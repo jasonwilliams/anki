@@ -10,6 +10,7 @@ export function activate(context: vscode.ExtensionContext) {
   // This line of code will only be executed once when your extension is activated
   console.log('Congratulations, your extension "anki-sync" is now active!');
 
+  // @todo use configuration
   const ankiService = new AnkiService(`http://localhost:8765`);
   // The command has been defined in the package.json file
   // Now provide the implementation of the command with registerCommand
@@ -17,12 +18,22 @@ export function activate(context: vscode.ExtensionContext) {
   let disposable = vscode.commands.registerCommand(
     "anki-sync.sync",
     async () => {
-      console.log("dsinjiujd");
       // The code you place here will be executed every time your command is executed
-
-      await ankiService.syncGui();
+      vscode.window.withProgress(
+        {
+          location: vscode.ProgressLocation.Notification,
+          title: "Syncing your Anki Instance...",
+          cancellable: false,
+        },
+        async () => {
+          try {
+            await ankiService.syncGui();
+          } catch (e) {
+            vscode.window.showErrorMessage("Failed to connect to Anki");
+          }
+        }
+      );
       // Display a message box to the user
-      vscode.window.showInformationMessage("Hello World from Anki Sync!");
     }
   );
 
