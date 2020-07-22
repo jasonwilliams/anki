@@ -15,5 +15,3 @@ class Template {
     this.css = css || defaultCss;
   }
 }
-
-module.exports = Template;

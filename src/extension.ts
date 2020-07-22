@@ -1,15 +1,17 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from "vscode";
+import { workspace } from "vscode";
 import { AnkiService } from "./AnkiService";
+import { AnkiCardProvider } from "./AnkiCardProvider";
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
 export function activate(context: vscode.ExtensionContext) {
   // Grab config
-  const schema = vscode.workspace.getConfiguration("anki.api.schema");
-  const hostname = vscode.workspace.getConfiguration("anki.api.hostname");
-  const port = vscode.workspace.getConfiguration("anki.api.port");
+  const schema = workspace.getConfiguration("anki.api").get("schema");
+  const hostname = workspace.getConfiguration("anki.api").get("hostname");
+  const port = workspace.getConfiguration("anki.api").get("port");
 
   const ankiService = new AnkiService(`${schema}://${hostname}:${port}`);
   // The command has been defined in the package.json file
@@ -36,6 +38,12 @@ export function activate(context: vscode.ExtensionContext) {
         }
       );
     }
+  );
+
+  // Register TreeView API
+  vscode.window.registerTreeDataProvider(
+    "decks",
+    new AnkiCardProvider(ankiService)
   );
 
   context.subscriptions.push(disposable);

@@ -9,28 +9,62 @@ export class AnkiCardProvider implements vscode.TreeDataProvider<Dependency> {
     return element;
   }
 
-  getChildren(element?: Dependency): Thenable<Dependency[]> {
+  async getChildren(element?: Dependency) {
+    // get children of Deck
     if (element) {
-      // get children of a deck
+      // as cards don't have children element would be a Deck
+      let cards;
+      try {
+        cards = await this.ankiService.findCards(`deck:${element.label}`);
+      } catch (e) {
+        console.log(e);
+      }
+
+      return cards?.map((v) => {
+        return new Dependency(
+          v.question,
+          v.question,
+          vscode.TreeItemCollapsibleState.None
+        );
+      });
     }
+
+    // Top level, get decks
+    let decks;
+    try {
+      decks = await this.ankiService.deckNamesAndIds();
+    } catch (e) {
+      vscode.window.showErrorMessage("Failed to get any Anki Decks");
+      return;
+    }
+
+    const deps = decks.map((v) => {
+      return new Dependency(
+        v.name,
+        v.id?.toString(10),
+        vscode.TreeItemCollapsibleState.Collapsed
+      );
+    });
+
+    return deps;
   }
 }
 
 class Dependency extends vscode.TreeItem {
   constructor(
     public readonly label: string,
-    private version: string,
+    public readonly id: string,
     public readonly collapsibleState: vscode.TreeItemCollapsibleState
   ) {
     super(label, collapsibleState);
   }
 
   get tooltip(): string {
-    return `${this.label}-${this.version}`;
+    return `${this.label}-${this.id}`;
   }
 
   get description(): string {
-    return this.version;
+    return this.label;
   }
 
   iconPath = {

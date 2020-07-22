@@ -1,22 +1,18 @@
-const fs = require("fs");
-const { default: AnkiExport } = require("anki-apkg-export");
+import { Card } from "./Card";
 
-class Deck {
-  private name: string;
+export class Deck {
+  public readonly name: string;
   private options: any;
   private cards: Card[];
   private mediaCollection: any[];
-  //   @todo add type
-  private template: Template;
-  //   @todo add type
-  private ankiService: any;
-  constructor(name: string, options = {}) {
+  public readonly id: number;
+
+  constructor(name: string, id: number, options = {}) {
     this.name = name;
+    this.id = id;
     this.options = options;
     this.cards = [];
     this.mediaCollection = [];
-    this.template = new Template();
-    this.ankiService = new AnkiExport(this.name, this.template);
   }
 
   /** add card to this deck */
@@ -31,5 +27,3 @@ class Deck {
 
   async save() {}
 }
-
-module.exports = Deck;

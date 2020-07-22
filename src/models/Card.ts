@@ -1,13 +1,15 @@
 const { sanitizeString } = require("../utils");
 
-class Card {
-  private front: string;
-  private back: string;
-  private tags: string[];
+export class Card {
+  public question: string;
+  public answer: string;
+  public tags: string[];
+  public id: number;
 
-  constructor(front: string, back: string, tags = []) {
-    this.front = front;
-    this.back = back;
+  constructor(question: string, answer: string, id: number, tags = []) {
+    this.question = question;
+    this.answer = answer;
+    this.id = id;
     this.tags = tags;
   }
 
@@ -21,5 +23,3 @@ class Card {
     }
   }
 }
-
-module.exports = Card;
