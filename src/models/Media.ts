@@ -16,5 +16,3 @@ class Media {
     return createHash("md5").update(this.data, "utf8").digest("hex");
   }
 }
-
-module.exports = Media;
