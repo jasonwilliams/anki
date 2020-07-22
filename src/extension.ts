@@ -6,12 +6,12 @@ import { AnkiService } from "./AnkiService";
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
 export function activate(context: vscode.ExtensionContext) {
-  // Use the console to output diagnostic information (console.log) and errors (console.error)
-  // This line of code will only be executed once when your extension is activated
-  console.log('Congratulations, your extension "anki-sync" is now active!');
+  // Grab config
+  const schema = vscode.workspace.getConfiguration("anki.api.schema");
+  const hostname = vscode.workspace.getConfiguration("anki.api.hostname");
+  const port = vscode.workspace.getConfiguration("anki.api.port");
 
-  // @todo use configuration
-  const ankiService = new AnkiService(`http://localhost:8765`);
+  const ankiService = new AnkiService(`${schema}://${hostname}:${port}`);
   // The command has been defined in the package.json file
   // Now provide the implementation of the command with registerCommand
   // The commandId parameter must match the command field in package.json
@@ -29,11 +29,12 @@ export function activate(context: vscode.ExtensionContext) {
           try {
             await ankiService.syncGui();
           } catch (e) {
-            vscode.window.showErrorMessage("Failed to connect to Anki");
+            vscode.window.showErrorMessage(
+              "Failed to connect to Anki: Do you have Anki running?"
+            );
           }
         }
       );
-      // Display a message box to the user
     }
   );
 
