@@ -1,21 +1,6 @@
 const fs = require("fs");
 const { default: AnkiExport } = require("anki-apkg-export");
 
-/**
- * @typedef {import('./template').Template} Template
- * @typedef {import('./card').Card} Card
- * @typedef {import('./media').Media} Media
- * @typedef {import('anki-apkg-export').default} AnkiExport
- */
-
-/**
- * @typedef {Object} Deck
- * @property {string} name
- * @property {Template} template
- * @property {[Card]} cards
- * @property {Object} [options]
- */
-
 class Deck {
   private name: string;
   private options: any;
