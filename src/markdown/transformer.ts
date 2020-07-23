@@ -70,7 +70,7 @@ export class Transformer {
       throw new Error("No Deck exists for current cards");
     }
 
-    await this.deck.save();
+    await this.deck.pushNewCardsToAnki();
   }
 
   /**
@@ -120,5 +120,3 @@ export class Transformer {
     });
   }
 }
-
-module.exports = Transformer;

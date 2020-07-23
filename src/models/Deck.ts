@@ -28,6 +28,7 @@ export class Deck {
 
   /** add card to this deck */
   addCard(card: Card) {
+    card.setDeck(this);
     this.cards.push(card);
   }
 
@@ -36,10 +37,16 @@ export class Deck {
     this.mediaCollection.push(media);
   }
 
+  async pushNewCardsToAnki() {
+    const newCards = this.cards.filter((v) => !v.id);
+    const ids = await this.ankiService?.addNotes(newCards);
+    ids?.map((v, i) => (newCards[i].id = v));
+  }
+
   // Anki Service Methods
 
-  /** if the Deck already exists it will update the deck */
   async createOnAnki() {
+    console.log(this);
     // If this deck has an ID it's already created on Anki
     if (this.ankiService && !this.id) {
       const id = await this.ankiService.createDeck(this.name);
