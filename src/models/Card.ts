@@ -4,12 +4,11 @@ export class Card {
   public question: string;
   public answer: string;
   public tags: string[];
-  public id: number;
+  public id?: number;
 
-  constructor(question: string, answer: string, id: number, tags = []) {
+  constructor(question: string, answer: string, tags: string[] = []) {
     this.question = question;
     this.answer = answer;
-    this.id = id;
     this.tags = tags;
   }
 
@@ -21,5 +20,11 @@ export class Card {
     if (tag) {
       this.tags.push(tag);
     }
+  }
+
+  /** Set the ID on the Card object */
+  setId(id: number) {
+    this.id = id;
+    return this;
   }
 }

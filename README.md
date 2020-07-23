@@ -1,6 +1,6 @@
-# anki-sync README
+# anki README
 
-This is the README for your extension "anki-sync". After writing up a brief description, we recommend including the following sections.
+This is the README for your extension "anki". After writing up a brief description, we recommend including the following sections.
 
 ## Features
 
@@ -14,7 +14,9 @@ For example if there is an image subfolder under your extension project workspac
 
 ## Requirements
 
-If you have any requirements or dependencies, add a section describing those and how to install and configure them.
+- Anki >= 2.1.21
+- [Anki Connect](https://ankiweb.net/shared/info/2055492159) >= 2020-07-13
+- VSCode >= 1.47
 
 ## Extension Settings
 

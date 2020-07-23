@@ -41,7 +41,7 @@ export class AnkiCardProvider implements vscode.TreeDataProvider<Dependency> {
     const deps = decks.map((v) => {
       return new Dependency(
         v.name,
-        v.id?.toString(10),
+        v.id?.toString(10) || "0",
         vscode.TreeItemCollapsibleState.Collapsed
       );
     });

@@ -5,7 +5,8 @@ import { Card } from "./models/Card";
 
 interface IResponse {
   result: any;
-  error: any;
+  /** AnkiConnect error, which should always be a string */
+  error: string;
 }
 
 export class AnkiService {
@@ -16,7 +17,7 @@ export class AnkiService {
     this.url = url;
   }
 
-  async invoke(action: string, params?: object): Promise<IResponse> {
+  async invoke(action: string, params?: object): Promise<any> {
     const req = { action, version: this.version, params: { ...params } };
     console.log(JSON.stringify(req));
     const response = await fetch(this.url, {
@@ -27,9 +28,14 @@ export class AnkiService {
       body: JSON.stringify(req),
     });
 
-    const jsonResponse = await response.json();
-    console.log(jsonResponse);
-    return jsonResponse;
+    const jsonResponse: IResponse = await response.json();
+
+    // Seeing that all responses have an error property, its worth just throwing on it here
+    if (jsonResponse.error) {
+      throw new Error(jsonResponse.error);
+    }
+
+    return jsonResponse.result;
   }
 
   // https://github.com/FooSoft/anki-connect/blob/master/actions/miscellaneous.md
@@ -45,12 +51,8 @@ export class AnkiService {
     const response = await this.invoke("deckNamesAndIds");
     const decks = [];
 
-    if (response.error) {
-      throw response.error;
-    }
-
-    for (const [key, value] of Object.entries(response.result)) {
-      const deck = new Deck(key, value as number);
+    for (const [key, value] of Object.entries(response)) {
+      const deck = new Deck(key).setId(value as number);
       decks.push(deck);
     }
 
@@ -59,31 +61,30 @@ export class AnkiService {
 
   async getCardInfo(cards: number[]) {
     const response = await this.invoke("cardsInfo", { cards });
-    if (response.error) {
-      throw response.error;
-    }
 
     return response;
+  }
+
+  /**
+   * Will not overwrite a deck that exists with the same name.
+   */
+  async createDeck(deckName: string): Promise<number> {
+    return await this.invoke("createDeck", {
+      deck: deckName,
+    });
   }
 
   async findCards(query: string): Promise<Card[]> {
     // need double quotes for findCard
     // https://github.com/FooSoft/anki-connect/issues/80#issuecomment-394154441
-    console.log("sending req");
     const response = await this.invoke("findCards", { query: `${query}` });
-    console.log("response: ", response);
-    const cards = await this.getCardInfo(response.result);
-    console.log("cards: ", cards);
-
-    if (response.error) {
-      throw response.error;
-    }
+    const cards = await this.getCardInfo(response);
 
     return cards.result.map((v: any) => {
       console.log("sihuhi");
       const $ = load(v.question.toString());
       console.log($("html").text());
-      return new Card(v.question, v.answer, v.id);
+      return new Card(v.question, v.answer).setId(v.id);
     });
   }
 }
