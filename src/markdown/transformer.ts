@@ -1,0 +1,124 @@
+import { window, workspace } from "vscode";
+import { Serializer } from "./Serializer";
+import { Deck } from "../models/Deck";
+import { AnkiService } from "../AnkiService";
+import { Card } from "../models/Card";
+
+/**
+ * Create anki cards from markdown files
+ */
+export class Transformer {
+  private source: string;
+  private deck: Deck | null;
+  private defaultDeck: string;
+  private useDefault: boolean;
+  private ankiService: AnkiService;
+
+  /**
+   * @param {string} source String of the markdown file
+   * @param {string} useDefault Whether to send to default deck or not
+   */
+  constructor(
+    source: string,
+    ankiService: AnkiService,
+    useDefault: boolean = true
+  ) {
+    this.deck = null;
+    this.source = source;
+    this.ankiService = ankiService;
+    this.useDefault = useDefault;
+    this.defaultDeck = workspace
+      .getConfiguration("anki")
+      .get("defaultDeck") as string;
+  }
+
+  async transform() {
+    await this.transformToDeck();
+  }
+
+  async transformToDeck() {
+    const file = window.activeTextEditor?.document.getText();
+    const serializer = new Serializer(file ?? "");
+
+    const { cards, deckName } = await serializer.transform();
+
+    if (!cards.length) {
+      throw new Error("No cards found. Check your markdown file");
+    }
+
+    this.deck = new Deck(this.calculateDeckName(deckName)).setAnkiService(
+      this.ankiService
+    );
+
+    // Either create a new Deck on Anki or get back the ID of the same-named Deck
+    await this.deck.createOnAnki();
+
+    await this.exportCards(cards);
+  }
+
+  calculateDeckName(generatedName: string | null = null): string {
+    return this.useDefault
+      ? this.defaultDeck
+      : generatedName || this.defaultDeck;
+  }
+
+  async exportCards(cards: Card[]) {
+    // this.addResourcesToDeck();
+    this.addCardsToDeck(cards);
+    // this.addMediaItemsToDeck(media);
+    if (!this.deck) {
+      throw new Error("No Deck exists for current cards");
+    }
+
+    await this.deck.save();
+  }
+
+  /**
+   * Adds required resources to deck
+   * @returns {void}
+   * @private
+   */
+  //   addResourcesToDeck() {
+  //     // add media for code highlighting
+  //     this.deck.addMedia(
+  //       this.toMedia(
+  //         "_highlight.js",
+  //         path.resolve(__dirname, "../resources/highlight.js")
+  //       )
+  //     );
+  //     this.deck.addMedia(
+  //       this.toMedia(
+  //         "_prism.js",
+  //         path.resolve(__dirname, "../resources/prism.js")
+  //       )
+  //     );
+
+  //     if (configs.code.template === "dark") {
+  //       this.deck.addMedia(
+  //         this.toMedia(
+  //           "_highlight_dark.css",
+  //           path.resolve(__dirname, "../resources/dark.css")
+  //         )
+  //       );
+  //     } else {
+  //       this.deck.addMedia(
+  //         this.toMedia(
+  //           "_highlight_default.css",
+  //           path.resolve(__dirname, "../resources/default.css")
+  //         )
+  //       );
+  //     }
+  //   }
+
+  addCardsToDeck(cards: Card[]) {
+    cards.forEach((card: Card) => {
+      if (!this.deck) {
+        throw new Error("No Deck exists for current cards");
+      }
+
+      this.deck.addCard(card);
+    });
+  }
+}
+
+module.exports = Transformer;
