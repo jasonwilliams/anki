@@ -1,5 +1,5 @@
-const MdParser = require("./md_parser");
-const { trimArray } = require("../utils");
+import { MdParser } from "../parsers/mdParser";
+import { trimArray } from "../../utils";
 import { BaseParser } from "./baseParser";
 
 import { Card } from "../../models/Card";
@@ -120,6 +120,6 @@ export class CardParser extends BaseParser {
   async linesToHtml(lines: string[]) {
     const string = lines.join("\n");
 
-    return MdParser.parse(string);
+    return await new MdParser({}).parse(string);
   }
 }

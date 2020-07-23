@@ -25,5 +25,3 @@ export class BaseParser {
   //     return new this(options).parse(data);
   //   }
 }
-
-module.exports = BaseParser;

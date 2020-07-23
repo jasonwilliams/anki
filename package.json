@@ -59,50 +59,40 @@
           "default": "notes",
           "description": "Set's default deck when pushing from Markdown"
         },
-        "anki.md": {
-          "card": {
-            "separator": {
-              "type": "string",
-              "default": "(?=^##\\s)",
-              "description": "Regex for card separator"
-            },
-            "frontBackSeparator": {
-              "type": "string",
-              "default": "%",
-              "description": "Text to match to split the front and back (not regex)"
-            },
-            "tagPattern": {
-              "type": "string",
-              "default": "^\\[#(.*)\\]",
-              "description": "Regex for tags"
-            }
-          },
-          "deck": {
-            "titleSeparator": {
-              "type": "string",
-              "default": "^#\\s",
-              "description": "Parsing for Deck Name"
-            }
-          },
-          "template": {
-            "formats": {
-              "question": {
-                "type": "string",
-                "default": "{{Front}}<link rel='stylesheet' href='_highlight_default.css'><link rel='stylesheet' href='_highlight_dark.css'></link><script>var script;'undefined'==typeof hljs&&((script=document.createElement('script')).src='_prism.js',script.async=!1,document.head.appendChild(script));(script=document.createElement('script')).src='_highlight.js',script.async=!1,document.head.appendChild(script),document.head.removeChild(script);</script>'",
-                "description": "test"
-              },
-              "answer": {
-                "type": "string",
-                "default": "{{FrontSide}}\n\n<hr id='answer'>\n\n{{Back}}",
-                "description": "test"
-              },
-              "css": {
-                "type": "string",
-                "default": ".card {\n font-family: Arial,'Helvetica Neue',Helvetica,sans-serif;\n font-size: 16px;\n color: black;\nbackground-color: white;\n}\ncode[class*='language-'],pre[class*='language-'] {\n font-size: 0.9em !important;\n}",
-                "description": "test"
-              }
-            }
-          }
+        "anki.md.card.separator": {
+          "type": "string",
+          "default": "(?=^##\\s)",
+          "description": "Regex for card separator"
+        },
+        "anki.md.card.frontBackSeparator": {
+          "type": "string",
+          "default": "%",
+          "description": "Text to match to split the front and back (not regex)"
+        },
+        "anki.md.card.tagPattern": {
+          "type": "string",
+          "default": "^\\[#(.*)\\]",
+          "description": "Regex for tags"
+        },
+        "anki.md.deck.titleSeparator": {
+          "type": "string",
+          "default": "^#\\s",
+          "description": "Parsing for Deck Name"
+        },
+        "anki.md.template.formats.question": {
+          "type": "string",
+          "default": "{{Front}}<link rel='stylesheet' href='_highlight_default.css'><link rel='stylesheet' href='_highlight_dark.css'></link><script>var script;'undefined'==typeof hljs&&((script=document.createElement('script')).src='_prism.js',script.async=!1,document.head.appendChild(script));(script=document.createElement('script')).src='_highlight.js',script.async=!1,document.head.appendChild(script),document.head.removeChild(script);</script>'",
+          "description": "test"
+        },
+        "anki.md.template.formats.answer": {
+          "type": "string",
+          "default": "{{FrontSide}}\n\n<hr id='answer'>\n\n{{Back}}",
+          "description": "test"
+        },
+        "anki.md.template.formats.css": {
+          "type": "string",
+          "default": ".card {\n font-family: Arial,'Helvetica Neue',Helvetica,sans-serif;\n font-size: 16px;\n color: black;\nbackground-color: white;\n}\ncode[class*='language-'],pre[class*='language-'] {\n font-size: 0.9em !important;\n}",
+          "description": "test"
         }
       }
     }
@@ -118,9 +108,11 @@
   "devDependencies": {
     "@types/cheerio": "^0.22.21",
     "@types/glob": "^7.1.1",
+    "@types/marked": "^1.1.0",
     "@types/mocha": "^7.0.2",
     "@types/node": "^13.11.0",
     "@types/node-fetch": "^2.5.7",
+    "@types/prismjs": "^1.16.1",
     "@types/vscode": "^1.47.0",
     "@typescript-eslint/eslint-plugin": "^2.30.0",
     "@typescript-eslint/parser": "^2.30.0",
@@ -131,8 +123,6 @@
     "vscode-test": "^1.3.0"
   },
   "dependencies": {
-    "@types/marked": "^1.1.0",
-    "@types/prismjs": "^1.16.1",
     "cheerio": "^1.0.0-rc.3",
     "markdown-it-deflist": "^2.0.3",
     "marked": "^1.1.1",

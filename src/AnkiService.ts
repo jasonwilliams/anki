@@ -74,6 +74,22 @@ export class AnkiService {
     });
   }
 
+  async addNotes(cards: Card[]): Promise<any[]> {
+    const notes = cards.map((v) => {
+      return {
+        deckName: v?.deck?.name || "default",
+        modelName: "Basic",
+        fields: {
+          Front: v.question,
+          Back: v.answer,
+        },
+        tags: v.tags,
+      };
+    });
+
+    return await this.invoke("addNotes", { notes });
+  }
+
   async findCards(query: string): Promise<Card[]> {
     // need double quotes for findCard
     // https://github.com/FooSoft/anki-connect/issues/80#issuecomment-394154441

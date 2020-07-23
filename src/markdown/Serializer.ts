@@ -113,5 +113,3 @@ export class Serializer {
   //     return side.replace(pattern, prepare);
   //   }
 }
-
-module.exports = Serializer;

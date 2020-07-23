@@ -14,6 +14,9 @@ export function activate(context: vscode.ExtensionContext) {
   const hostname = workspace.getConfiguration("anki.api").get("hostname");
   const port = workspace.getConfiguration("anki.api").get("port");
   const defaultDeck = workspace.getConfiguration("anki").get("defaultDeck");
+  console.log(
+    workspace.getConfiguration("anki.md.card").get("separator") as string
+  );
   const failedToConnectMessage =
     "Failed to connect to Anki: Do you have Anki running?";
 
@@ -58,7 +61,7 @@ export function activate(context: vscode.ExtensionContext) {
             const file = window.activeTextEditor?.document.getText() ?? "";
             await new Transformer(file, ankiService, true).transform();
           } catch (e) {
-            vscode.window.showErrorMessage(failedToConnectMessage);
+            vscode.window.showErrorMessage(e);
           }
         }
       );
