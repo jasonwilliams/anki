@@ -3,8 +3,13 @@
   "displayName": "Anki for VSCode",
   "description": "Sync notes with your locally running Anki",
   "version": "0.0.1",
+  "publisher": "jasew",
   "engines": {
     "vscode": "^1.47.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jasonwilliams/anki"
   },
   "categories": [
     "Notebooks",
