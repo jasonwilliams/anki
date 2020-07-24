@@ -93,6 +93,11 @@
           "type": "string",
           "default": ".card {\n font-family: Arial,'Helvetica Neue',Helvetica,sans-serif;\n font-size: 16px;\n color: black;\nbackground-color: white;\n}\ncode[class*='language-'],pre[class*='language-'] {\n font-size: 0.9em !important;\n}",
           "description": "test"
+        },
+        "anki.md.createTagForTitle": {
+          "type": "boolean",
+          "default": true,
+          "description": "When you run 'Send To Deck' the title (h1) of the markdown file is stored as a tag. This is useful if you have 'daily' notes, you can use the same deck but separate cards by title"
         }
       }
     }
@@ -127,6 +132,6 @@
     "markdown-it-deflist": "^2.0.3",
     "marked": "^1.1.1",
     "node-fetch": "^2.6.0",
-    "prism": "^4.1.2"
+    "prismjs": "^1.20.0"
   }
 }

@@ -50,6 +50,17 @@ export class Transformer {
       this.ankiService
     );
 
+    // If useDefault is true then the title will be the default Deck
+    // For daily markdown files it's still useful to have a tag (we can use the title for this)
+    if (
+      deckName &&
+      (workspace
+        .getConfiguration("anki.md")
+        .get("createTagForTitle") as boolean)
+    ) {
+      cards.forEach((v) => v.addTag(deckName));
+    }
+
     // Either create a new Deck on Anki or get back the ID of the same-named Deck
     await this.deck.createOnAnki();
 
