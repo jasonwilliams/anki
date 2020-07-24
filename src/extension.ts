@@ -5,6 +5,7 @@ import { window, workspace } from "vscode";
 import { AnkiService } from "./AnkiService";
 import { AnkiCardProvider } from "./AnkiCardProvider";
 import { Transformer } from "./markdown/transformer";
+import resources from "./resources.json";
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
@@ -14,14 +15,16 @@ export function activate(context: vscode.ExtensionContext) {
   const hostname = workspace.getConfiguration("anki.api").get("hostname");
   const port = workspace.getConfiguration("anki.api").get("port");
   const defaultDeck = workspace.getConfiguration("anki").get("defaultDeck");
-  console.log(
-    workspace.getConfiguration("anki.md.card").get("separator") as string
-  );
   const failedToConnectMessage =
     "Failed to connect to Anki: Do you have Anki running?";
 
   // Start up Anki Service
   const ankiService = new AnkiService(`${schema}://${hostname}:${port}`);
+
+  // Check to see if we need to upload assets into Anki
+  if (!context.globalState.get("resourceFilesInstalled")) {
+    installResourceFiles(context, ankiService);
+  }
 
   // Handle Syncing the Anki Instance
   let disposableSync = vscode.commands.registerCommand(
@@ -76,11 +79,33 @@ export function activate(context: vscode.ExtensionContext) {
 
   context.subscriptions.push(disposableSync, disposableSendToDeck);
 
-  return {
-    extendMarkdownIt(md: any) {
-      return md.use(require("markdown-it-deflist"));
-    },
-  };
+  /**
+   * The same file names should overwrite, so older versions will eventually update
+   * @see https://github.com/FooSoft/anki-connect/issues/158#issuecomment-622669323
+   */
+  async function installResourceFiles(
+    context: vscode.ExtensionContext,
+    ankiService: AnkiService
+  ) {
+    let result: any[] = [],
+      disposable: vscode.Disposable;
+    try {
+      disposable = vscode.window.setStatusBarMessage(
+        "Uploading resources to Anki..."
+      );
+      result = await ankiService.storeMultipleFiles(resources);
+    } catch (e) {
+      vscode.window.showErrorMessage(
+        "Anki: Unable to update resources on Anki"
+      );
+      console.log(e);
+    }
+
+    // If assets are safely installed we can set a flag so we don't need to do this action again
+    if (result.every((v) => v === null)) {
+      context.globalState.update("resourceFilesInstalled", true);
+    }
+  }
 }
 
 // this method is called when your extension is deactivated
