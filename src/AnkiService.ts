@@ -75,13 +75,13 @@ export class AnkiService {
   }
 
   async storeMultipleFiles(
-    files: { filename: string; url?: string; data?: string }[]
+    files: { filename: string; data: string }[]
   ): Promise<any> {
     const actions = files.map((v) => ({
       action: "storeMediaFile",
       params: {
         filename: v.filename,
-        url: v.url,
+        data: v.data,
       },
     }));
 
