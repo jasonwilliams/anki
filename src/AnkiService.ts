@@ -75,7 +75,7 @@ export class AnkiService {
   }
 
   async storeMultipleFiles(
-    files: { filename: string; url: string }[]
+    files: { filename: string; url?: string; data?: string }[]
   ): Promise<any> {
     const actions = files.map((v) => ({
       action: "storeMediaFile",
@@ -88,11 +88,15 @@ export class AnkiService {
     return await this.invoke("multi", { actions });
   }
 
+  async createModel(model: any) {
+    return await this.invoke("createModel", model);
+  }
+
   async addNotes(cards: Card[]): Promise<any[]> {
     const notes = cards.map((v) => {
       return {
         deckName: v?.deck?.name || "default",
-        modelName: "Basic",
+        modelName: "BasicWithHighlight",
         fields: {
           Front: v.question,
           Back: v.answer,
