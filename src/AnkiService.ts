@@ -92,11 +92,15 @@ export class AnkiService {
     return await this.invoke("createModel", model);
   }
 
+  async modelNames() {
+    return await this.invoke("modelNames");
+  }
+
   async addNotes(cards: Card[]): Promise<any[]> {
     const notes = cards.map((v) => {
       return {
         deckName: v?.deck?.name || "default",
-        modelName: "BasicWithHighlight",
+        modelName: "BasicWithHighlightVSCode",
         fields: {
           Front: v.question,
           Back: v.answer,
@@ -114,9 +118,15 @@ export class AnkiService {
     const response = await this.invoke("findCards", { query: `${query}` });
     const cards = await this.getCardInfo(response);
 
-    return cards.result.map((v: any) => {
-      const $ = load(v.question.toString());
-      return new Card(v.question, v.answer).setId(v.id);
+    return cards.map((v: any) => {
+      let $ = load(v.question.toString());
+      const cleanQuestion = $("html").text();
+      $ = load(v.answer.toString());
+      const cleanAnswer = $("html").text();
+      console.log(v);
+      return new Card(cleanQuestion, cleanAnswer)
+        .setId(v.id)
+        .setFields(v.fields);
     });
   }
 }
