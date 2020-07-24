@@ -11,6 +11,7 @@
   ],
   "activationEvents": [
     "onCommand:anki.sync",
+    "onCommand:anki.sendToStandalone",
     "onCommand:anki.sendToDeck",
     "onView:decks"
   ],
@@ -24,6 +25,11 @@
       {
         "command": "anki.sendToDeck",
         "title": "Anki: Send To Deck",
+        "enablement": "editorLangId == markdown"
+      },
+      {
+        "command": "anki.sendToStandalone",
+        "title": "Anki: Send To Own Deck",
         "enablement": "editorLangId == markdown"
       }
     ],

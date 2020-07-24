@@ -46,7 +46,6 @@ export class Deck {
   // Anki Service Methods
 
   async createOnAnki() {
-    console.log(this);
     // If this deck has an ID it's already created on Anki
     if (this.ankiService && !this.id) {
       const id = await this.ankiService.createDeck(this.name);
