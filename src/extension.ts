@@ -7,7 +7,8 @@ import { window, workspace } from "vscode";
 import { AnkiService } from "./AnkiService";
 import { AnkiCardProvider } from "./AnkiCardProvider";
 import { Transformer } from "./markdown/transformer";
-require("resources/prism-dark.css");
+require("./resources/prism-dark.css");
+require("./resources/prism.min.css");
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
@@ -94,8 +95,15 @@ export function activate(context: vscode.ExtensionContext) {
 
     // get dark-mode override
     // The selectors in here are more specific so will kick in when darkMode is turned on
-    const contents = readFileSync(
-      path.join(__dirname, "resources", "prism-dark.css"),
+    const prismDark = readFileSync(
+      path.join(context.extensionPath, "out", "resources", "prism-dark.css"),
+      {
+        encoding: "base64",
+      }
+    );
+
+    const prismLight = readFileSync(
+      path.join(context.extensionPath, "out", "resources", "prism.min.css"),
       {
         encoding: "base64",
       }
@@ -104,12 +112,11 @@ export function activate(context: vscode.ExtensionContext) {
     const resources = [
       {
         filename: "_prism-dark.css",
-        data: contents,
+        data: prismDark,
       },
       {
         filename: "_prism.min.css",
-        url:
-          "https://cdnjs.cloudflare.com/ajax/libs/prism/1.20.0/themes/prism.min.css",
+        data: prismLight,
       },
     ];
     try {
@@ -118,11 +125,11 @@ export function activate(context: vscode.ExtensionContext) {
       );
       await createTemplate(ankiService);
       result = await ankiService.storeMultipleFiles(resources);
+      disposable.dispose();
     } catch (e) {
       vscode.window.showErrorMessage(
         "Anki: Unable to update resources on Anki"
       );
-      console.log(e);
     }
 
     // If assets are safely installed we can set a flag so we don't need to do this action again
@@ -133,7 +140,7 @@ export function activate(context: vscode.ExtensionContext) {
 
   async function createTemplate(ankiService: AnkiService) {
     const model = {
-      name: "BasicWithHighlight",
+      modelName: "BasicWithHighlight",
       inOrderFields: ["Front", "Back"],
       css:
         ".card{font-family:arial;font-size:20px;text-align:center;color:#000;background-color:#fff}pre{text-align:left}",
