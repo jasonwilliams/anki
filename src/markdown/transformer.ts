@@ -54,7 +54,7 @@ export class Transformer {
     // For daily markdown files it's still useful to have a tag (we can use the title for this)
     if (
       deckName &&
-      !this.useDefault &&
+      this.useDefault &&
       (workspace
         .getConfiguration("anki.md")
         .get("createTagForTitle") as boolean)

@@ -101,6 +101,10 @@ export class AnkiService {
       return {
         deckName: v?.deck?.name || "default",
         modelName: "BasicWithHighlightVSCode",
+        options: {
+          allowDuplicate: false,
+          duplicateScope: "deck",
+        },
         fields: {
           Front: v.question,
           Back: v.answer,
