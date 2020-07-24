@@ -97,9 +97,7 @@ export class AnkiService {
     const cards = await this.getCardInfo(response);
 
     return cards.result.map((v: any) => {
-      console.log("sihuhi");
       const $ = load(v.question.toString());
-      console.log($("html").text());
       return new Card(v.question, v.answer).setId(v.id);
     });
   }
