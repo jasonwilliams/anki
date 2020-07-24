@@ -74,6 +74,20 @@ export class AnkiService {
     });
   }
 
+  async storeMultipleFiles(
+    files: { filename: string; url: string }[]
+  ): Promise<any> {
+    const actions = files.map((v) => ({
+      action: "storeMediaFile",
+      params: {
+        filename: v.filename,
+        url: v.url,
+      },
+    }));
+
+    return await this.invoke("multi", { actions });
+  }
+
   async addNotes(cards: Card[]): Promise<any[]> {
     const notes = cards.map((v) => {
       return {

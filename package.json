@@ -129,9 +129,9 @@
   },
   "dependencies": {
     "cheerio": "^1.0.0-rc.3",
-    "markdown-it-deflist": "^2.0.3",
     "marked": "^1.1.1",
     "node-fetch": "^2.6.0",
-    "prismjs": "^1.20.0"
+    "prismjs": "^1.20.0",
+    "yaml": "^1.10.0"
   }
 }

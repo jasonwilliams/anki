@@ -1,0 +1,14 @@
+[
+  {
+    "filename": "_prism.min.js",
+    "url": "https://cdnjs.cloudflare.com/ajax/libs/prism/1.20.0/prism.min.js"
+  },
+  {
+    "filename": "_prism-dark.min.css",
+    "url": "https://cdnjs.cloudflare.com/ajax/libs/prism/1.20.0/themes/prism-dark.min.css"
+  },
+  {
+    "filename": "_prism.min.css",
+    "url": "https://cdnjs.cloudflare.com/ajax/libs/prism/1.20.0/themes/prism.min.css"
+  }
+]
