@@ -7,6 +7,7 @@
     "vscode": "^1.47.0"
   },
   "categories": [
+    "Notebooks",
     "Other"
   ],
   "activationEvents": [
