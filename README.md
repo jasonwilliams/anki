@@ -1,16 +1,35 @@
-# anki README
+# Anki for VSCode (Beta)
 
-This is the README for your extension "anki". After writing up a brief description, we recommend including the following sections.
+This is a VSCode plugin for interacting and sending cards to Anki.  
+It uses AnkiConnect for communication so you will need this plugin installed and running before installing the VSCode extension.
 
 ## Features
 
-Describe specific features of your extension including screenshots of your extension in action. Image paths are relative to this README file.
+### Send to deck
 
-For example if there is an image subfolder under your extension project workspace:
+If you're writing up Markdown files and want to send some Q & As to a deck you can do that quite easily with the `Anki: Send To Deck` command.  
+It will send to the default deck "notes" but you can change this in the settings.  
+This is useful if you want a "Daily" deck where you can put daily notes into.
+This plugin will also add a tag to each card based of the title, so you can still organise cards within a deck.
 
-\!\[feature X\]\(images/feature-x.png\)
+Here's an example
 
-> Tip: Many popular extensions utilize animations. This is an excellent way to show off your extension! We recommend short, focused animations that are easy to follow.
+![image](./docs/img/sendToAnki.gif)
+
+### Send to own deck
+
+Very similar to the above but will send to a new deck of the Markdown title.  
+In this example we realise that we want to send this content to its own deck, that's no problem, use `Anki: Send To Own Deck`
+
+Here's an example
+
+![image](./docs/img/sendToAnkiOwnDeck.gif)
+
+### Explorer
+
+More to come on this
+
+![image](./docs/img/ankiExplorer.gif)
 
 ## Requirements
 
@@ -20,51 +39,16 @@ For example if there is an image subfolder under your extension project workspac
 
 ## Extension Settings
 
-Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
+- `anki.defaultDeck`: Default deck to send notes to. | _notes_
+- `anki.md.createTagForTitle`: Send tag with cards? (when using default deck). | _true_
+- `anki.api.hostname`: API Hostname. | _127.0.0.1_
+- `anki.api.port`: API Port. | _8765_
+- `anki.api.schema`: Schema. | _http_
+- `anki.api.port`: API Port. | _8765_
 
-For example:
+I don't recommend messing with the following settings
 
-This extension contributes the following settings:
-
-- `myExtension.enable`: enable/disable this extension
-- `myExtension.thing`: set to `blah` to do something
-
-## Known Issues
-
-Calling out known issues can help limit users opening duplicate issues against your extension.
-
-## Release Notes
-
-Users appreciate release notes as you update your extension.
-
-### 1.0.0
-
-Initial release of ...
-
-### 1.0.1
-
-Fixed issue #.
-
-### 1.1.0
-
-Added features X, Y, and Z.
-
----
-
-## Working with Markdown
-
-**Note:** You can author your README using Visual Studio Code. Here are some useful editor keyboard shortcuts:
-
-- Split the editor (`Cmd+\` on macOS or `Ctrl+\` on Windows and Linux)
-- Toggle preview (`Shift+CMD+V` on macOS or `Shift+Ctrl+V` on Windows and Linux)
-- Press `Ctrl+Space` (Windows, Linux) or `Cmd+Space` (macOS) to see a list of Markdown snippets
-
-### For more information
-
-- [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
-- [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
-
-**Enjoy!**
-
-Test::
-bldshshdsiu
+- `anki.md.card.separator`: Regex used for separating cards
+- `anki.md.card.frontBackSeparator`: Regex used for separating front / back
+- `anki.md.card.tagPattern`: Regex used to scrape tags
+- `anki.md.deck.titleSeparator`: Regex to remove the top title from cards
