@@ -1,11 +1,13 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from "vscode";
+import path from "path";
+import { readFileSync } from "fs";
 import { window, workspace } from "vscode";
 import { AnkiService } from "./AnkiService";
 import { AnkiCardProvider } from "./AnkiCardProvider";
 import { Transformer } from "./markdown/transformer";
-import resources from "./resources.json";
+require("resources/prism-dark.css");
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
@@ -89,10 +91,32 @@ export function activate(context: vscode.ExtensionContext) {
   ) {
     let result: any[] = [],
       disposable: vscode.Disposable;
+
+    // get dark-mode override
+    // The selectors in here are more specific so will kick in when darkMode is turned on
+    const contents = readFileSync(
+      path.join(__dirname, "resources", "prism-dark.css"),
+      {
+        encoding: "base64",
+      }
+    );
+
+    const resources = [
+      {
+        filename: "_prism-dark.css",
+        data: contents,
+      },
+      {
+        filename: "_prism.min.css",
+        url:
+          "https://cdnjs.cloudflare.com/ajax/libs/prism/1.20.0/themes/prism.min.css",
+      },
+    ];
     try {
       disposable = vscode.window.setStatusBarMessage(
         "Uploading resources to Anki..."
       );
+      await createTemplate(ankiService);
       result = await ankiService.storeMultipleFiles(resources);
     } catch (e) {
       vscode.window.showErrorMessage(
@@ -103,8 +127,27 @@ export function activate(context: vscode.ExtensionContext) {
 
     // If assets are safely installed we can set a flag so we don't need to do this action again
     if (result.every((v) => v === null)) {
-      context.globalState.update("resourceFilesInstalled", true);
+      // context.globalState.update("resourceFilesInstalled", true);
     }
+  }
+
+  async function createTemplate(ankiService: AnkiService) {
+    const model = {
+      name: "BasicWithHighlight",
+      inOrderFields: ["Front", "Back"],
+      css:
+        ".card{font-family:arial;font-size:20px;text-align:center;color:#000;background-color:#fff}pre{text-align:left}",
+      cardTemplates: [
+        {
+          Name: "Card 1",
+          Front:
+            '{{Front}}<link rel="stylesheet" href="_prism.min.css" /><link rel="stylesheet" href="_prism-dark.min.css" />',
+          Back: "{{FrontSide}}\n\n<hr id=answer>\n\n{{Back}}",
+        },
+      ],
+    };
+
+    await ankiService.createModel(model);
   }
 }
 
