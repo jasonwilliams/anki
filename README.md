@@ -95,6 +95,7 @@ In computer science, a binary tree is a tree data structure in which each node h
 
 ## Code and syntax highlighting
 
+Syntax highlighting should work out the box.
 Code blocks can be written with and without specifying a language name:
 
 <pre>
@@ -121,12 +122,6 @@ echo "Code block with language name"
 ```
 echo "Code block without language name"
 ```
-
-## Supported languages
-
-MDAnki supports code highlighting for these languages:
-
-> actionscript, applescript, aspnet, bash, basic, batch, c, coffeescript, cpp, csharp, d, dart, erlang, fsharp, go, graphql, groovy, handlebars, java, json, latex, less, livescript, lua, makefile, markdown, markup-templating, nginx, objectivec, pascal, perl, php, powershell, python, r, ruby, rust, sass, scheme, smalltalk, smarty, sql, stylus, swift, typescript, vim, yaml.
 
 ## Extension Settings
 
