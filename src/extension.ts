@@ -7,8 +7,7 @@ import { window, workspace } from "vscode";
 import { AnkiService } from "./AnkiService";
 import { AnkiCardProvider } from "./AnkiCardProvider";
 import { Transformer } from "./markdown/transformer";
-require("./resources/prism-dark.css");
-require("./resources/prism.min.css");
+require("./resources/vscodeAnkiPlugin.scss");
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
@@ -27,9 +26,9 @@ export function activate(context: vscode.ExtensionContext) {
   const ankiService = new AnkiService(`${schema}://${hostname}:${port}`);
 
   // Check to see if we need to upload assets into Anki
-  if (!context.globalState.get("resourceFilesInstalled")) {
-    initialSetup(context, ankiService);
-  }
+  // if (!context.globalState.get("resourceFilesInstalled")) {
+  initialSetup(context, ankiService);
+  // }
 
   // Handle Syncing the Anki Instance
   let disposableSync = vscode.commands.registerCommand(
@@ -124,15 +123,13 @@ export function activate(context: vscode.ExtensionContext) {
 
     // get dark-mode override
     // The selectors in here are more specific so will kick in when darkMode is turned on
-    const prismDark = readFileSync(
-      path.join(context.extensionPath, "out", "resources", "prism-dark.css"),
-      {
-        encoding: "base64",
-      }
-    );
-
-    const prismLight = readFileSync(
-      path.join(context.extensionPath, "out", "resources", "prism.min.css"),
+    const vscodeAnkiPlugin = readFileSync(
+      path.join(
+        context.extensionPath,
+        "out",
+        "resources",
+        "vscodeAnkiPlugin.css"
+      ),
       {
         encoding: "base64",
       }
@@ -140,12 +137,8 @@ export function activate(context: vscode.ExtensionContext) {
 
     const resources = [
       {
-        filename: "_prism-dark.css",
-        data: prismDark,
-      },
-      {
-        filename: "_prism.min.css",
-        data: prismLight,
+        filename: "_vscodeAnkiPlugin.css",
+        data: vscodeAnkiPlugin,
       },
     ];
     try {
@@ -172,6 +165,7 @@ export function activate(context: vscode.ExtensionContext) {
     // Creating a template twice causes an error, we should check if it already exists first..
     const modelList: string[] = await ankiService.modelNames();
     if (modelList.includes(defaultTemplateName)) {
+      console.log(`${defaultTemplateName} already exists in Anki.`);
       return;
     }
 
@@ -184,7 +178,7 @@ export function activate(context: vscode.ExtensionContext) {
         {
           Name: "Card 1",
           Front:
-            '{{Front}}<link rel="stylesheet" href="_prism.min.css" /><link rel="stylesheet" href="_prism-dark.min.css" />',
+            '<link rel="stylesheet" href="_vscodeAnkiPlugin.css" />{{Front}}',
           Back: "{{FrontSide}}\n\n<hr id=answer>\n\n{{Back}}",
         },
       ],
