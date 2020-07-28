@@ -3,6 +3,7 @@
 "use strict";
 
 const path = require("path");
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
 /**@type {import('webpack').Configuration}*/
 const config = {
@@ -23,6 +24,11 @@ const config = {
     // support reading TypeScript and JavaScript files, 📖 -> https://github.com/TypeStrong/ts-loader
     extensions: [".ts", ".js"],
   },
+  plugins: [
+    new MiniCssExtractPlugin({
+      filename: "resources/vscodeAnkiPlugin.css",
+    }),
+  ],
   module: {
     rules: [
       {
@@ -35,12 +41,16 @@ const config = {
         ],
       },
       {
-        test: /\.(css)$/i,
+        test: /\.scss$/,
         use: [
+          MiniCssExtractPlugin.loader,
+          "css-loader",
           {
-            loader: "file-loader",
+            loader: "sass-loader",
             options: {
-              name: "/resources/[name].[ext]",
+              sassOptions: {
+                outputStyle: "compressed",
+              },
             },
           },
         ],

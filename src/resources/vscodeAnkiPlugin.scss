@@ -1,0 +1,7 @@
+.card:not(.nightMode) {
+  @import "~prismjs/themes/prism";
+}
+
+.card.nightMode {
+  @import "~prismjs/themes/prism-dark";
+}
