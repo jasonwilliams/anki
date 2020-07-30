@@ -2,6 +2,8 @@ import fetch from "node-fetch";
 import { load } from "cheerio";
 import { Deck } from "./models/Deck";
 import { Card } from "./models/Card";
+import { getLogger } from "./logger";
+import { CONSTANTS } from "./constants";
 
 interface IResponse {
   result: any;
@@ -19,7 +21,7 @@ export class AnkiService {
 
   async invoke(action: string, params?: object): Promise<any> {
     const req = { action, version: this.version, params: { ...params } };
-    console.log(JSON.stringify(req));
+    getLogger().info(JSON.stringify(req));
     const response = await fetch(this.url, {
       method: "post",
       headers: {
@@ -96,11 +98,25 @@ export class AnkiService {
     return await this.invoke("modelNames");
   }
 
+  async updateModelTemplate(model: any) {
+    return await this.invoke("updateModelTemplates", {
+      model: {
+        name: CONSTANTS.defaultTemplateName,
+        templates: {
+          "Card 1": {
+            Front: model.cardTemplates[0].Front,
+            Back: model.cardTemplates[0].Back,
+          },
+        },
+      },
+    });
+  }
+
   async addNotes(cards: Card[]): Promise<any[]> {
     const notes = cards.map((v) => {
       return {
         deckName: v?.deck?.name || "default",
-        modelName: "BasicWithHighlightVSCode",
+        modelName: CONSTANTS.defaultTemplateName,
         options: {
           allowDuplicate: false,
           duplicateScope: "deck",
@@ -127,7 +143,6 @@ export class AnkiService {
       const cleanQuestion = $("html").text();
       $ = load(v.answer.toString());
       const cleanAnswer = $("html").text();
-      console.log(v);
       return new Card(cleanQuestion, cleanAnswer)
         .setId(v.id)
         .setFields(v.fields);
