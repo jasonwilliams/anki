@@ -6,7 +6,6 @@ export class AnkiCardProvider implements vscode.TreeDataProvider<Dependency> {
   constructor(private ankiService: AnkiService) {}
 
   getTreeItem(element: Dependency): vscode.TreeItem {
-    console.log(element);
     return element;
   }
 
@@ -17,12 +16,9 @@ export class AnkiCardProvider implements vscode.TreeDataProvider<Dependency> {
       let cards;
       try {
         cards = await this.ankiService.findCards(`\"deck:${element.label}\"`);
-      } catch (e) {
-        console.log(e);
-      }
+      } catch (e) {}
 
       return cards?.map((v) => {
-        console.log(v.question);
         return new Dependency(
           v.question,
           v.question,
