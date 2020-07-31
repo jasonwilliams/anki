@@ -72,6 +72,18 @@
           "default": "notes",
           "description": "Set's default deck when pushing from Markdown"
         },
+        "anki.log": {
+          "type": "string",
+          "default": "error",
+          "description": "Logging level, defaults to error",
+          "enum": [
+            "off",
+            "error",
+            "warn",
+            "info",
+            "trace"
+          ]
+        },
         "anki.md.card.separator": {
           "type": "string",
           "default": "(?=^##\\s)",
@@ -118,6 +130,7 @@
     "@types/node": "^13.11.0",
     "@types/node-fetch": "^2.5.7",
     "@types/prismjs": "^1.16.1",
+    "@types/semver": "^7.3.1",
     "@types/vscode": "^1.47.0",
     "@typescript-eslint/eslint-plugin": "^2.30.0",
     "@typescript-eslint/parser": "^2.30.0",

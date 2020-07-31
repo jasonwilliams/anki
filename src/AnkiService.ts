@@ -137,6 +137,7 @@ export class AnkiService {
     // https://github.com/FooSoft/anki-connect/issues/80#issuecomment-394154441
     const response = await this.invoke("findCards", { query: `${query}` });
     const cards = await this.getCardInfo(response);
+    console.log(cards);
 
     return cards.map((v: any) => {
       let $ = load(v.question.toString());
@@ -144,8 +145,9 @@ export class AnkiService {
       $ = load(v.answer.toString());
       const cleanAnswer = $("html").text();
       return new Card(cleanQuestion, cleanAnswer)
-        .setId(v.id)
-        .setFields(v.fields);
+        .setId(v.cardId)
+        .setFields(v.fields)
+        .setDeckName(v.deckName);
     });
   }
 }
