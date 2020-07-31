@@ -3,9 +3,7 @@
 import {
   window,
   extensions,
-  commands,
   ExtensionContext,
-  ProgressLocation,
   workspace,
   Disposable,
 } from "vscode";
@@ -13,19 +11,32 @@ import path from "path";
 import { readFileSync } from "fs";
 import { AnkiService } from "./AnkiService";
 import { AnkiCardProvider } from "./AnkiCardProvider";
-import { Transformer } from "./markdown/transformer";
-import { getExtensionLogger, IVSCodeExtLogger } from "@vscode-logging/logger";
-import { initLogger } from "./logger";
+import {
+  getExtensionLogger,
+  IVSCodeExtLogger,
+  LogLevel,
+} from "@vscode-logging/logger";
+import { initLogger, getLogger } from "./logger";
 import { registerCommands } from "./commands";
 import { createOrUpdateTemplate } from "./manageTemplate";
+import semver from "semver";
+import { subscriptions } from "./subscriptions";
+import { AnkiFS, initFilesystem } from "./fileSystemProvider";
 
 require("./resources/vscodeAnkiPlugin.scss");
+
+export interface IConfig {
+  defaultDeck: string;
+  log: LogLevel;
+}
 
 export interface IContext {
   ankiService: AnkiService;
   /** ExtensionContext from VSCode */
   context: ExtensionContext;
   logger: IVSCodeExtLogger;
+  config: IConfig;
+  ankiFS?: AnkiFS;
 }
 
 // this method is called when your extension is activated
@@ -35,9 +46,13 @@ export function activate(context: ExtensionContext) {
   const schema = workspace.getConfiguration("anki.api").get("schema");
   const hostname = workspace.getConfiguration("anki.api").get("hostname");
   const port = workspace.getConfiguration("anki.api").get("port");
-  const defaultTemplateName = "BasicWithHighlightVSCode";
   "Failed to connect to Anki: Do you have Anki running?";
-  const defaultDeck = workspace.getConfiguration("anki").get("defaultDeck");
+  const config: IConfig = {
+    defaultDeck: workspace
+      .getConfiguration("anki")
+      .get("defaultDeck") as string,
+    log: workspace.getConfiguration("anki").get("log") as LogLevel,
+  };
 
   // Start up Anki Service
   const ankiService = new AnkiService(`${schema}://${hostname}:${port}`);
@@ -46,11 +61,11 @@ export function activate(context: ExtensionContext) {
   const extMeta = ankiExt?.packageJSON;
 
   // Set up logging
-  const logOutputChannel = window.createOutputChannel(extMeta.name);
+  const logOutputChannel = window.createOutputChannel(extMeta.displayName);
 
   const extLogger = getExtensionLogger({
-    extName: extMeta.name,
-    level: "info",
+    extName: extMeta.displayName,
+    level: config.log,
     logPath: context.logPath,
     logOutputChannel: logOutputChannel,
   });
@@ -62,14 +77,27 @@ export function activate(context: ExtensionContext) {
     ankiService,
     logger: extLogger,
     context: context,
+    config,
   };
 
   // Check to see if we need to upload assets into Anki
-  // if (!context.globalState.get("resourceFilesInstalled")) {
-  initialSetup(context, ankiService);
-  // }
+  // If the extension has updated, that is a good time to re-upload
+  if (
+    semver.gt(
+      extMeta.version,
+      context.globalState.get("installedVersion") ?? "0.0.0"
+    )
+  ) {
+    getLogger().info(`new version detected (${extMeta.version}), setting up`);
+    initialSetup(context, ankiService);
+  }
 
   registerCommands(extContext);
+
+  subscriptions(extContext);
+
+  initFilesystem(extContext);
+
   // Register TreeView API
   window.registerTreeDataProvider("decks", new AnkiCardProvider(ankiService));
 
@@ -110,7 +138,6 @@ export function activate(context: ExtensionContext) {
       result = await ankiService.storeMultipleFiles(resources);
       disposable.dispose();
     } catch (e) {
-      console.log(e);
       window.showErrorMessage(
         "Anki Installation: Unable to update resources on Anki"
       );
@@ -119,7 +146,8 @@ export function activate(context: ExtensionContext) {
 
     // If assets are safely installed we can set a flag so we don't need to do this action again
     if (result.every((v) => v === null)) {
-      context.globalState.update("resourceFilesInstalled", true);
+      getLogger().info("Successfully updated Anki, storing flag");
+      context.globalState.update("installedVersion", extMeta.version);
     }
   }
 }

@@ -3,6 +3,7 @@ import { Serializer } from "./Serializer";
 import { Deck } from "../models/Deck";
 import { AnkiService } from "../AnkiService";
 import { Card } from "../models/Card";
+import { getLogger } from "../logger";
 
 /**
  * Create anki cards from markdown files
@@ -38,7 +39,7 @@ export class Transformer {
 
   async transformToDeck() {
     const file = window.activeTextEditor?.document.getText();
-    const serializer = new Serializer(file ?? "");
+    const serializer = new Serializer(file ?? "", this.useDefault);
 
     const { cards, deckName } = await serializer.transform();
 
@@ -84,43 +85,6 @@ export class Transformer {
 
     await this.deck.pushNewCardsToAnki();
   }
-
-  /**
-   * Adds required resources to deck
-   * @returns {void}
-   * @private
-   */
-  //   addResourcesToDeck() {
-  //     // add media for code highlighting
-  //     this.deck.addMedia(
-  //       this.toMedia(
-  //         "_highlight.js",
-  //         path.resolve(__dirname, "../resources/highlight.js")
-  //       )
-  //     );
-  //     this.deck.addMedia(
-  //       this.toMedia(
-  //         "_prism.js",
-  //         path.resolve(__dirname, "../resources/prism.js")
-  //       )
-  //     );
-
-  //     if (configs.code.template === "dark") {
-  //       this.deck.addMedia(
-  //         this.toMedia(
-  //           "_highlight_dark.css",
-  //           path.resolve(__dirname, "../resources/dark.css")
-  //         )
-  //       );
-  //     } else {
-  //       this.deck.addMedia(
-  //         this.toMedia(
-  //           "_highlight_default.css",
-  //           path.resolve(__dirname, "../resources/default.css")
-  //         )
-  //       );
-  //     }
-  //   }
 
   addCardsToDeck(cards: Card[]) {
     cards.forEach((card: Card) => {

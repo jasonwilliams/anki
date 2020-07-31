@@ -18,11 +18,12 @@ export class AnkiCardProvider implements vscode.TreeDataProvider<Dependency> {
         cards = await this.ankiService.findCards(`\"deck:${element.label}\"`);
       } catch (e) {}
 
-      return cards?.map((v) => {
+      return cards?.map((v, i) => {
         return new Dependency(
           v.question,
-          v.question,
-          vscode.TreeItemCollapsibleState.None
+          v.id?.toString() ?? i.toString(),
+          vscode.TreeItemCollapsibleState.None,
+          `anki://${v.deckName}/${v.question}`
         );
       });
     }
@@ -36,11 +37,12 @@ export class AnkiCardProvider implements vscode.TreeDataProvider<Dependency> {
       return;
     }
 
-    const deps = decks.map((v) => {
+    const deps = decks.map((v, i) => {
       return new Dependency(
         v.name,
-        v.id?.toString(10) || "0",
-        vscode.TreeItemCollapsibleState.Collapsed
+        v.id?.toString(10) || i.toString(),
+        vscode.TreeItemCollapsibleState.Collapsed,
+        `anki:/${v.name}`
       );
     });
 
@@ -52,9 +54,16 @@ class Dependency extends vscode.TreeItem {
   constructor(
     public readonly label: string,
     public readonly id: string,
-    public readonly collapsibleState: vscode.TreeItemCollapsibleState
+    public readonly collapsibleState: vscode.TreeItemCollapsibleState,
+    public uri: string
   ) {
     super(label, collapsibleState);
+    this.uri = uri;
+    this.command = {
+      command: "anki.treeItem",
+      arguments: [this.uri, this.label],
+      title: "Open",
+    };
   }
 
   get tooltip(): string {

@@ -9,6 +9,7 @@ export class Card {
   public id?: number;
   public deck?: Deck;
   public fields?: any;
+  public deckName?: string;
 
   constructor(question: string, answer: string, tags: string[] = []) {
     this.question = question;
@@ -39,6 +40,11 @@ export class Card {
 
   setFields(fields: any) {
     this.fields = fields;
+    return this;
+  }
+
+  setDeckName(deckName: string) {
+    this.deckName = deckName;
     return this;
   }
 }
