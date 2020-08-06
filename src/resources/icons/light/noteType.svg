@@ -1,0 +1,22 @@
+<svg
+  viewBox="0 0 60 60"
+  xmlns="http://www.w3.org/2000/svg"
+  fill-rule="evenodd"
+  clip-rule="evenodd"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+  stroke-miterlimit="1.5"
+>
+  <path fill="none" d="M0 0h60v60H0z" />
+  <path
+    fill="none"
+    stroke="#000"
+    stroke-width="2.08"
+    d="M3.5 15.5h53v12h-53zM3.5 42.5h53v12h-53z"
+  />
+  <path
+    stroke="#000"
+    stroke-width="2.08"
+    d="M3.5 5.5h25v5h-25zM3.5 32.5h25v5h-25z"
+  />
+</svg>

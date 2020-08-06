@@ -1,9 +1,15 @@
 import { join } from "path";
 import * as vscode from "vscode";
 import { AnkiService } from "./AnkiService";
+import { IContext } from "./extension";
 
 export class AnkiCardProvider implements vscode.TreeDataProvider<Dependency> {
-  constructor(private ankiService: AnkiService) {}
+  private ankiService: AnkiService;
+  private context: vscode.ExtensionContext;
+  constructor(extContext: IContext) {
+    this.ankiService = extContext.ankiService;
+    this.context = extContext.context;
+  }
 
   getTreeItem(element: Dependency): vscode.TreeItem {
     return element;
@@ -12,7 +18,10 @@ export class AnkiCardProvider implements vscode.TreeDataProvider<Dependency> {
   async getChildren(element?: Dependency) {
     // get children of Deck
     if (element) {
-      // as cards don't have children element would be a Deck
+      // as cards don't have children element would be a Deck or templates folder
+      if (element.uri === "anki:/templates") {
+        return this.getAllModels();
+      }
       let cards;
       try {
         cards = await this.ankiService.findCards(`\"deck:${element.label}\"`);
@@ -23,7 +32,7 @@ export class AnkiCardProvider implements vscode.TreeDataProvider<Dependency> {
           v.question,
           v.id?.toString() ?? i.toString(),
           vscode.TreeItemCollapsibleState.None,
-          `anki://${v.deckName}/${v.question}`
+          `anki:/${v.deckName}/${v.question}`
         );
       });
     }
@@ -42,11 +51,63 @@ export class AnkiCardProvider implements vscode.TreeDataProvider<Dependency> {
         v.name,
         v.id?.toString(10) || i.toString(),
         vscode.TreeItemCollapsibleState.Collapsed,
-        `anki:/${v.name}`
+        `anki:/decks/${v.name}`,
+        this.getIconPath("deck")
       );
     });
 
+    const templates = new Dependency(
+      "__Templates__",
+      "000000",
+      vscode.TreeItemCollapsibleState.Collapsed,
+      "anki:/templates",
+      this.getIconPath("collection")
+    );
+
+    deps.unshift(templates);
+
     return deps;
+  }
+
+  /** Fetch all models and return wrapped Dependency's */
+  async getAllModels(): Promise<Dependency[]> {
+    const models = await this.ankiService.modelNamesAndIds();
+
+    let templateDeps: Dependency[] = [];
+    for (const [key, value] of Object.entries(models)) {
+      templateDeps.push(
+        new Dependency(
+          key,
+          value.toString(),
+          vscode.TreeItemCollapsibleState.Collapsed,
+          `anki:/templates/${key}`,
+          this.getIconPath("noteType")
+        )
+      );
+    }
+
+    return templateDeps;
+  }
+
+  getIconPath(iconName: string): object {
+    return {
+      light: join(
+        this.context.extensionPath,
+        "src",
+        "resources",
+        "icons",
+        "light",
+        `${iconName}.svg`
+      ),
+      dark: join(
+        this.context.extensionPath,
+        "src",
+        "resources",
+        "icons",
+        "dark",
+        `${iconName}.svg`
+      ),
+    };
   }
 }
 
@@ -55,7 +116,8 @@ class Dependency extends vscode.TreeItem {
     public readonly label: string,
     public readonly id: string,
     public readonly collapsibleState: vscode.TreeItemCollapsibleState,
-    public uri: string
+    public uri: string,
+    public iconPath?: any
   ) {
     super(label, collapsibleState);
     this.uri = uri;
@@ -64,6 +126,7 @@ class Dependency extends vscode.TreeItem {
       arguments: [this.uri, this.label],
       title: "Open",
     };
+    this.iconPath = iconPath;
   }
 
   get tooltip(): string {
@@ -73,9 +136,4 @@ class Dependency extends vscode.TreeItem {
   get description(): string {
     return this.label;
   }
-
-  iconPath = {
-    light: join(__filename, "..", "..", "resources", "light", "dependency.svg"),
-    dark: join(__filename, "..", "..", "resources", "dark", "dependency.svg"),
-  };
 }
