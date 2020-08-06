@@ -96,10 +96,10 @@ export function activate(context: ExtensionContext) {
 
   subscriptions(extContext);
 
-  initFilesystem(extContext);
+  // initFilesystem(extContext);
 
   // Register TreeView API
-  window.registerTreeDataProvider("decks", new AnkiCardProvider(ankiService));
+  window.registerTreeDataProvider("decks", new AnkiCardProvider(extContext));
 
   /**
    * The same file names should overwrite, so older versions will eventually update

@@ -94,8 +94,12 @@ export class AnkiService {
     return await this.invoke("createModel", model);
   }
 
-  async modelNames() {
+  async modelNames(): Promise<string[]> {
     return await this.invoke("modelNames");
+  }
+
+  async modelNamesAndIds(): Promise<{ [key: string]: number }> {
+    return await this.invoke("modelNamesAndIds");
   }
 
   async updateModelTemplate(model: any) {
