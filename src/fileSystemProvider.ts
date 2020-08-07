@@ -2,8 +2,16 @@ import * as path from "path";
 import * as vscode from "vscode";
 import { IContext } from "./extension";
 
-let _ankiFs;
+let _ankiFs: AnkiFS;
 let _initialised = false;
+
+const getAnkiFS = (): AnkiFS => {
+  if (_initialised !== true) {
+    throw new Error("Trying to access an uninitialised file system!");
+  }
+
+  return _ankiFs;
+};
 
 export class File implements vscode.FileStat {
   type: vscode.FileType;
@@ -169,7 +177,6 @@ export class AnkiFS implements vscode.FileSystemProvider {
 
 export const initFilesystem = (ctx: IContext) => {
   _ankiFs = new AnkiFS();
-  ctx.ankiFS = _ankiFs;
   _initialised = true;
 
   ctx.context.subscriptions.push(
@@ -178,10 +185,5 @@ export const initFilesystem = (ctx: IContext) => {
     })
   );
 
-  _ankiFs.createDirectory(vscode.Uri.parse("anki:/notes"));
-  _ankiFs.writeFile(
-    vscode.Uri.parse(`anki:/notes/something`),
-    Buffer.from("let a:number = true; console.log(a);"),
-    { create: true, overwrite: true }
-  );
+  ctx.getAnkiFS = getAnkiFS;
 };

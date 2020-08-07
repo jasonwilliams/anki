@@ -1,27 +1,50 @@
 import { join } from "path";
-import * as vscode from "vscode";
+import {
+  TreeItemCollapsibleState,
+  TreeItem,
+  ExtensionContext,
+  TreeDataProvider,
+  window,
+  Uri,
+} from "vscode";
 import { AnkiService } from "./AnkiService";
 import { IContext } from "./extension";
+import { AnkiFS } from "./fileSystemProvider";
 
-export class AnkiCardProvider implements vscode.TreeDataProvider<Dependency> {
+export class AnkiCardProvider implements TreeDataProvider<Dependency> {
   private ankiService: AnkiService;
-  private context: vscode.ExtensionContext;
+  private context: ExtensionContext;
+  private ankiFS: AnkiFS;
+  private state: any;
+
   constructor(extContext: IContext) {
     this.ankiService = extContext.ankiService;
     this.context = extContext.context;
+    if (!extContext?.getAnkiFS || !extContext.getAnkiState) {
+      throw new Error("Anki Error: initialised AnkiFS/AnkiState is required");
+    }
+
+    this.state = extContext.getAnkiState();
+    this.ankiFS = extContext.getAnkiFS();
   }
 
-  getTreeItem(element: Dependency): vscode.TreeItem {
+  getTreeItem(element: Dependency): TreeItem {
     return element;
   }
 
   async getChildren(element?: Dependency) {
     // get children of Deck
     if (element) {
-      // as cards don't have children element would be a Deck or templates folder
       if (element.uri === "anki:/templates") {
         return this.getAllModels();
       }
+
+      if (element.uri.match(new RegExp("anki:/templates/w+"))) {
+        const uri = element.uri;
+        const model = element.uri.replace("anki:/templates/", "");
+        this.getModelTemplates(model);
+      }
+
       let cards;
       try {
         cards = await this.ankiService.findCards(`\"deck:${element.label}\"`);
@@ -31,27 +54,35 @@ export class AnkiCardProvider implements vscode.TreeDataProvider<Dependency> {
         return new Dependency(
           v.question,
           v.id?.toString() ?? i.toString(),
-          vscode.TreeItemCollapsibleState.None,
-          `anki:/${v.deckName}/${v.question}`
+          TreeItemCollapsibleState.None,
+          `anki:/decks/${v.deckName}/${v.id?.toString()}`
         );
       });
     }
 
-    // Top level, get decks
+    /** Top level */
+
+    // Create top level directories in the virtual file system.
+    this.ankiFS.createDirectory(Uri.parse("anki:/templates"));
+    this.ankiFS.createDirectory(Uri.parse("anki:/decks"));
     let decks;
+
     try {
       decks = await this.ankiService.deckNamesAndIds();
     } catch (e) {
-      vscode.window.showErrorMessage("Failed to get any Anki Decks");
+      window.showErrorMessage("Failed to get any Anki Decks");
       return;
     }
 
     const deps = decks.map((v, i) => {
+      // Create a directory for this deck in the file system
+      // this.ankiService.getDeckNameFromId(v.id?.toString() || "", this.state);
+      this.ankiFS.createDirectory(Uri.parse(`anki:/decks/${v.id?.toString()}`));
       return new Dependency(
         v.name,
         v.id?.toString(10) || i.toString(),
-        vscode.TreeItemCollapsibleState.Collapsed,
-        `anki:/decks/${v.name}`,
+        TreeItemCollapsibleState.Collapsed,
+        `anki:/decks/${v.id?.toString(10)}`,
         this.getIconPath("deck")
       );
     });
@@ -59,7 +90,7 @@ export class AnkiCardProvider implements vscode.TreeDataProvider<Dependency> {
     const templates = new Dependency(
       "__Templates__",
       "000000",
-      vscode.TreeItemCollapsibleState.Collapsed,
+      TreeItemCollapsibleState.Collapsed,
       "anki:/templates",
       this.getIconPath("collection")
     );
@@ -75,11 +106,14 @@ export class AnkiCardProvider implements vscode.TreeDataProvider<Dependency> {
 
     let templateDeps: Dependency[] = [];
     for (const [key, value] of Object.entries(models)) {
+      // Add all the models to the file system as folders
+      // Normally I would use id here but the API queries are done by name
+      this.ankiFS.createDirectory(Uri.parse(`anki:/templates/${key}`));
       templateDeps.push(
         new Dependency(
           key,
           value.toString(),
-          vscode.TreeItemCollapsibleState.Collapsed,
+          TreeItemCollapsibleState.Collapsed,
           `anki:/templates/${key}`,
           this.getIconPath("noteType")
         )
@@ -87,6 +121,10 @@ export class AnkiCardProvider implements vscode.TreeDataProvider<Dependency> {
     }
 
     return templateDeps;
+  }
+
+  async getModelTemplates(model: string) {
+    console.log(model);
   }
 
   getIconPath(iconName: string): object {
@@ -111,11 +149,11 @@ export class AnkiCardProvider implements vscode.TreeDataProvider<Dependency> {
   }
 }
 
-class Dependency extends vscode.TreeItem {
+class Dependency extends TreeItem {
   constructor(
     public readonly label: string,
     public readonly id: string,
-    public readonly collapsibleState: vscode.TreeItemCollapsibleState,
+    public readonly collapsibleState: TreeItemCollapsibleState,
     public uri: string,
     public iconPath?: any
   ) {

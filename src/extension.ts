@@ -22,6 +22,7 @@ import { createOrUpdateTemplate } from "./manageTemplate";
 import semver from "semver";
 import { subscriptions } from "./subscriptions";
 import { AnkiFS, initFilesystem } from "./fileSystemProvider";
+import { initState, getAnkiState } from "./state";
 
 require("./resources/vscodeAnkiPlugin.scss");
 
@@ -36,7 +37,8 @@ export interface IContext {
   context: ExtensionContext;
   logger: IVSCodeExtLogger;
   config: IConfig;
-  ankiFS?: AnkiFS;
+  getAnkiFS?: () => AnkiFS;
+  getAnkiState?: () => any;
 }
 
 // this method is called when your extension is activated
@@ -96,7 +98,11 @@ export function activate(context: ExtensionContext) {
 
   subscriptions(extContext);
 
-  // initFilesystem(extContext);
+  // FileSystem needs to be initiated before the TreeView Api
+  initFilesystem(extContext);
+
+  initState();
+  extContext.getAnkiState = getAnkiState;
 
   // Register TreeView API
   window.registerTreeDataProvider("decks", new AnkiCardProvider(extContext));

@@ -4,6 +4,7 @@ import { Deck } from "./models/Deck";
 import { Card } from "./models/Card";
 import { getLogger } from "./logger";
 import { CONSTANTS } from "./constants";
+import { IAnkiState } from "./state";
 
 interface IResponse {
   result: any;
@@ -67,6 +68,17 @@ export class AnkiService {
     return response;
   }
 
+  // Tries to convert a deck name from an ID
+  async getDeckNameFromId(id: string, state: IAnkiState) {
+    // If values are already there use them
+    const deckNameAndIds =
+      state.api.deckNamesAndIds ?? (await this.deckNamesAndIds());
+
+    Object.entries(deckNameAndIds).filter((v) => {
+      console.log(v);
+    });
+  }
+
   /**
    * Will not overwrite a deck that exists with the same name.
    */
@@ -102,6 +114,9 @@ export class AnkiService {
     return await this.invoke("modelNamesAndIds");
   }
 
+  async modelTemplates(modelName: string): Promise<object> {
+    return await this.invoke("modelTemplates", { modelName });
+  }
   async updateModelTemplate(model: any) {
     return await this.invoke("updateModelTemplates", {
       model: {
