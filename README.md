@@ -33,9 +33,10 @@ Here's an example
 
 ### Explorer
 
-More to come on this
+Navigate through cards and template CSS.  
+Currently this is in a readonly state but future releases should enable editing.
 
-![image](./docs/img/ankiExplorer.gif)
+![image](./docs/img/ankiExplorer2.gif)
 
 ## Cards
 
