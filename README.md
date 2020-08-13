@@ -36,7 +36,7 @@ Here's an example
 Navigate through cards and template CSS.  
 Currently this is in a readonly state but future releases should enable editing.
 
-![image](./docs/img/ankiExplorer2.gif)
+![image](./docs/img/ankiExplorer3.gif)
 
 ## Cards
 
