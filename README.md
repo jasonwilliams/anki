@@ -112,18 +112,6 @@ echo "Hello, World!"
 ```
 </pre>
 
-The last code block will be treated by MDAnki as Bash code. The default language can be configured by specifying `--config` with an appropriate **defaultLanguage** [setting](../src/configs/settings.js).
-
-**Note!** Creating a block without language name is not fully supported and should be eliminated in usage. Take a look at this:
-
-```bash
-echo "Code block with language name"
-```
-
-```
-echo "Code block without language name"
-```
-
 ## Extension Commands
 
 - `Anki: Sync Anki`: This will run Sync on your Anki Instance
