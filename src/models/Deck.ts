@@ -7,6 +7,10 @@ export class Deck {
   private cards: Card[];
   private mediaCollection: any[];
   private ankiService?: AnkiService;
+  /** Id is optional on Decks because they can be created before syncing back to Anki.
+   * Therefore, newly created decks won't have IDs (this is currently not implemented though)
+   * So for now we can assume all decks have an id.
+   */
   public id?: number;
 
   constructor(name: string, options = {}) {
@@ -30,6 +34,11 @@ export class Deck {
   addCard(card: Card) {
     card.setDeck(this);
     this.cards.push(card);
+  }
+
+  /** Check if this deck has a card by passing the card ID */
+  hasCard(cardId: number) {
+    return this.cards.some((v) => v.id === cardId);
   }
 
   /** add media item to this deck */

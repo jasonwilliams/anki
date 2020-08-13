@@ -79,7 +79,8 @@ export const registerCommands = (ctx: IContext) => {
   let disposableTreeItemOpen = commands.registerCommand(
     "anki.treeItem",
     async (uri) => {
-      workspace.openTextDocument(Uri.parse(uri));
+      const doc = await workspace.openTextDocument(Uri.parse(uri));
+      window.showTextDocument(doc);
     }
   );
 

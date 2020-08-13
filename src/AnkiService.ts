@@ -4,7 +4,7 @@ import { Deck } from "./models/Deck";
 import { Card } from "./models/Card";
 import { getLogger } from "./logger";
 import { CONSTANTS } from "./constants";
-import { IAnkiState } from "./state";
+import { getAnkiState } from "./state";
 
 interface IResponse {
   result: any;
@@ -59,6 +59,8 @@ export class AnkiService {
       decks.push(deck);
     }
 
+    // Add the decks into our state
+    getAnkiState().addDecks(decks);
     return decks;
   }
 
@@ -67,18 +69,6 @@ export class AnkiService {
 
     return response;
   }
-
-  // Tries to convert a deck name from an ID
-  async getDeckNameFromId(id: string, state: IAnkiState) {
-    // If values are already there use them
-    const deckNameAndIds =
-      state.api.deckNamesAndIds ?? (await this.deckNamesAndIds());
-
-    Object.entries(deckNameAndIds).filter((v) => {
-      console.log(v);
-    });
-  }
-
   /**
    * Will not overwrite a deck that exists with the same name.
    */
@@ -156,17 +146,25 @@ export class AnkiService {
     // https://github.com/FooSoft/anki-connect/issues/80#issuecomment-394154441
     const response = await this.invoke("findCards", { query: `${query}` });
     const cards = await this.getCardInfo(response);
-    console.log(cards);
 
     return cards.map((v: any) => {
       let $ = load(v.question.toString());
       const cleanQuestion = $("html").text();
       $ = load(v.answer.toString());
       const cleanAnswer = $("html").text();
-      return new Card(cleanQuestion, cleanAnswer)
+      const newCard = new Card(cleanQuestion, cleanAnswer)
         .setId(v.cardId)
         .setFields(v.fields)
         .setDeckName(v.deckName);
+
+      // If the card's deck exists in our state, add our card into it the deck
+      // Don't add if it's already there
+      const deck = getAnkiState().getDeckFromName(v.deckName);
+      if (deck && !deck.hasCard(v.cardId)) {
+        deck.addCard(newCard);
+      }
+
+      return newCard;
     });
   }
 }
