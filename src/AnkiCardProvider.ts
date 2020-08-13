@@ -10,6 +10,8 @@ import {
 import { AnkiService } from "./AnkiService";
 import { IContext } from "./extension";
 import { AnkiFS } from "./fileSystemProvider";
+import { getAnkiState } from "./state";
+import { TextEncoder } from "util";
 
 export class AnkiCardProvider implements TreeDataProvider<Dependency> {
   private ankiService: AnkiService;
@@ -20,11 +22,10 @@ export class AnkiCardProvider implements TreeDataProvider<Dependency> {
   constructor(extContext: IContext) {
     this.ankiService = extContext.ankiService;
     this.context = extContext.context;
-    if (!extContext?.getAnkiFS || !extContext.getAnkiState) {
+    if (!extContext?.getAnkiFS) {
       throw new Error("Anki Error: initialised AnkiFS/AnkiState is required");
     }
 
-    this.state = extContext.getAnkiState();
     this.ankiFS = extContext.getAnkiFS();
   }
 
@@ -51,11 +52,17 @@ export class AnkiCardProvider implements TreeDataProvider<Dependency> {
       } catch (e) {}
 
       return cards?.map((v, i) => {
+        const deckID = getAnkiState().getDeckIDFromName(v.deckName || "");
+        const cardUri = `anki:/decks/${deckID}/${v.id?.toString()}.json`;
+        this.ankiFS.writeFile(Uri.parse(cardUri), Buffer.from(v.toString()), {
+          create: true,
+          overwrite: true,
+        });
         return new Dependency(
           v.question,
           v.id?.toString() ?? i.toString(),
           TreeItemCollapsibleState.None,
-          `anki:/decks/${v.deckName}/${v.id?.toString()}`
+          cardUri
         );
       });
     }

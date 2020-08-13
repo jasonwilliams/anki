@@ -80,7 +80,30 @@ export class AnkiFS implements vscode.FileSystemProvider {
     uri: vscode.Uri,
     content: Uint8Array,
     options: { create: boolean; overwrite: boolean }
-  ): void {}
+  ): void {
+    const basename = path.posix.basename(uri.path);
+    const parent = this._lookupParentDirectory(uri);
+    let entry = parent.entries.get(basename);
+    if (entry instanceof Directory) {
+      throw vscode.FileSystemError.FileIsADirectory(uri);
+    }
+    if (!entry && !options.create) {
+      throw vscode.FileSystemError.FileNotFound(uri);
+    }
+    if (entry && options.create && !options.overwrite) {
+      throw vscode.FileSystemError.FileExists(uri);
+    }
+    if (!entry) {
+      entry = new File(basename);
+      parent.entries.set(basename, entry);
+      this._fireSoon({ type: vscode.FileChangeType.Created, uri });
+    }
+    entry.mtime = Date.now();
+    entry.size = content.byteLength;
+    entry.data = content;
+
+    this._fireSoon({ type: vscode.FileChangeType.Changed, uri });
+  }
 
   rename(
     oldUri: vscode.Uri,
@@ -147,6 +170,11 @@ export class AnkiFS implements vscode.FileSystemProvider {
     throw vscode.FileSystemError.FileIsADirectory(uri);
   }
 
+  private _lookupParentDirectory(uri: vscode.Uri): Directory {
+    const dirname = uri.with({ path: path.posix.dirname(uri.path) });
+    return this._lookupAsDirectory(dirname, false);
+  }
+
   // --- manage file events
 
   private _emitter = new vscode.EventEmitter<vscode.FileChangeEvent[]>();
@@ -182,6 +210,7 @@ export const initFilesystem = (ctx: IContext) => {
   ctx.context.subscriptions.push(
     vscode.workspace.registerFileSystemProvider("anki", _ankiFs, {
       isCaseSensitive: true,
+      isReadonly: true,
     })
   );
 

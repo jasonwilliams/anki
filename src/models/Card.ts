@@ -1,6 +1,5 @@
 import { sanitizeString } from "../utils";
 import { Deck } from "./Deck";
-import { throws } from "assert";
 
 export class Card {
   public question: string;
@@ -46,5 +45,19 @@ export class Card {
   setDeckName(deckName: string) {
     this.deckName = deckName;
     return this;
+  }
+
+  toString() {
+    return JSON.stringify(
+      {
+        id: this.id,
+        question: this.question,
+        answer: this.answer,
+        deck: this.deckName,
+        fields: this.fields,
+      },
+      null,
+      4
+    );
   }
 }
