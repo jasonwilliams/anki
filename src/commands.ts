@@ -3,7 +3,7 @@ import { Uri, commands, ProgressLocation, window, workspace } from "vscode";
 import { Transformer } from "./markdown/transformer";
 import { CONSTANTS } from "./constants";
 import { getLogger } from "./logger";
-import { downloadAndUnzipVSCode } from "vscode-test";
+import { initialSetup } from "./initialSetup";
 
 export const registerCommands = (ctx: IContext) => {
   // Handle Syncing the Anki Instance
@@ -84,10 +84,18 @@ export const registerCommands = (ctx: IContext) => {
     }
   );
 
+  let disposableForceInstall = commands.registerCommand(
+    "anki.forceInstall",
+    async () => {
+      await initialSetup(ctx);
+    }
+  );
+
   ctx.context.subscriptions.push(
     disposableSync,
     disposableSendToDeck,
     disposableSendToStandalone,
-    disposableTreeItemOpen
+    disposableTreeItemOpen,
+    disposableForceInstall
   );
 };
