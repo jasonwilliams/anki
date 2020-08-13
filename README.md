@@ -1,5 +1,7 @@
 # Anki for VSCode (Beta)
 
+[![](https://vsmarketplacebadge.apphb.com/version/jasew.anki.svg)](https://marketplace.visualstudio.com/items?itemName=jasew.anki)
+
 This is a VSCode plugin for interacting and sending cards to Anki.  
 It uses AnkiConnect for communication so you will need this plugin installed and running before installing the VSCode extension.
 
