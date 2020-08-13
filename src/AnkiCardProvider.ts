@@ -11,7 +11,6 @@ import { AnkiService } from "./AnkiService";
 import { IContext } from "./extension";
 import { AnkiFS } from "./fileSystemProvider";
 import { getAnkiState } from "./state";
-import { TextEncoder } from "util";
 
 export class AnkiCardProvider implements TreeDataProvider<Dependency> {
   private ankiService: AnkiService;
@@ -36,14 +35,14 @@ export class AnkiCardProvider implements TreeDataProvider<Dependency> {
   async getChildren(element?: Dependency) {
     // get children of Deck
     if (element) {
-      if (element.uri === "anki:/templates") {
+      if (element.type === ItemType.TemplateFolder) {
         return this.getAllModels();
       }
 
-      if (element.uri.match(new RegExp("anki:/templates/w+"))) {
-        const uri = element.uri;
+      if (element.type === ItemType.Template) {
         const model = element.uri.replace("anki:/templates/", "");
-        this.getModelTemplates(model);
+        const styleDep = await this.getModelStyling(model);
+        return [styleDep];
       }
 
       let cards;
@@ -62,7 +61,8 @@ export class AnkiCardProvider implements TreeDataProvider<Dependency> {
           v.question,
           v.id?.toString() ?? i.toString(),
           TreeItemCollapsibleState.None,
-          cardUri
+          cardUri,
+          ItemType.Card
         );
       });
     }
@@ -90,6 +90,7 @@ export class AnkiCardProvider implements TreeDataProvider<Dependency> {
         v.id?.toString(10) || i.toString(),
         TreeItemCollapsibleState.Collapsed,
         `anki:/decks/${v.id?.toString(10)}`,
+        ItemType.Deck,
         this.getIconPath("deck")
       );
     });
@@ -99,6 +100,7 @@ export class AnkiCardProvider implements TreeDataProvider<Dependency> {
       "000000",
       TreeItemCollapsibleState.Collapsed,
       "anki:/templates",
+      ItemType.TemplateFolder,
       this.getIconPath("collection")
     );
 
@@ -122,6 +124,7 @@ export class AnkiCardProvider implements TreeDataProvider<Dependency> {
           value.toString(),
           TreeItemCollapsibleState.Collapsed,
           `anki:/templates/${key}`,
+          ItemType.Template,
           this.getIconPath("noteType")
         )
       );
@@ -130,8 +133,22 @@ export class AnkiCardProvider implements TreeDataProvider<Dependency> {
     return templateDeps;
   }
 
-  async getModelTemplates(model: string) {
-    console.log(model);
+  async getModelStyling(model: string): Promise<Dependency> {
+    const uri = `anki:/templates/${model}/styling.css`;
+    const styling = await this.ankiService.modelStyling(model);
+    this.ankiFS.writeFile(Uri.parse(uri), Buffer.from(styling.css), {
+      create: true,
+      overwrite: true,
+    });
+    const css = new Dependency(
+      "styling.css",
+      uri,
+      TreeItemCollapsibleState.None,
+      uri,
+      ItemType.Css
+    );
+
+    return css;
   }
 
   getIconPath(iconName: string): object {
@@ -162,16 +179,20 @@ class Dependency extends TreeItem {
     public readonly id: string,
     public readonly collapsibleState: TreeItemCollapsibleState,
     public uri: string,
+    public type: ItemType,
     public iconPath?: any
   ) {
     super(label, collapsibleState);
     this.uri = uri;
-    this.command = {
-      command: "anki.treeItem",
-      arguments: [this.uri, this.label],
-      title: "Open",
-    };
+    if (type === ItemType.Css || type === ItemType.Card) {
+      this.command = {
+        command: "anki.treeItem",
+        arguments: [this.uri, this.label],
+        title: "Open",
+      };
+    }
     this.iconPath = iconPath;
+    this.type = type;
   }
 
   get tooltip(): string {
@@ -181,4 +202,13 @@ class Dependency extends TreeItem {
   get description(): string {
     return this.label;
   }
+}
+
+enum ItemType {
+  DeckFolder,
+  Deck,
+  Card,
+  TemplateFolder,
+  Template,
+  Css,
 }

@@ -22,7 +22,7 @@ export class AnkiService {
 
   async invoke(action: string, params?: object): Promise<any> {
     const req = { action, version: this.version, params: { ...params } };
-    getLogger().info(JSON.stringify(req));
+    getLogger().trace(JSON.stringify(req));
     const response = await fetch(this.url, {
       method: "post",
       headers: {
@@ -98,6 +98,10 @@ export class AnkiService {
 
   async modelNames(): Promise<string[]> {
     return await this.invoke("modelNames");
+  }
+
+  async modelStyling(modelName: string) {
+    return await this.invoke("modelStyling", { modelName });
   }
 
   async modelNamesAndIds(): Promise<{ [key: string]: number }> {

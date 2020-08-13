@@ -123,6 +123,13 @@ echo "Code block with language name"
 echo "Code block without language name"
 ```
 
+## Extension Commands
+
+- `Anki: Sync Anki`: This will run Sync on your Anki Instance
+- `Anki: Anki: Send To Deck`: This will attempt to send your (markdown) card into Anki - More info above
+- `Anki: Anki: Send To Own Deck`: Sends to a new deck using the Markdown's title as a deck name
+- `Anki: Force Re-install`: This will attempt to re-setup the extension on Anki (Anki needs to be running). You shouldn't need this unless there's an issue.
+
 ## Extension Settings
 
 - `anki.defaultDeck`: Default deck to send notes to. | _notes_

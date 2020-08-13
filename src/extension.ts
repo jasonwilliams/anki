@@ -23,6 +23,7 @@ import semver from "semver";
 import { subscriptions } from "./subscriptions";
 import { AnkiFS, initFilesystem } from "./fileSystemProvider";
 import { initState, getAnkiState } from "./state";
+import { initialSetup } from "./initialSetup";
 
 require("./resources/vscodeAnkiPlugin.scss");
 
@@ -37,6 +38,7 @@ export interface IContext {
   context: ExtensionContext;
   logger: IVSCodeExtLogger;
   config: IConfig;
+  extMeta: any;
   getAnkiFS?: () => AnkiFS;
   getAnkiState?: () => any;
 }
@@ -80,6 +82,7 @@ export function activate(context: ExtensionContext) {
     logger: extLogger,
     context: context,
     config,
+    extMeta,
   };
 
   // Check to see if we need to upload assets into Anki
@@ -91,7 +94,7 @@ export function activate(context: ExtensionContext) {
     )
   ) {
     getLogger().info(`new version detected (${extMeta.version}), setting up`);
-    initialSetup(context, ankiService);
+    initialSetup(extContext);
   }
 
   registerCommands(extContext);
@@ -106,56 +109,6 @@ export function activate(context: ExtensionContext) {
 
   // Register TreeView API
   window.registerTreeDataProvider("decks", new AnkiCardProvider(extContext));
-
-  /**
-   * The same file names should overwrite, so older versions will eventually update
-   * @see https://github.com/FooSoft/anki-connect/issues/158#issuecomment-622669323
-   */
-  async function initialSetup(
-    context: ExtensionContext,
-    ankiService: AnkiService
-  ) {
-    let result: any[] = [],
-      disposable: Disposable;
-
-    // get dark-mode override
-    // The selectors in here are more specific so will kick in when darkMode is turned on
-    const vscodeAnkiPlugin = readFileSync(
-      path.join(
-        context.extensionPath,
-        "out",
-        "resources",
-        "vscodeAnkiPlugin.css"
-      ),
-      {
-        encoding: "base64",
-      }
-    );
-
-    const resources = [
-      {
-        filename: "_vscodeAnkiPlugin.css",
-        data: vscodeAnkiPlugin,
-      },
-    ];
-    try {
-      disposable = window.setStatusBarMessage("Uploading resources to Anki...");
-      await createOrUpdateTemplate(extContext);
-      result = await ankiService.storeMultipleFiles(resources);
-      disposable.dispose();
-    } catch (e) {
-      window.showErrorMessage(
-        "Anki Installation: Unable to update resources on Anki"
-      );
-      extLogger.error(e);
-    }
-
-    // If assets are safely installed we can set a flag so we don't need to do this action again
-    if (result.every((v) => v === null)) {
-      getLogger().info("Successfully updated Anki, storing flag");
-      context.globalState.update("installedVersion", extMeta.version);
-    }
-  }
 }
 
 // this method is called when your extension is deactivated
