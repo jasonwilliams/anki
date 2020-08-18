@@ -129,15 +129,12 @@ export class AnkiService {
     const notes = cards.map((v) => {
       return {
         deckName: v?.deck?.name || "default",
-        modelName: CONSTANTS.defaultTemplateName,
+        modelName: v.modelName,
         options: {
           allowDuplicate: false,
           duplicateScope: "deck",
         },
-        fields: {
-          Front: v.question,
-          Back: v.answer,
-        },
+        fields: v.fields,
         tags: v.tags,
       };
     });

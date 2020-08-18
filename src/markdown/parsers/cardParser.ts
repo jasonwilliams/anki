@@ -8,6 +8,7 @@ interface ParsedCardLine {
   front: string[];
   back: string[];
   tags: string[];
+  isCloze: boolean;
 }
 
 /**
@@ -17,6 +18,7 @@ interface ParsedCardLine {
 export class CardParser extends BaseParser {
   private splitRe: RegExp;
   private tagRe: RegExp;
+  private clozeRe: RegExp;
 
   constructor({ convertToHtml = true } = {}) {
     super({ convertToHtml });
@@ -25,6 +27,7 @@ export class CardParser extends BaseParser {
       "m"
     );
     this.tagRe = new RegExp(this.getConfig("card.tagPattern") as string);
+    this.clozeRe = new RegExp("{{c\\w+::");
   }
 
   /**
@@ -42,11 +45,22 @@ export class CardParser extends BaseParser {
     if (cardLines.length === 1 && !cardLines[0].filter((line) => line).length) {
       throw new Error("Not allowed cards with only front side");
     }
-    const { front, back, tags } = this.parseCardLines(cardLines);
+    const { front, back, tags, isCloze } = this.parseCardLines(cardLines);
 
     if (!this.options.convertToHtml) {
       return new Card(front.join(), back.join(), tags);
     }
+
+    // If card is a Cloze card we need to use a different note type
+    if (isCloze) {
+      return new Card(
+        front.join().replace("## ", ""),
+        back.join(),
+        tags,
+        "Cloze"
+      );
+    }
+
     const frontHtml = await this.linesToHtml(front);
     const backHtml = await this.linesToHtml(back);
 
@@ -57,6 +71,7 @@ export class CardParser extends BaseParser {
     const front: string[] = [];
     const back: string[] = [];
     const tags: string[] = [];
+    let isCloze = false;
 
     const fillBackAndTags = (line: string) => {
       // set tags
@@ -78,6 +93,10 @@ export class CardParser extends BaseParser {
       trimArray(cardLines[0]).forEach((line: string) => {
         // we should set front first
         if (front.length === 0) {
+          // Detect if Cloze syntax is being used on the card title
+          if (this.clozeRe.test(line)) {
+            isCloze = true;
+          }
           front.push(line);
           return;
         }
@@ -95,6 +114,7 @@ export class CardParser extends BaseParser {
       front: trimArray(front),
       back: trimArray(back),
       tags: trimArray(tags),
+      isCloze,
     };
   }
 

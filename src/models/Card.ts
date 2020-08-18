@@ -1,19 +1,40 @@
 import { sanitizeString } from "../utils";
 import { Deck } from "./Deck";
+import { CONSTANTS } from "../constants";
 
 export class Card {
   public question: string;
   public answer: string;
   public tags: string[];
+  public fields: any;
+  public modelName: string;
   public id?: number;
   public deck?: Deck;
-  public fields?: any;
   public deckName?: string;
 
-  constructor(question: string, answer: string, tags: string[] = []) {
+  constructor(
+    question: string,
+    answer: string,
+    tags: string[] = [],
+    model: string = CONSTANTS.defaultTemplateName
+  ) {
     this.question = question;
     this.answer = answer;
     this.tags = tags;
+    this.modelName = model;
+
+    // The fields need to match the template, cloze has different fields
+    if (this.modelName === CONSTANTS.defaultTemplateName) {
+      this.fields = {
+        Front: question,
+        Back: answer,
+      };
+      // must be a Cloze note type
+    } else {
+      this.fields = {
+        Text: question,
+      };
+    }
   }
 
   /**

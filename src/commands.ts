@@ -42,7 +42,7 @@ export const registerCommands = (ctx: IContext) => {
             const file = window.activeTextEditor?.document.getText() ?? "";
             await new Transformer(file, ctx.ankiService, true).transform();
           } catch (e) {
-            window.showErrorMessage(e);
+            window.showErrorMessage(e.toString());
           }
         }
       );
