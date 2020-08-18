@@ -55,8 +55,9 @@ export class Serializer {
       rawCards.map((str) => new CardParser().parse(str))
     );
     const cards = parsedCards
-      // card should have front and back sides
-      .filter((card) => card?.question && card?.answer);
+      // card should have at least a front side
+      // Cloze cards don't need an answer side
+      .filter((card) => card?.question);
 
     // get media from markdown file
     // const media = this.mediaFromCards(cards);
