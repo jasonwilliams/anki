@@ -44,6 +44,7 @@ export async function createOrUpdateTemplate(ctx: IContext) {
   if (modelNames.includes(CONSTANTS.defaultTemplateName)) {
     getLogger().info(`${CONSTANTS.defaultTemplateName} found in Anki`);
     await updateTemplate(ctx);
+    return;
   } else {
     getLogger().info(
       `${CONSTANTS.defaultTemplateName} was not found in Anki. Will attempt to upload..`
