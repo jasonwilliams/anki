@@ -1,12 +1,11 @@
 import { createHash } from "crypto";
 
-class Media {
-  private data: any;
-  //   private filename: string;
+export class Media {
+  public data: any;
+  public fileName: string = "";
 
-  constructor(data: any, fileName: string) {
+  constructor(data: any) {
     this.data = data;
-    // this.fileName = fileName;
   }
 
   /**

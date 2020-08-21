@@ -4,6 +4,7 @@
 
 const path = require("path");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 
 /**@type {import('webpack').Configuration}*/
 const config = {
@@ -25,6 +26,7 @@ const config = {
     extensions: [".ts", ".js"],
   },
   plugins: [
+    new CleanWebpackPlugin(),
     new MiniCssExtractPlugin({
       filename: "resources/vscodeAnkiPlugin.css",
     }),

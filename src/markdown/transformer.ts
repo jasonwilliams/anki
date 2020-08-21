@@ -4,6 +4,7 @@ import { Deck } from "../models/Deck";
 import { AnkiService } from "../AnkiService";
 import { Card } from "../models/Card";
 import { getLogger } from "../logger";
+import { Media } from "../models/Media";
 
 /**
  * Create anki cards from markdown files
@@ -41,7 +42,7 @@ export class Transformer {
     const file = window.activeTextEditor?.document.getText();
     const serializer = new Serializer(file ?? "", this.useDefault);
 
-    const { cards, deckName } = await serializer.transform();
+    const { cards, deckName, media } = await serializer.transform();
 
     if (!cards.length) {
       throw new Error("No cards found. Check your markdown file");
@@ -65,8 +66,21 @@ export class Transformer {
 
     // Either create a new Deck on Anki or get back the ID of the same-named Deck
     await this.deck.createOnAnki();
-
+    await this.pushMediaItems(media);
     await this.exportCards(cards);
+  }
+
+  async pushMediaItems(media: Media[]) {
+    if (!media.length) {
+      return;
+    }
+
+    const files = media.map((v) => ({
+      filename: v.fileName,
+      data: v.data,
+    }));
+
+    await this.ankiService.storeMultipleFiles(files);
   }
 
   calculateDeckName(generatedName: string | null = null): string {
@@ -76,9 +90,7 @@ export class Transformer {
   }
 
   async exportCards(cards: Card[]) {
-    // this.addResourcesToDeck();
     this.addCardsToDeck(cards);
-    // this.addMediaItemsToDeck(media);
     if (!this.deck) {
       throw new Error("No Deck exists for current cards");
     }
