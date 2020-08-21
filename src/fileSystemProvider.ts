@@ -179,7 +179,7 @@ export class AnkiFS implements vscode.FileSystemProvider {
 
   private _emitter = new vscode.EventEmitter<vscode.FileChangeEvent[]>();
   private _bufferedEvents: vscode.FileChangeEvent[] = [];
-  private _fireSoonHandle?: NodeJS.Timer;
+  private _fireSoonHandle?: NodeJS.Timeout;
 
   readonly onDidChangeFile: vscode.Event<vscode.FileChangeEvent[]> = this
     ._emitter.event;
@@ -196,7 +196,7 @@ export class AnkiFS implements vscode.FileSystemProvider {
       clearTimeout(this._fireSoonHandle);
     }
 
-    this._fireSoonHandle = setTimeout(() => {
+    this._fireSoonHandle = global.setTimeout(() => {
       this._emitter.fire(this._bufferedEvents);
       this._bufferedEvents.length = 0;
     }, 5);

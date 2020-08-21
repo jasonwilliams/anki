@@ -4,12 +4,15 @@ import { workspace } from "vscode";
 import { Card } from "../models/Card";
 import { CardParser } from "./parsers/cardParser";
 import { getLogger } from "../logger";
+import { Media } from "../models/Media";
+import path from "path";
+import fs from "fs";
 
 interface ParsedData {
   /** DeckName can be null in which case we use the defaultDeck */
   deckName: string | null;
   cards: Card[];
-  //   media: Media[];
+  media: Media[];
 }
 
 export class Serializer {
@@ -60,12 +63,12 @@ export class Serializer {
       .filter((card) => card?.question);
 
     // get media from markdown file
-    // const media = this.mediaFromCards(cards);
+    const media = this.mediaFromCards(cards);
 
     return {
       deckName,
       cards,
-      //   media,
+      media,
     };
   }
 
@@ -94,16 +97,16 @@ export class Serializer {
   /**
    * Search media in cards and add it to the media collection
    */
-  //   private mediaFromCards(cards: Card[]) {
-  //     const mediaList = [];
+  private mediaFromCards(cards: Card[]) {
+    const mediaList: Media[] = [];
 
-  //     cards.forEach((card) => {
-  //       card.question = this.prepareMediaForSide(card.question, mediaList);
-  //       card.answer = this.prepareMediaForSide(card.answer, mediaList);
-  //     });
+    cards.forEach((card) => {
+      card.setQuestion(this.prepareMediaForSide(card.question, mediaList));
+      card.setAnswer(this.prepareMediaForSide(card.answer, mediaList));
+    });
 
-  //     return mediaList;
-  //   }
+    return mediaList;
+  }
 
   /**
    * Prepare media from card's and prepare it for using
@@ -111,28 +114,34 @@ export class Serializer {
    * @param {[Media]} mediaList
    * @private
    */
-  //   prepareMediaForSide(side, mediaList) {
-  //     const pattern = /src="([^"]*?)"/g;
+  prepareMediaForSide(side: string, mediaList: Media[]) {
+    const pattern = /src="([^"]*?)"/g;
 
-  //     const prepare = (match, p1) => {
-  //       const filePath = path.resolve(path.dirname(this.source), p1);
-  //       const fileExt = path.extname(filePath);
+    const prepare = (_: string, p1: string) => {
+      const filePath = path.resolve(
+        workspace.workspaceFolders?.[0].uri.fsPath ?? "",
+        p1
+      );
 
-  //       const data = fs.readFileSync(filePath);
-  //       const media = new Media(data);
+      const fileExt = path.extname(filePath);
 
-  //       media.fileName = `${media.checksum}${fileExt}`;
+      const data = fs.readFileSync(filePath, {
+        encoding: "base64",
+      });
+      const media = new Media(data);
 
-  //       const hasMedia = mediaList.some(
-  //         (item) => item.checksum === media.checksum
-  //       );
-  //       if (!hasMedia) {
-  //         mediaList.push(media);
-  //       }
+      media.fileName = `${media.checksum}${fileExt}`;
 
-  //       return `src="${media.fileName}"`;
-  //     };
+      const hasMedia = mediaList.some(
+        (item) => item.checksum === media.checksum
+      );
+      if (!hasMedia) {
+        mediaList.push(media);
+      }
 
-  //     return side.replace(pattern, prepare);
-  //   }
+      return `src="${media.fileName}"`;
+    };
+
+    return side.replace(pattern, prepare);
+  }
 }

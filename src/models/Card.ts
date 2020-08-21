@@ -68,6 +68,29 @@ export class Card {
     return this;
   }
 
+  setQuestion(q: string) {
+    this.question = q;
+
+    // Also set the fields
+    // The fields need to match the template, cloze has different fields
+    if (this.modelName === CONSTANTS.defaultTemplateName) {
+      this.fields.Front = q;
+      // must be a Cloze note type
+    } else {
+      this.fields.Text = q;
+    }
+  }
+
+  setAnswer(a: string) {
+    this.answer = a;
+
+    // Also set the fields
+    // The fields need to match the template, cloze has different fields
+    if (this.modelName === CONSTANTS.defaultTemplateName) {
+      this.fields.Back = a;
+    }
+  }
+
   toString() {
     return JSON.stringify(
       {
