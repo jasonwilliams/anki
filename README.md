@@ -2,8 +2,8 @@
 
 [![](https://vsmarketplacebadge.apphb.com/version/jasew.anki.svg)](https://marketplace.visualstudio.com/items?itemName=jasew.anki)
 
-This is a VSCode plugin for interacting and sending cards to Anki.  
-It uses AnkiConnect for communication so you will need this plugin installed and running before installing the VSCode extension.
+This is a VSCode extension for interacting and sending cards to Anki.  
+It uses AnkiConnect for communication so you will need this extension installed and running before installing the VSCode extension.
 
 ## Requirements
 
@@ -16,9 +16,9 @@ It uses AnkiConnect for communication so you will need this plugin installed and
 ### Send to deck
 
 If you're writing up Markdown files and want to send some Q & As to a deck you can do that quite easily with the `Anki: Send To Deck` command.  
-It will send to the default deck "notes" but you can change this in the settings.  
+It will send to this extension's default deck named "notes" but you can change this in the settings.  
 This is useful if you want a "Daily" deck where you can put daily notes into.
-This plugin will also add a tag to each card based of the title, so you can still organise cards within a deck.
+This extension will also add a tag to each card based on the title, so you can still organise cards within a deck.
 
 Here's an example
 
@@ -26,7 +26,7 @@ Here's an example
 
 ### Send to own deck
 
-Very similar to the above but will send to a new deck of the Markdown title.  
+Very similar to the above but will send to a new deck that will have the same name that you marked with `#` as the title of the current document.  
 In this example we realise that we want to send this content to its own deck, that's no problem, use `Anki: Send To Own Deck`
 
 Here's an example
@@ -77,7 +77,7 @@ When parsing only one markdown file, the title of the deck could be generated ba
 
 ## Tags
 
-Cards can have tags in their markdown sources. For adding tags to cart it should follow some rules:
+Cards can have tags in their markdown sources. For adding tags to cards it should follow some rules:
 
 - tags start from a new line
 - only one line with tags per card
@@ -118,7 +118,7 @@ echo "Hello, World!"
 
 - `Anki: Sync Anki`: This will run Sync on your Anki Instance
 - `Anki: Anki: Send To Deck`: This will attempt to send your (markdown) card into Anki - More info above
-- `Anki: Anki: Send To Own Deck`: Sends to a new deck using the Markdown's title as a deck name
+- `Anki: Anki: Send To Own Deck`: Sends to a new deck using the Markdown's title (# example) as a deck name
 - `Anki: Force Re-install`: This will attempt to re-setup the extension on Anki (Anki needs to be running). You shouldn't need this unless there's an issue.
 
 ## Extension Settings
@@ -128,7 +128,6 @@ echo "Hello, World!"
 - `anki.api.hostname`: API Hostname. | _127.0.0.1_
 - `anki.api.port`: API Port. | _8765_
 - `anki.api.schema`: Schema. | _http_
-- `anki.api.port`: API Port. | _8765_
 
 I don't recommend messing with the following settings
 
