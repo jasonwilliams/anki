@@ -75,6 +75,13 @@ necessary.
 
 When parsing only one markdown file, the title of the deck could be generated based on the top-level headline (`#`).
 
+### Cloze
+
+You can make Cloze deletions in the card title `## A bit like {{c1::this}}`.
+Any body attached to a Cloze title won't be used. This is because by default, Cloze card's only have 1 side.
+
+Cloze cards won't work when using `%` also, this is due to the way Cloze cards work (We can't enforce any styling).
+
 ## Tags
 
 Cards can have tags in their markdown sources. For adding tags to cards it should follow some rules:
