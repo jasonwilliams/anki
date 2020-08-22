@@ -15,6 +15,8 @@ jobs:
         uses: borales/actions-yarn@v2.0.0
         with:
           cmd: install --force
+      - name: NPM Rebuild
+        run: sudo npm rebuild node-sass
       - name: Build and Pre-Publish
         run: yarn vscode:prepublish
       - name: Install VSCE
