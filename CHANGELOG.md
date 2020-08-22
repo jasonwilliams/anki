@@ -4,6 +4,11 @@ All notable changes to the "anki" extension will be documented in this file.
 
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
+## [0.3.0]
+
+- Added support for images
+- Fixed potential bug which creates multiple templates
+
 ## [0.2.0]
 
 - Support for Cloze deletions, you just need to use Cloze syntax in your card title

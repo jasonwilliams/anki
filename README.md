@@ -82,6 +82,11 @@ Any body attached to a Cloze title won't be used. This is because by default, Cl
 
 Cloze cards won't work when using `%` also, this is due to the way Cloze cards work (We can't enforce any styling).
 
+### Images
+
+You can add images to Anki by adding them to your markdown file.
+`![image](../path/to/image.png)
+
 ## Tags
 
 Cards can have tags in their markdown sources. For adding tags to cards it should follow some rules:
