@@ -8,7 +8,7 @@ on:
 
 jobs:
   deploy:
-    runs-on: ubuntu-16.04
+    runs-on: ubuntu-latest
     steps:
       - name: Git Checkout
         uses: actions/checkout@v2
@@ -16,11 +16,8 @@ jobs:
           ref: ${{ github.sha }}
       - uses: actions/setup-node@v2-beta
         with:
-          node-version: "10"
-      - name: yarn Install
-        uses: borales/actions-yarn@v2.0.0
-        with:
-          cmd: install --force
+          node-version: "14"
+      - run: yarn install && npm rebuild
       - name: Build and Pre-Publish
         run: yarn vscode:prepublish
       - name: Install VSCE
