@@ -14,7 +14,7 @@ jobs:
       - name: Yarn Install
         uses: borales/actions-yarn@v2.0.0
         with:
-          cmd: install --production
+          cmd: install
       - name: GitHub Action for vsce
         uses: lannonbr/vsce-action@2.0.0
         with:
