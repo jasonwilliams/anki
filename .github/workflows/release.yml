@@ -1,0 +1,23 @@
+name: Publish Release
+on:
+  release:
+    types: [published]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Git Checkout
+        uses: actions/checkout@v2
+        with:
+          ref: ${{ github.sha }}
+      - name: Yarn Install
+        uses: borales/actions-yarn@v2.0.0
+        with:
+          cmd: install --production
+      - name: GitHub Action for vsce
+        uses: lannonbr/vsce-action@2.0.0
+        with:
+          args: "publish -p $VSCE_TOKEN"
+        env:
+          VSCE_TOKEN: ${{ secrets.VSCE_TOKEN }}
