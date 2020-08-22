@@ -2,21 +2,25 @@ name: Publish Release
 on:
   release:
     types: [published]
+  push:
+    branches:
+      - master
 
 jobs:
   deploy:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-16.04
     steps:
       - name: Git Checkout
         uses: actions/checkout@v2
         with:
           ref: ${{ github.sha }}
+      - uses: actions/setup-node@v2-beta
+        with:
+          node-version: "10"
       - name: yarn Install
         uses: borales/actions-yarn@v2.0.0
         with:
           cmd: install --force
-      - name: NPM Rebuild
-        run: sudo npm rebuild node-sass
       - name: Build and Pre-Publish
         run: yarn vscode:prepublish
       - name: Install VSCE
