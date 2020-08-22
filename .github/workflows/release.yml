@@ -15,9 +15,11 @@ jobs:
         uses: borales/actions-yarn@v2.0.0
         with:
           cmd: install --force
-      - name: GitHub Action for vsce
-        uses: lannonbr/vsce-action@2.0.0
-        with:
-          args: "publish -p $VSCE_TOKEN"
+      - name: Build and Pre-Publish
+        run: yarn vscode:prepublish
+      - name: Install VSCE
+        run: yarn add vsce
+      - name: Publish
+        run: yarn vsce publish -p $VSCE_TOKEN
         env:
           VSCE_TOKEN: ${{ secrets.VSCE_TOKEN }}
