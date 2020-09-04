@@ -84,8 +84,10 @@ Cloze cards won't work when using `%` also, this is due to the way Cloze cards w
 
 ### Images
 
-You can add images to Anki by adding them to your markdown file.
-`![image](../path/to/image.png)
+You can add images to Anki by adding them to your markdown file:
+```
+![image](../path/to/image.png)
+```
 
 ## Tags
 
