@@ -193,14 +193,8 @@ class Dependency extends TreeItem {
     }
     this.iconPath = iconPath;
     this.type = type;
-  }
-
-  get tooltip(): string {
-    return `${this.label}-${this.id}`;
-  }
-
-  get description(): string {
-    return this.label;
+    this.tooltip = `${this.label}-${this.id}`;
+    this.description = this.label;
   }
 }
 

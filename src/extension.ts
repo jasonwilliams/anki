@@ -50,7 +50,7 @@ export function activate(context: ExtensionContext) {
   const schema = workspace.getConfiguration("anki.api").get("schema");
   const hostname = workspace.getConfiguration("anki.api").get("hostname");
   const port = workspace.getConfiguration("anki.api").get("port");
-  "Failed to connect to Anki: Do you have Anki running?";
+  ("Failed to connect to Anki: Do you have Anki running?");
   const config: IConfig = {
     defaultDeck: workspace
       .getConfiguration("anki")
