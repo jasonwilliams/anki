@@ -124,7 +124,6 @@
     "compile": "webpack --mode production",
     "lint": "eslint src --ext ts",
     "watch": "webpack --mode development --watch",
-    "pretest": "yarn run compile && yarn run lint",
     "test": "jest",
     "test-compile": "tsc -p ./",
     "vscode:prepublish": "webpack --mode production",

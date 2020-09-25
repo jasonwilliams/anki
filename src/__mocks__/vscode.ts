@@ -20,7 +20,23 @@ const window = {
 };
 
 const workspace = {
-  getConfiguration: jest.fn(),
+  getConfiguration: jest.fn(() => ({
+    get: jest.fn((val: string) => {
+      switch (val) {
+        case "card.frontBackSeparator":
+          return "%";
+        case "card.separator":
+          return "(?=^##\\s)";
+        case "card.tagPattern":
+          return "^\\[#(.*)\\]";
+        case "card.createTagForTitle":
+          return true;
+
+        default:
+          break;
+      }
+    }),
+  })),
   workspaceFolders: [],
   getWorkspaceFolder: jest.fn(),
 

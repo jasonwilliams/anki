@@ -1,28 +1,9 @@
 import assert from "assert";
 import { CardParser } from "../cardParser";
-import { workspace } from "vscode";
 import { Card } from "../../../models/Card";
 
 // Setup mocks for cardParser
 jest.mock("vscode");
-const config = workspace.getConfiguration as any;
-config.mockImplementation(() => ({
-  get: jest.fn((val: string) => {
-    switch (val) {
-      case "card.frontBackSeparator":
-        return "%";
-      case "card.separator":
-        return "(?=^##\\s)";
-      case "card.tagPattern":
-        return "^\\[#(.*)\\]";
-      case "card.createTagForTitle":
-        return true;
-
-      default:
-        break;
-    }
-  }),
-}));
 
 describe("CardParser", () => {
   afterAll(() => {

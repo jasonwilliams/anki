@@ -7,8 +7,6 @@ import {
   workspace,
   Disposable,
 } from "vscode";
-import path from "path";
-import { readFileSync } from "fs";
 import { AnkiService } from "./AnkiService";
 import { AnkiCardProvider } from "./AnkiCardProvider";
 import {
@@ -18,7 +16,6 @@ import {
 } from "@vscode-logging/logger";
 import { initLogger, getLogger } from "./logger";
 import { registerCommands } from "./commands";
-import { createOrUpdateTemplate } from "./manageTemplate";
 import semver from "semver";
 import { subscriptions } from "./subscriptions";
 import { AnkiFS, initFilesystem } from "./fileSystemProvider";
