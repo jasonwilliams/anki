@@ -4,6 +4,11 @@ All notable changes to the "anki" extension will be documented in this file.
 
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
+## [1.0.0]
+
+- Addition of unit tests for card parser
+- Fixed small bug which prevents cards being created if no body
+
 ## [0.3.0]
 
 - Added support for images

@@ -1,4 +1,4 @@
-# Anki for VSCode (Beta)
+# Anki for VSCode
 
 [![](https://vsmarketplacebadge.apphb.com/version/jasew.anki.svg)](https://marketplace.visualstudio.com/items?itemName=jasew.anki)
 
@@ -85,6 +85,7 @@ Cloze cards won't work when using `%` also, this is due to the way Cloze cards w
 ### Images
 
 You can add images to Anki by adding them to your markdown file:
+
 ```
 ![image](../path/to/image.png)
 ```
