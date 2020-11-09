@@ -120,7 +120,7 @@ export class Serializer {
     const prepare = (_: string, p1: string) => {
       const filePath = path.resolve(
         workspace.workspaceFolders?.[0].uri.fsPath ?? "",
-        p1
+        decodeURIComponent(p1)
       );
 
       const fileExt = path.extname(filePath);

@@ -4,6 +4,11 @@ All notable changes to the "anki" extension will be documented in this file.
 
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
+## [1.0.1]
+
+- Fix bug where non-ascii characters for media was not being sent [#22](https://github.com/jasonwilliams/anki/issues/22)
+- The extension bundle is now smaller due to dropped support of older Node versions
+
 ## [1.0.0]
 
 - Addition of unit tests for card parser
