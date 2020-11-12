@@ -81,7 +81,10 @@ export class Serializer {
       if (match && match.input) {
         // Handle frontmatter
         // There could be frontmatter in this string, we need to slice it out, we can get the index of where the match happened and remove everything before
-        return match.input.slice(match.index);
+        let cleanedDeckName = match.input.slice(match.index);
+
+        // Remove anything after a new line of the deck name
+        return cleanedDeckName.replace(/(\r\n|\r|\n)+.+/gm, "");
       }
 
       return acc;
@@ -91,7 +94,7 @@ export class Serializer {
       return null;
     }
 
-    return deckName.replace(/(#\s|\n)/g, "");
+    return deckName.replace(/(#\s|\r\n|\r|\n)/g, "");
   }
 
   /**
