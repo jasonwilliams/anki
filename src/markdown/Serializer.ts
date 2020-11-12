@@ -94,7 +94,7 @@ export class Serializer {
       return null;
     }
 
-    return deckName.replace(/(#\s|\n)/g, "");
+    return deckName.replace(/(#\s|\r\n|\r|\n)/g, "");
   }
 
   /**
