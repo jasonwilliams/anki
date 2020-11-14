@@ -4,6 +4,10 @@ All notable changes to the "anki" extension will be documented in this file.
 
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
+## [1.0.3]
+
+- Remove single-line check, this caused a regression with Cloze [#26](https://github.com/jasonwilliams/anki/issues/26)
+
 ## [1.0.2]
 
 - Fixed a bug where the deck name was including all content underneath on "Send To Own Deck". [#25](https://github.com/jasonwilliams/anki/pull/25) (thanks @MicahGV)

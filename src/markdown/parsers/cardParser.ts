@@ -41,14 +41,6 @@ export class CardParser extends BaseParser {
       .map((item) => item.split("\n"))
       .map((arr) => arr.map((str) => str.trimRight()));
 
-    // not allowed cards with only front side
-    if (
-      cardLines.length === 1 &&
-      cardLines[0].filter((line) => line).length <= 1
-    ) {
-      throw new Error("Not allowed cards with only front side");
-    }
-
     const { front, back, tags, isCloze } = this.parseCardLines(cardLines);
 
     if (!this.options.convertToHtml) {

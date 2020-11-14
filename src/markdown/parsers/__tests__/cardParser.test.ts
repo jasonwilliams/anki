@@ -74,21 +74,5 @@ describe("CardParser", () => {
       );
       expect(card.answer).toBe("<p>This text will be on the back</p>\n");
     });
-
-    it("should throw an error if there is only a title", async () => {
-      const input = "## Only text on the front";
-      const parser = new CardParser();
-      await expect(parser.parse(input)).rejects.toThrow(
-        "Not allowed cards with only front side"
-      );
-    });
-
-    it("should error if there is no text", async () => {
-      const input = "";
-      const parser = new CardParser();
-      await expect(parser.parse(input)).rejects.toThrow(
-        "Not allowed cards with only front side"
-      );
-    });
   });
 });
