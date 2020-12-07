@@ -4,6 +4,10 @@ All notable changes to the "anki" extension will be documented in this file.
 
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
+## [1.0.4]
+
+- Fixed bug where various assets were ignored in production builds
+
 ## [1.0.3]
 
 - Remove single-line check, this caused a regression with Cloze [#26](https://github.com/jasonwilliams/anki/issues/26)
