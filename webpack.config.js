@@ -1,12 +1,10 @@
-//@ts-check
-
 "use strict";
 
 const path = require("path");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
+const CopyWebpackPlugin = require("copy-webpack-plugin");
 
-/**@type {import('webpack').Configuration}*/
 const config = {
   target: "node", // vscode extensions run in a Node.js-context 📖 -> https://webpack.js.org/configuration/node/
 
@@ -29,6 +27,14 @@ const config = {
     new CleanWebpackPlugin(),
     new MiniCssExtractPlugin({
       filename: "resources/vscodeAnkiPlugin.css",
+    }),
+    new CopyWebpackPlugin({
+      patterns: [
+        {
+          from: path.resolve(__dirname, "src/resources/icons"),
+          to: path.resolve(__dirname, "out/resources/icons"),
+        },
+      ],
     }),
   ],
   module: {
