@@ -91,7 +91,22 @@ export const registerCommands = (ctx: IContext) => {
         async () => {
           try {
             const uris = await allMarkdownUri();
-            console.log(uris);
+            for (let i = 0; i < uris.length; i++)
+            {
+              try {
+                const data = await workspace.fs.readFile(uris[i]);
+                const file = data.toString();
+                console.log('file data:', file);
+                try {
+                  await new Transformer(file, ctx.ankiService, true).transform();
+                } catch (e) {
+                  window.showErrorMessage(e.toString());
+                }
+              } catch(e)
+              {
+                window.showErrorMessage(`Unable to read ${uris[i].fsPath}`);
+              }              
+            }
           } catch(err)
           {
             console.log(err);

@@ -39,7 +39,7 @@ export class Transformer {
   }
 
   async transformToDeck() {
-    const file = window.activeTextEditor?.document.getText();
+    const file = this.source; // Was that an unintentional error?
     const serializer = new Serializer(file ?? "", this.useDefault);
 
     const { cards, deckName, media } = await serializer.transform();

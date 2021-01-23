@@ -1,4 +1,16 @@
-# Anki for VSCode
+# Anki for VSCode FORK
+
+I have forked this to use the original author's groundwork to make a plugin for use with Foam. If you check out some of my other repos like Notes to Cards, I intend to make the 
+cards in markdown work something like that. Except using nested headers instead of bullet lists.
+
+## Changes so far
+
+- "Anki: Send Directory" Send all the .md files in your (1st) workspace to Anki.
+
+
+# Original Readme below:
+
+
 
 [![](https://vsmarketplacebadge.apphb.com/version/jasew.anki.svg)](https://marketplace.visualstudio.com/items?itemName=jasew.anki)
 
