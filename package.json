@@ -40,6 +40,10 @@
         "enablement": "editorLangId == markdown"
       },
       {
+        "command": "anki.sendDir",
+        "title": "Anki: Send Directory"
+      },
+      {
         "command": "anki.forceInstall",
         "title": "Anki: Force Re-install"
       }

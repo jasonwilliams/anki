@@ -1,9 +1,11 @@
 import { IContext } from "./extension";
-import { Uri, commands, ProgressLocation, window, workspace } from "vscode";
+import { Uri, commands, ProgressLocation, window, workspace, FileType } from "vscode";
+import * as fs from 'fs';
 import { Transformer } from "./markdown/transformer";
 import { CONSTANTS } from "./constants";
 import { getLogger } from "./logger";
 import { initialSetup } from "./initialSetup";
+import { allMarkdownUri } from "./fsUtils";
 
 export const registerCommands = (ctx: IContext) => {
   // Handle Syncing the Anki Instance
@@ -76,6 +78,30 @@ export const registerCommands = (ctx: IContext) => {
     }
   );
 
+
+  let disposableSendDir = commands.registerCommand(
+    "anki.sendDir",
+    async () => {
+      window.withProgress(
+        {
+          location: ProgressLocation.Notification,
+          title: `Sending directory...`,
+          cancellable: false
+        },
+        async () => {
+          try {
+            const uris = await allMarkdownUri();
+            console.log(uris);
+          } catch(err)
+          {
+            console.log(err);
+            window.showErrorMessage("Failed to retrieve markdown files from workspace.");
+          }
+        }
+      );
+    }
+  );
+
   let disposableTreeItemOpen = commands.registerCommand(
     "anki.treeItem",
     async (uri) => {
@@ -91,10 +117,12 @@ export const registerCommands = (ctx: IContext) => {
     }
   );
 
+
   ctx.context.subscriptions.push(
     disposableSync,
     disposableSendToDeck,
     disposableSendToStandalone,
+    disposableSendDir,
     disposableTreeItemOpen,
     disposableForceInstall
   );
