@@ -6,6 +6,7 @@ import { CONSTANTS } from "./constants";
 import { getLogger } from "./logger";
 import { initialSetup } from "./initialSetup";
 import { allMarkdownUri } from "./fsUtils";
+import { MarkdownFile } from './models/MarkdownFile';
 
 export const registerCommands = (ctx: IContext) => {
   // Handle Syncing the Anki Instance
@@ -41,8 +42,7 @@ export const registerCommands = (ctx: IContext) => {
         async () => {
           try {
             getLogger().info("active Editor..");
-            const file = window.activeTextEditor?.document.getText() ?? "";
-            await new Transformer(file, ctx.ankiService, true).transform();
+            await new Transformer(MarkdownFile.fromActiveTextEditor(), ctx.ankiService, true).transform();
           } catch (e) {
             window.showErrorMessage(e.toString());
           }
@@ -64,8 +64,7 @@ export const registerCommands = (ctx: IContext) => {
         },
         async () => {
           try {
-            const file = window.activeTextEditor?.document.getText() ?? "";
-            await new Transformer(file, ctx.ankiService, false).transform();
+            await new Transformer(MarkdownFile.fromActiveTextEditor(), ctx.ankiService, false).transform();
           } catch (e) {
             getLogger().error(e);
             getLogger().error(
@@ -85,7 +84,7 @@ export const registerCommands = (ctx: IContext) => {
       window.withProgress(
         {
           location: ProgressLocation.Notification,
-          title: `Sending directory...`,
+          title: `Sending everything...`,
           cancellable: false
         },
         async () => {
@@ -94,9 +93,8 @@ export const registerCommands = (ctx: IContext) => {
             for (let i = 0; i < uris.length; i++)
             {
               try {
-                const data = await workspace.fs.readFile(uris[i]);
-                const file = data.toString();
-                console.log('file data:', file);
+                const file = new MarkdownFile(uris[i]);
+                await file.loadContent();
                 try {
                   await new Transformer(file, ctx.ankiService, true).transform();
                 } catch (e) {

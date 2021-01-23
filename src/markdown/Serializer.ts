@@ -7,6 +7,7 @@ import { getLogger } from "../logger";
 import { Media } from "../models/Media";
 import path from "path";
 import fs from "fs";
+import { MarkdownFile } from "../models/MarkdownFile";
 
 interface ParsedData {
   /** DeckName can be null in which case we use the defaultDeck */
@@ -16,17 +17,16 @@ interface ParsedData {
 }
 
 export class Serializer {
-  private source: string;
+  private source: MarkdownFile;
   private useDefault: boolean;
 
-  public constructor(source: string, useDefault: boolean) {
+  public constructor(source: MarkdownFile, useDefault: boolean) {
     this.source = source;
     this.useDefault = useDefault;
   }
 
   public async transform(): Promise<ParsedData> {
-    const markdownSource = this.source;
-    return await this.splitByCards(markdownSource);
+    return await this.splitByCards(this.source.cachedContent);
   }
 
   private getConfig(conf: string) {
@@ -122,7 +122,7 @@ export class Serializer {
 
     const prepare = (_: string, p1: string) => {
       const filePath = path.resolve(
-        workspace.workspaceFolders?.[0].uri.fsPath ?? "",
+        this.source.dirPath() ?? "",
         decodeURIComponent(p1)
       );
 

@@ -1,6 +1,7 @@
 import assert from "assert";
 import { Serializer } from "../Serializer";
-import { workspace } from "vscode";
+import { Uri, workspace } from "vscode";
+import { MarkdownFile } from "../../models/MarkdownFile";
 
 describe("Serializer", () => {
   afterAll(() => {
@@ -8,7 +9,7 @@ describe("Serializer", () => {
   });
   it("constructs without erroring", () => {
     assert.doesNotThrow(() => {
-      new Serializer("", false);
+      new Serializer(new MarkdownFile(null), false);
     });
   });
   describe("deckName", () => {
@@ -25,7 +26,7 @@ describe("Serializer", () => {
         `Some Random Front Matter\r\n# ${deckName}\r\n`,
         "## Some Card\r\nCard text"
       ];
-      const serializer = new Serializer("", false);
+      const serializer = new Serializer(new MarkdownFile(null), false);
       // Act
       const result = serializer.deckName(input);
       // Assert
@@ -38,7 +39,7 @@ describe("Serializer", () => {
         `# ${deckName}\r\n\r\nextra stuff before the card`,
         "## Some Card\r\nCard text"
       ];
-      const serializer = new Serializer("", false);
+      const serializer = new Serializer(new MarkdownFile(null), false);
       // Act
       const result = serializer.deckName(input);
       // Assert
@@ -51,7 +52,7 @@ describe("Serializer", () => {
         `# ${deckName}\n\nextra stuff before the card`,
         "## Some Card\nCard text"
       ];
-      const serializer = new Serializer("", false);
+      const serializer = new Serializer(new MarkdownFile(null), false);
       // Act
       const result = serializer.deckName(input);
       // Assert
@@ -64,7 +65,7 @@ describe("Serializer", () => {
         `# ${deckName}\r\rextra stuff before the card`,
         "## Some Card\rCard text"
       ];
-      const serializer = new Serializer("", false);
+      const serializer = new Serializer(new MarkdownFile(null), false);
       // Act
       const result = serializer.deckName(input);
       // Assert

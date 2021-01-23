@@ -41,7 +41,7 @@
       },
       {
         "command": "anki.sendDir",
-        "title": "Anki: Send Directory"
+        "title": "Anki: Send All"
       },
       {
         "command": "anki.forceInstall",

@@ -5,23 +5,24 @@ import { AnkiService } from "../AnkiService";
 import { Card } from "../models/Card";
 import { getLogger } from "../logger";
 import { Media } from "../models/Media";
+import { MarkdownFile } from "../models/MarkdownFile";
 
 /**
  * Create anki cards from markdown files
  */
 export class Transformer {
-  private source: string;
+  private source: MarkdownFile;
   private deck: Deck | null;
   private defaultDeck: string;
   private useDefault: boolean;
   private ankiService: AnkiService;
 
   /**
-   * @param {string} source String of the markdown file
+   * @param {string} source markdown file
    * @param {string} useDefault Whether to send to default deck or not
    */
   constructor(
-    source: string,
+    source: MarkdownFile,
     ankiService: AnkiService,
     useDefault: boolean = true
   ) {
@@ -39,8 +40,7 @@ export class Transformer {
   }
 
   async transformToDeck() {
-    const file = this.source; // Was that an unintentional error?
-    const serializer = new Serializer(file ?? "", this.useDefault);
+    const serializer = new Serializer(this.source, this.useDefault);
 
     const { cards, deckName, media } = await serializer.transform();
 

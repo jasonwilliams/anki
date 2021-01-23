@@ -1,12 +1,22 @@
 # Anki for VSCode FORK
 
-I have forked this to use the original author's groundwork to make a plugin for use with Foam. If you check out some of my other repos like Notes to Cards, I intend to make the 
-cards in markdown work something like that. Except using nested headers instead of bullet lists.
+I have forked extension to use the original author's nice groundwork to make a plugin for use with [Foam](https://foambubble.github.io/foam/). If you check out some of my other repos like [AnkiNotebooks](https://github.com/fletchermoore/AnkiNotebooks) I intend to make the 
+cards in markdown work something like that. Except using nested headers instead of bullet lists. I told myself I was done making file to anki parsers and plugins but here I am doing again something I did with .txt, then .odt, then .docx
+and now .md.
 
 ## Changes so far
 
-- "Anki: Send Directory" Send all the .md files in your (1st) workspace to Anki.
+- Added command: "Anki: Send All" Send all the .md files in your (1st) workspace to Anki.
+- Fixed(?) Transformer.transform() to use constructor source instead of active text document.
+- Transformer & Serializer now take MarkdownFile objects
+- Serializer can now handle media with relative file paths.
 
+## Todo:
+
+- Provide option to use nested heading structure for card seralization instead of just basic splitting on ## or other delimiter.
+- Update Anki on .md save option.
+- Better feedback for what happened during Send to Anki (# cards created, # unchanged, etc)
+- System to designate files/dirs for exclusion/inclusion on Send All
 
 # Original Readme below:
 
