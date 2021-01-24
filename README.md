@@ -17,6 +17,8 @@ I have forked extension to use the original author's nice groundwork to expand t
 - Better feedback for what happened during Send to Anki (# cards created, # unchanged, etc)
 - System to designate files/dirs for exclusion/inclusion on Send All
 - Add option so that card updates are in place, leaving the learning meta data.
+- Cards deleted from Markdown files will delete in Anki. On SendAll, display a Markdown->Anki deck diff popup with option to user to remove cards that are no longer represented in the markdown files. 
+- Display hover-over link to show the corresponding Anki card in the guiBrowser. I imagine this similar to Yomichan little book icon, except appearing at the end of the header lines.
 
 ## Known Issues
 
