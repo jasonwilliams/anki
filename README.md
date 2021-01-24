@@ -9,19 +9,21 @@ I have forked extension to use the original author's nice groundwork to expand t
 - Transformer & Serializer now take MarkdownFile objects
 - Serializer can now handle media with relative file paths.
 - Added option: "anki.md.card.strategy" with "Nested Headers" & "Delimiter"; Delimiter is original author strategy. See Nested Headers below
+- Added option: "anki.send.allowUpdates". If enabled, this will check the anki db for cards where the front matches the sent card. Then, if the rest of the fields are not a match, it will delete the card from the anki db and replace it with the sent card. This will allow you continuously edit the markdown files and have it reflected in anki. This will of course, remove any learning state from the card, which is my current intended behavior. Beware: If you edit a card from within Anki, these changes will trigger a delete as it will no longer match the markdown.
 
 ## Todo:
 
 - Update Anki on .md save option.
 - Better feedback for what happened during Send to Anki (# cards created, # unchanged, etc)
 - System to designate files/dirs for exclusion/inclusion on Send All
-- Update cards that already exist on Send if there have been changes.
+- Add option so that card updates are in place, leaving the learning meta data.
 
 ## Known Issues
 
 - What should SendAll do if multiple workspaces? 
 - At the moment, Nested header strategy ignores clozes, % sign and tags. I don't use any of this, so I am in no rush to add it.
 - Nested Header strategy ignores original author's use of title to send to own deck.
+- Card updates from within Anki are overwritten. Is there a solution...? There doesn't seem to be any way to know if the card was updated in Markdown or Anki last and which should take priority.
 
 
 ## Nested Headers
@@ -52,7 +54,7 @@ axillary-neuropraxia.md:
 
       [[GAGL]] from shoulder dislocation
 
-roughly created cards:
+Text appearance of created cards (In reality they have the HTML styling from the markdown parser):
 
     Axillary Neuropraxia
     ---
@@ -81,7 +83,7 @@ roughly created cards:
 
 *** Media & html is sent to and rendered in Anki appropriately like the original plugin.
 
-I recommend you update the card style sheet within Anki to make adjust the headers, in particular to make h1 smaller. I just added the line  `h1 { font-size: 20px }` to mine.
+I recommend you update the card style sheet within Anki to adjust the headers, in particular to make h1 smaller. I just added the line  `h1 { font-size: 20px }` to mine.
 
 
 # Original Readme below:

@@ -95,7 +95,12 @@ export class Transformer {
       throw new Error("No Deck exists for current cards");
     }
 
-    await this.deck.pushNewCardsToAnki();
+    if (workspace.getConfiguration("anki.send").get("allowUpdates")) {
+      await this.deck.updateOrAdd();
+    } else {
+      await this.deck.pushNewCardsToAnki();
+    }
+    
   }
 
   addCardsToDeck(cards: Card[]) {

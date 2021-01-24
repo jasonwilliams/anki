@@ -9,6 +9,7 @@ export class Card {
   public fields: any;
   public modelName: string;
   public id?: number;
+  public noteId?: number;
   public deck?: Deck;
   public deckName?: string;
 
@@ -50,6 +51,11 @@ export class Card {
   /** Set the ID on the Card object */
   setId(id: number) {
     this.id = id;
+    return this;
+  }
+
+  setNoteId(id: number) {
+    this.noteId = id;
     return this;
   }
 
@@ -103,5 +109,13 @@ export class Card {
       null,
       4
     );
+  }
+
+  // return false if any field in this card does not have a perfectly matching correlate in the anki card
+  // this is how we check to see if the anki card needs to be updated
+  fieldsMatch(ankiCard: Card): boolean {
+    return !Object.keys(this.fields).some(key => {
+      return !(ankiCard.fields[key] && ankiCard.fields[key].value == this.fields[key]);
+    })
   }
 }

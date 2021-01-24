@@ -142,6 +142,12 @@ export class AnkiService {
     return await this.invoke("addNotes", { notes });
   }
 
+  async deleteNotes(notes: number[]): Promise<any[]> {
+    return await this.invoke("deleteNotes", {
+      "notes": notes
+    })
+  }
+
   async findCards(query: string): Promise<Card[]> {
     // need double quotes for findCard
     // https://github.com/FooSoft/anki-connect/issues/80#issuecomment-394154441
@@ -155,6 +161,7 @@ export class AnkiService {
       const cleanAnswer = $("html").text();
       const newCard = new Card(cleanQuestion, cleanAnswer)
         .setId(v.cardId)
+        .setNoteId(v.note)
         .setFields(v.fields)
         .setDeckName(v.deckName);
 

@@ -92,6 +92,11 @@
             "trace"
           ]
         },
+        "anki.send.allowUpdates": {
+          "type": "boolean",
+          "default": false,
+          "description": "If true and the generated card front matches the front of a card that already exists in Anki, replace the preexisting Anki card with the newly generated card. This is useful if you plan to keep editing the source markdown files and send multiple times. This will delete the replaced anki card, which will consequently reset any learning state."
+        },
         "anki.md.card.strategy": {
           "type": "string",
           "default": "Basic Separators",
