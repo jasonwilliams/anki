@@ -1,7 +1,6 @@
 # Anki for VSCode FORK
 
-I have forked extension to use the original author's nice groundwork to make a plugin for use with [Foam](https://foambubble.github.io/foam/). If you check out some of my other repos like [AnkiNotebooks](https://github.com/fletchermoore/AnkiNotebooks) I intend to make the 
-cards in markdown work something like that. Except using nested headers instead of bullet lists. I told myself I was done making file to anki parsers and plugins but here I am doing again something I did with .txt, then .odt, then .docx
+I have forked extension to use the original author's nice groundwork to make a plugin for use with [Foam](https://foambubble.github.io/foam/). I told myself I was done making file to anki parsers and plugins but here I am doing again something I did with .txt, then .odt, then .docx
 and now .md.
 
 ## Changes so far
@@ -10,13 +9,76 @@ and now .md.
 - Fixed(?) Transformer.transform() to use constructor source instead of active text document.
 - Transformer & Serializer now take MarkdownFile objects
 - Serializer can now handle media with relative file paths.
+- Added option: "anki.md.card.strategy" with "Nested Headers" & "Delimiter"; Delimiter is original author strategy. See Nested Headers below
 
 ## Todo:
 
-- Provide option to use nested heading structure for card seralization instead of just basic splitting on ## or other delimiter.
 - Update Anki on .md save option.
 - Better feedback for what happened during Send to Anki (# cards created, # unchanged, etc)
 - System to designate files/dirs for exclusion/inclusion on Send All
+- Update cards that already exist on Send if there have been changes.
+
+## Known Issues
+
+- What should SendAll do if multiple workspaces? 
+- At the moment, Nested header strategy ignores clozes, % sign and tags. I don't use any of this, so I am in no rush to add it.
+- Nested Header strategy ignores original author's use of title to send to own deck.
+
+
+## Nested Headers
+
+This is a strategy to create cards from markdown. The way it works is the header #, ##, ###, etc delimit cards. Each block of html between headers becomes the back of a card.
+The front of the cards is the tree of headers to the card. This allows you to create cards like so:
+
+axillary-neuropraxia.md:
+
+      # Axillary Neuropraxia
+
+      see [[Neuropaxia]]
+
+      ## Etiology
+
+      - Shoulder dislocation
+      - Masses
+
+      ## Findings
+
+      ### MRI findings
+
+      Atrophy of teres minor muscle, inferior deltoid
+
+      ![](2021-01-15-10-39-54.png) ![](2021-01-15-10-41-15.png)
+
+      ## Associated Lesion
+
+      [[GAGL]] from shoulder dislocation
+
+created cards:
+
+    1.
+    Axillary Neuropraxia
+    ---
+    see [[Neuropaxia]]
+
+    2.
+    Axillary Neuropraxia: Etiology
+    ---
+    * Shoulder dislocation 
+    * Masses
+
+    3.
+    Axillary Neuropraxia: Findings: MRI findings
+    ---
+    Atrophy of teres minor muscle, inferior deltoid 
+    img img***
+
+    4.
+    Axillary Neuropraxia: Associated Lesion
+    ---
+    [GAGL] from shoulder dislocation
+
+*** Media & html is sent to and rendered in Anki appropriately like the original plugin.
+
 
 # Original Readme below:
 
