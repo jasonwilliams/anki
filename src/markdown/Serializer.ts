@@ -8,6 +8,7 @@ import { Media } from "../models/Media";
 import path from "path";
 import fs from "fs";
 import { MarkdownFile } from "../models/MarkdownFile";
+import { NestedHeaderParser } from "./parsers/nestedHeaderParser";
 
 interface ParsedData {
   /** DeckName can be null in which case we use the defaultDeck */
@@ -26,11 +27,30 @@ export class Serializer {
   }
 
   public async transform(): Promise<ParsedData> {
-    return await this.splitByCards(this.source.cachedContent);
+    const content = this.source.cachedContent;
+    if (this.getConfig("card.strategy") == "Nested Headers")
+    {
+      return await this.splitNestedHeaders(content);
+    }
+    else {
+      return await this.splitByCards(content);
+    }
+    
   }
 
   private getConfig(conf: string) {
     return workspace.getConfiguration("anki.md").get(conf);
+  }
+
+  private async splitNestedHeaders(mdString: string): Promise<ParsedData> {
+    const deckName = null;
+    const cards: Card[] = await (new NestedHeaderParser()).parse(mdString);
+    const media: Media[] = this.mediaFromCards(cards);
+    return {
+      deckName,
+      cards,
+      media
+    };
   }
 
   private async splitByCards(mdString: string): Promise<ParsedData> {

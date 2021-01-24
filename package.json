@@ -92,6 +92,16 @@
             "trace"
           ]
         },
+        "anki.md.card.strategy": {
+          "type": "string",
+          "default": "Nested Headers",
+          "description": 
+            "Strategy used to create cards from markdown documents. 'Nested Headers' means the deepest markdown header line indicates a card, with all parent headers becoming the front. For example in a long document about the shoulder, '# Shoulder ## Glenohumeral Joint ### List changes of osteoarthritis' would become the card front, and the back would become the content below the header '### List changes of osteoarthritis'. The option 'Basic Separators' merely splits the document about Regex patterns, which is given in the option 'anki.md.card.separator'. If using 'Nested Headers', this option is ignored.",
+            "enum": [
+              "Nested Headers",
+              "Basic Separators"
+            ]
+        },
         "anki.md.card.separator": {
           "type": "string",
           "default": "(?=^##\\s)",
