@@ -1,7 +1,6 @@
 # Anki for VSCode FORK
 
-I have forked extension to use the original author's nice groundwork to make a plugin for use with [Foam](https://foambubble.github.io/foam/). I told myself I was done making file to anki parsers and plugins but here I am doing again something I did with .txt, then .odt, then .docx
-and now .md.
+I have forked extension to use the original author's nice groundwork to expand this for use with [Foam](https://foambubble.github.io/foam/). My vision is a tighter coupling between an Anki deck which is semi-automatically synchronized with the Foam directory.
 
 ## Changes so far
 
@@ -53,31 +52,36 @@ axillary-neuropraxia.md:
 
       [[GAGL]] from shoulder dislocation
 
-created cards:
+roughly created cards:
 
-    1.
     Axillary Neuropraxia
     ---
     see [[Neuropaxia]]
 
-    2.
-    Axillary Neuropraxia: Etiology
+    
+    Axillary Neuropraxia
+    Etiology
     ---
     * Shoulder dislocation 
     * Masses
 
-    3.
-    Axillary Neuropraxia: Findings: MRI findings
+    
+    Axillary Neuropraxia
+    Findings
+    MRI findings
     ---
     Atrophy of teres minor muscle, inferior deltoid 
     img img***
 
-    4.
-    Axillary Neuropraxia: Associated Lesion
+    
+    Axillary Neuropraxia
+    Associated Lesion
     ---
     [GAGL] from shoulder dislocation
 
 *** Media & html is sent to and rendered in Anki appropriately like the original plugin.
+
+I recommend you update the card style sheet within Anki to make adjust the headers, in particular to make h1 smaller. I just added the line  `h1 { font-size: 20px }` to mine.
 
 
 # Original Readme below:

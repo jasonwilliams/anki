@@ -54,7 +54,7 @@ export class NestedHeaderParser {
             return null;
         }
         else {
-            const joinedFront = front.join(': ').trim();
+            const joinedFront = front.join('\n').trim();
             const joinedBack = back.join('\n').trim();
             if (joinedBack == '') {
                 return null;
@@ -79,13 +79,11 @@ class Line {
 
     constructor(content: string)
     {
+        this.content = content;
         const matches = content.match(/^(#+)\s(.+)/);
         if (matches && matches.length == 3) {
             this.lineClass = LineClass.Header;
             this.depth = matches[1].length; // 1st group = number of #s
-            this.content = matches[2]; // second group = remainder of line
-        } else {
-            this.content = content; // regular ol' line
         }
     }
 }
