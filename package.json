@@ -96,7 +96,7 @@
         "anki.md.card.convertMath": {
           "type": "boolean",
           "default": true,
-          "description": "If set, convert Latex-style $ ... $ tags and blocks to MathJax-style \\( ... \\) tags and blocks",
+          "description": "If set, convert Latex-style $ ... $ tags and blocks to MathJax-style \\( ... \\) tags and blocks"
         },
         "anki.md.card.frontBackSeparator": {
           "type": "string",

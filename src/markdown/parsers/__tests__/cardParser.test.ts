@@ -32,7 +32,7 @@ describe("CardParser", () => {
     it("should parse a Markdown input and return a Card instance", async () => {
       const input =
         "## Some text that should be on the front\n\nThis text will be on the back";
-      const parser = new CardParser();
+      const parser = new CardParser({ convertMath: true });
       const card = await parser.parse(input);
       expect(card).toBeInstanceOf(Card);
     });
