@@ -1,3 +1,4 @@
+import { MathParser } from "../parsers/mathParser";
 import { MdParser } from "../parsers/mdParser";
 import { trimArray } from "../../utils";
 import { BaseParser } from "./baseParser";
@@ -136,6 +137,7 @@ export class CardParser extends BaseParser {
   async linesToHtml(lines: string[]) {
     const string = lines.join("\n");
 
-    return await new MdParser({}).parse(string);
+    const mdString = await new MdParser({}).parse(string);
+    return await new MathParser().parse(mdString);
   }
 }

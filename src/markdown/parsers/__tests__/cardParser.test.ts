@@ -16,6 +16,18 @@ describe("CardParser", () => {
       });
     });
 
+    // Handling math parsing
+    it("should convert math strings correctly", async () => {
+      const input =
+        "## Equation\n\n%\n\n$x_1 = 1$, $x_2 = 2$, $$x_3 = 3$$, $$x_4 = 4$$";
+      const parser = new CardParser();
+      const card = await parser.parse(input);
+      expect(card.question).toBe('<h2 id="equation">Equation</h2>\n');
+      expect(card.answer).toBe(
+        "<p>\\(x_1 = 1\\), \\(x_2 = 2\\), \\[x_3 = 3\\], \\[x_4 = 4\\]</p>\n"
+      );
+    });
+
     // Represents a typical use case of simple front and back card
     it("should parse a Markdown input and return a Card instance", async () => {
       const input =
