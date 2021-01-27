@@ -29,6 +29,14 @@ I have forked extension to use the original author's nice groundwork to expand t
 - Card updates from within Anki are overwritten. Is there a solution...? There doesn't seem to be any way to know if the card was updated in Markdown or Anki last and which should take priority.
 
 
+## Sync on save branch current issues getting it to work
+
+- Line breaks need to be appropriate
+- Always adds a new line so the metadata keeps creeping down
+- Writes to new file, but does not update the active editor to reflect changes after sync, resulting in conflicts
+- Deleting a card's back does not trigger a delete in the database for some reason...!!
+
+
 ## Nested Headers
 
 This is a strategy to create cards from markdown. The way it works is the header #, ##, ###, etc delimit cards. Each block of html between headers becomes the back of a card.
