@@ -39,6 +39,7 @@ export class Serializer {
       .map((line) => line.trim());
 
     const deckName = this.deckName(rawCards);
+    const convertMath = this.getConfig("card.convertMath") as boolean;
 
     // If we call "send to own deck" we need the title, if we don't have it error out here
     if (!deckName && this.useDefault === false) {
@@ -55,7 +56,7 @@ export class Serializer {
     );
 
     const parsedCards = await Promise.all(
-      rawCards.map((str) => new CardParser().parse(str))
+      rawCards.map((str) => new CardParser({ convertMath }).parse(str))
     );
     const cards = parsedCards
       // card should have at least a front side

@@ -21,8 +21,8 @@ export class CardParser extends BaseParser {
   private tagRe: RegExp;
   private clozeRe: RegExp;
 
-  constructor({ convertToHtml = true } = {}) {
-    super({ convertToHtml });
+  constructor({ convertToHtml = true, convertMath = true } = {}) {
+    super({ convertToHtml, convertMath });
     this.splitRe = new RegExp(
       `^${this.getConfig("card.frontBackSeparator") as string}$`,
       "m"
@@ -138,6 +138,10 @@ export class CardParser extends BaseParser {
     const string = lines.join("\n");
 
     const mdString = await new MdParser({}).parse(string);
-    return await new MathParser().parse(mdString);
+    if (!this.options.convertMath) {
+      return mdString;
+    }
+    const mathString = await new MathParser().parse(mdString);
+    return mathString;
   }
 }
