@@ -6,6 +6,7 @@ import { Card } from "../models/Card";
 import { getLogger } from "../logger";
 import { Media } from "../models/Media";
 import { MarkdownFile } from "../models/MarkdownFile";
+import { SendDiff } from "../models/SendDiff";
 
 /**
  * Create anki cards from markdown files
@@ -67,7 +68,24 @@ export class Transformer {
     // Either create a new Deck on Anki or get back the ID of the same-named Deck
     await this.deck.createOnAnki();
     await this.pushMediaItems(media);
-    await this.exportCards(cards);
+    const diff = await this.sendCards(cards);
+
+    // delete cards from anki that have been deleted from markdown
+    // add cards ids to markdown meta that are verified in Anki
+    if (workspace.getConfiguration("anki.send").get("keepSync")) {
+      const priorNoteIds = this.source.noteIds;
+      const currentCards = diff.cardsAdded.concat(diff.cardsUnchanged);
+      // find note ids that are in the existing markdown metadata, but not in the
+      // diff of unchanged and added cards. these need to be removed from Anki
+      const noteIdsToDelete: number[] = priorNoteIds.filter((oldNoteId) => {
+        return !currentCards.some(card => {
+          return oldNoteId == card.noteId;
+        })
+      })
+      this.ankiService?.deleteNotes(noteIdsToDelete);
+      // update the metadata or add it
+      this.source.updateMeta(currentCards);
+    }
   }
 
   async pushMediaItems(media: Media[]) {
@@ -89,18 +107,17 @@ export class Transformer {
       : generatedName || this.defaultDeck;
   }
 
-  async exportCards(cards: Card[]) {
+  async sendCards(cards: Card[]): Promise<SendDiff> {
     this.addCardsToDeck(cards);
     if (!this.deck) {
       throw new Error("No Deck exists for current cards");
     }
-
+    let allowUpdates: boolean = false;
     if (workspace.getConfiguration("anki.send").get("allowUpdates")) {
-      await this.deck.updateOrAdd();
-    } else {
-      await this.deck.pushNewCardsToAnki();
+      allowUpdates = true;
+      
     }
-    
+    return await this.deck.updateOrAdd(allowUpdates); 
   }
 
   addCardsToDeck(cards: Card[]) {

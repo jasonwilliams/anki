@@ -10,15 +10,16 @@ I have forked extension to use the original author's nice groundwork to expand t
 - Serializer can now handle media with relative file paths.
 - Added option: "anki.md.card.strategy" with "Nested Headers" & "Delimiter"; Delimiter is original author strategy. See Nested Headers below
 - Added option: "anki.send.allowUpdates". If enabled, this will check the anki db for cards where the front matches the sent card. Then, if the rest of the fields are not a match, it will delete the card from the anki db and replace it with the sent card. This will allow you continuously edit the markdown files and have it reflected in anki. This will of course, remove any learning state from the card, which is my current intended behavior. Beware: If you edit a card from within Anki, these changes will trigger a delete as it will no longer match the markdown.
+- Added option: "anki.send.keepSync". If enabled, after send metadata is added to the bottom of the file. Subsequent file changes will trigger another send. BEWARE: Cards deleted from the markdown will be deleted from the Anki database. Delete the metadata from the file to prevent future sync.
 
 ## Todo:
 
-- Update Anki on .md save option.
 - Better feedback for what happened during Send to Anki (# cards created, # unchanged, etc)
 - System to designate files/dirs for exclusion/inclusion on Send All
 - Add option so that card updates are in place, leaving the learning meta data.
-- Cards deleted from Markdown files will delete in Anki. On SendAll, display a Markdown->Anki deck diff popup with option to user to remove cards that are no longer represented in the markdown files. 
+- Option to display a Markdown->Anki deck diff popup with option proceed or cancel. Might be useful if not sure which cards will be created/deleted.
 - Display hover-over link to show the corresponding Anki card in the guiBrowser. I imagine this similar to Yomichan little book icon, except appearing at the end of the header lines.
+- Need to check to make sure text above any header at the top of a document is handled appropriately.
 
 ## Known Issues
 

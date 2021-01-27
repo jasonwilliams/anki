@@ -94,7 +94,7 @@ export const registerCommands = (ctx: IContext) => {
             {
               try {
                 const file = new MarkdownFile(uris[i]);
-                await file.loadContent();
+                await file.load(); // must call to read prior to transform
                 try {
                   await new Transformer(file, ctx.ankiService, true).transform();
                 } catch (e) {

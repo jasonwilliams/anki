@@ -1,10 +1,11 @@
 import { Card } from "./Card";
 import { AnkiService } from "../AnkiService";
+import { SendDiff } from "./SendDiff";
 
 export class Deck {
   public readonly name: string;
   private options: any;
-  private cards: Card[];
+  public cards: Card[];
   private mediaCollection: any[];
   private ankiService?: AnkiService;
   /** Id is optional on Decks because they can be created before syncing back to Anki.
@@ -62,21 +63,37 @@ export class Deck {
       });
   }
 
-  async updateOrAdd() {
+  // pull the deck from Anki
+  // loop through the markdown cards looking for duplicates
+  // request add or delete as appropriate based on config
+  // track cards that are already in Anki
+  // TODO: check to see if Anki actually added/deleted the notes
+  // could be slow on very large decks
+  async updateOrAdd(allowUpdates: boolean): Promise<SendDiff> {
     const ankiCards = await this.ankiService?.findCards(`deck:${this.name}`);
+    const diff = new SendDiff();
     if (ankiCards) {
       const cardsToDelete: Card[] = [];
       this.cards.forEach((c) => {
         // find the anki card with the same question value
         const duplicate = this.findDuplicate(ankiCards, c);
         // queue the anki card for deletion if it doesn't match the fields of the new card
-        if (duplicate && !c.fieldsMatch(duplicate)) {
-          cardsToDelete.push(duplicate);
-        } 
+        if (duplicate) {
+          if (!c.fieldsMatch(duplicate) && allowUpdates) {
+            cardsToDelete.push(duplicate);
+            diff.cardsAdded.push(c);
+          } else {
+            diff.cardsUnchanged.push(duplicate);
+          }
+        } else {
+          diff.cardsAdded.push(c);
+        }
       });
       await this.deleteCards(cardsToDelete);
+      diff.cardsDeleted = cardsToDelete; // not sure how to confirm actual deletion at this point
     }
-    await this.pushNewCardsToAnki();      
+    await this.pushNewCardsToAnki(diff.cardsAdded); // no confirmation of actual addition
+    return diff;
   }
 
   private async deleteCards(cards: Card[]) {
@@ -84,15 +101,12 @@ export class Deck {
     await this.ankiService?.deleteNotes(nIds);
   }
 
-  private async _pushNewCardsToAnki(cards: Card[]) {
+  // updates card references in place. kind of gross
+  private async pushNewCardsToAnki(cards: Card[]) {
     const ids = await this.ankiService?.addNotes(cards);
     ids?.map((v, i) => (cards[i].id = v));
   }
 
-  async pushNewCardsToAnki() {
-    const newCards = this.cards.filter((v) => !v.id);
-    this._pushNewCardsToAnki(newCards);
-  }
 
   // Anki Service Methods
 
