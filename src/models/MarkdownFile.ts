@@ -1,4 +1,5 @@
 import { Uri, workspace, window, Position } from 'vscode';
+import { EOL } from 'os';
 import * as path from 'path';
 import * as fs from 'fs';
 import { Card } from './Card';
@@ -52,15 +53,16 @@ export class MarkdownFile {
     const before = content.split(this.metaStart)[0];
     const endSplit = content.split(this.metaEnd);
     const after = endSplit.length > 1 ? endSplit[1] : "";
-    console.log(before);
-    return before + after;
+    // console.log(before);
+    const removed = (before + after).trimEnd();
+    return removed;
   }
 
   // TODO: make line breaks consistent with what's used in the file
   public async updateMeta(cards: Card[]) {
     const ids = cards.map(c => c.noteId ?? 0 );
     const metaBody = `[note-ids]: # (${ids.join(', ')})`;
-    const meta = `\r\n${this.metaStart}\r\n${metaBody}\r\n${this.metaEnd}\r\n`;
+    const meta = `${EOL}${EOL}${EOL}${this.metaStart}${EOL}${metaBody}${EOL}${this.metaEnd}${EOL}`;
     const content = this.cachedContent + meta;
     if (this.isFromActiveEditor) {
       await window.activeTextEditor?.document.save(); // cop-out. I editing the active editor in place without save

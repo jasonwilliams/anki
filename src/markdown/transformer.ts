@@ -70,14 +70,14 @@ export class Transformer {
     await this.pushMediaItems(media);
     const diff = await this.sendCards(cards);
 
-    console.log('after diff creation');
+    // console.log('after diff creation');
     // delete cards from anki that have been deleted from markdown
     // then add cards ids to markdown meta that are verified in Anki
     if (workspace.getConfiguration("anki.send").get("keepSync")) {
       const priorNoteIds = this.source.noteIds;
-      console.log('prior ids', priorNoteIds);
+      // console.log('prior ids', priorNoteIds);
       const currentCards = diff.cardsAdded.concat(diff.cardsUnchanged);
-      console.log('current ids from diff', currentCards);
+      // console.log('current ids from diff', currentCards);
       // find note ids that are in the existing markdown metadata, but not in the
       // diff of unchanged and added cards. these need to be removed from Anki
       const noteIdsToDelete: number[] = priorNoteIds.filter((oldNoteId) => {
@@ -85,7 +85,7 @@ export class Transformer {
           return oldNoteId == card.noteId;
         })
       })
-      console.log('notes to delete', noteIdsToDelete);
+      // console.log('notes to delete', noteIdsToDelete);
       this.ankiService?.deleteNotes(noteIdsToDelete);
       // update the metadata or add it
       await this.source.updateMeta(currentCards);

@@ -29,12 +29,7 @@ I have forked extension to use the original author's nice groundwork to expand t
 - At the moment, Nested header strategy ignores clozes, % sign and tags. I don't use any of this, so I am in no rush to add it.
 - Nested Header strategy ignores original author's use of title to send to own deck.
 - Card updates from within Anki are overwritten. Is there a solution...? There doesn't seem to be any way to know if the card was updated in Markdown or Anki last and which should take priority.
-
-
-## Sync on save branch current issues
-
-- Line breaks need to be appropriate
-- Always adds a new line so the metadata keeps creeping down
+- MarkdownFile uses node os.EOL for line breaks. Should probably be consistent with code, since a user could I think, use a non-os linebreak system within code.
 
 
 ## Nested Headers
