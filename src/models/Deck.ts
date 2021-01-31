@@ -39,7 +39,7 @@ export class Deck {
 
   /** Check if this deck has a card by passing the card ID */
   hasCard(cardId: number) {
-    return this.cards.some((v) => v.id === cardId);
+    return this.cards.some((v) => v.noteId === cardId);
   }
 
   /** add media item to this deck */
@@ -71,6 +71,7 @@ export class Deck {
   // could be slow on very large decks
   async updateOrAdd(allowUpdates: boolean): Promise<SendDiff> {
     const ankiCards = await this.ankiService?.findCards(`deck:${this.name}`);
+    // console.log('cards in deck', ankiCards);
     const diff = new SendDiff();
     if (ankiCards) {
       const cardsToDelete: Card[] = [];
@@ -79,6 +80,7 @@ export class Deck {
         const duplicate = this.findDuplicate(ankiCards, c);
         // queue the anki card for deletion if it doesn't match the fields of the new card
         if (duplicate) {
+          // console.log('found duplicate', duplicate);
           if (!c.fieldsMatch(duplicate) && allowUpdates) {
             cardsToDelete.push(duplicate);
             diff.cardsAdded.push(c);
@@ -93,6 +95,7 @@ export class Deck {
       diff.cardsDeleted = cardsToDelete; // not sure how to confirm actual deletion at this point
     }
     await this.pushNewCardsToAnki(diff.cardsAdded); // no confirmation of actual addition
+    // console.log('diff i created', diff);
     return diff;
   }
 
@@ -103,8 +106,8 @@ export class Deck {
 
   // updates card references in place. kind of gross
   private async pushNewCardsToAnki(cards: Card[]) {
-    const ids = await this.ankiService?.addNotes(cards);
-    ids?.map((v, i) => (cards[i].id = v));
+    const ids = await this.ankiService?.addNotes(cards); // this function returns NOTE IDS
+    ids?.map((v, i) => (cards[i].noteId = v));
   }
 
 

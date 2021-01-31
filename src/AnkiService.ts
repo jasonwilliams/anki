@@ -161,7 +161,6 @@ export class AnkiService {
       $ = load(v.answer.toString());
       const cleanAnswer = $("html").text();
       const newCard = new Card(cleanQuestion, cleanAnswer)
-        .setId(v.cardId)
         .setNoteId(v.note)
         .setFields(v.fields)
         .setDeckName(v.deckName);

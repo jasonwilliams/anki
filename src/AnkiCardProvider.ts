@@ -52,14 +52,14 @@ export class AnkiCardProvider implements TreeDataProvider<Dependency> {
 
       return cards?.map((v, i) => {
         const deckID = getAnkiState().getDeckIDFromName(v.deckName || "");
-        const cardUri = `anki:/decks/${deckID}/${v.id?.toString()}.json`;
+        const cardUri = `anki:/decks/${deckID}/${v.noteId?.toString()}.json`;
         this.ankiFS.writeFile(Uri.parse(cardUri), Buffer.from(v.toString()), {
           create: true,
           overwrite: true,
         });
         return new Dependency(
           v.question,
-          v.id?.toString() ?? i.toString(),
+          v.noteId?.toString() ?? i.toString(),
           TreeItemCollapsibleState.None,
           cardUri,
           ItemType.Card

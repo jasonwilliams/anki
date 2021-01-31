@@ -8,7 +8,6 @@ export class Card {
   public tags: string[];
   public fields: any;
   public modelName: string;
-  public id?: number;
   public noteId?: number;
   public deck?: Deck;
   public deckName?: string;
@@ -49,11 +48,6 @@ export class Card {
   }
 
   /** Set the ID on the Card object */
-  setId(id: number) {
-    this.id = id;
-    return this;
-  }
-
   setNoteId(id: number) {
     this.noteId = id;
     return this;
@@ -100,7 +94,7 @@ export class Card {
   toString() {
     return JSON.stringify(
       {
-        id: this.id,
+        id: this.noteId,
         question: this.question,
         answer: this.answer,
         deck: this.deckName,

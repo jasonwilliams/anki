@@ -57,7 +57,7 @@ export class MarkdownFile {
 
   // TODO: make line breaks consistent with what's used in the file
   public updateMeta(cards: Card[]) {
-    const ids = cards.map(c => c.id ?? 0 );
+    const ids = cards.map(c => c.noteId ?? 0 );
     const metaBody = `[note-ids]: # (${ids.join(', ')})`;
     const meta = `\r\n${this.metaStart}\r\n${metaBody}\r\n${this.metaEnd}\r\n`;
     const content = this.cachedContent + meta;
