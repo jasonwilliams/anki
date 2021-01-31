@@ -1,4 +1,4 @@
-import { Uri, workspace, window } from 'vscode';
+import { Uri, workspace, window, Position } from 'vscode';
 import * as path from 'path';
 import * as fs from 'fs';
 import { Card } from './Card';
@@ -11,6 +11,7 @@ export class MarkdownFile {
   public cachedContent: string;
   public noteIds: number[] = [];
   private meta: string = "";
+  private isFromActiveEditor: boolean = false;
 
   constructor(uri: Uri | null) {
     if (uri) {
@@ -56,11 +57,17 @@ export class MarkdownFile {
   }
 
   // TODO: make line breaks consistent with what's used in the file
-  public updateMeta(cards: Card[]) {
+  public async updateMeta(cards: Card[]) {
     const ids = cards.map(c => c.noteId ?? 0 );
     const metaBody = `[note-ids]: # (${ids.join(', ')})`;
     const meta = `\r\n${this.metaStart}\r\n${metaBody}\r\n${this.metaEnd}\r\n`;
     const content = this.cachedContent + meta;
+    if (this.isFromActiveEditor) {
+      await window.activeTextEditor?.document.save(); // cop-out. I editing the active editor in place without save
+      // is a bit difficult. But I am not sure what the expected functionality would be.
+      // Would a user expect to Send To Anki some unsaved data, and then make changes prior to saving...? I would think not.
+      // Would a user be upset if the function Send To Anki saved his data?
+    } 
     fs.writeFileSync(this.uri.fsPath, content);
   }
 
@@ -84,6 +91,7 @@ export class MarkdownFile {
       file = new MarkdownFile(null);
     }
     file.loadContent(window.activeTextEditor?.document.getText() ?? "");
+    file.isFromActiveEditor = true;
     return file;
   }
 }

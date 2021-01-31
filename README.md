@@ -12,6 +12,7 @@ I have forked extension to use the original author's nice groundwork to expand t
 - Added option: "anki.send.allowUpdates". If enabled, this will check the anki db for cards where the front matches the sent card. Then, if the rest of the fields are not a match, it will delete the card from the anki db and replace it with the sent card. This will allow you continuously edit the markdown files and have it reflected in anki. This will of course, remove any learning state from the card, which is my current intended behavior. Beware: If you edit a card from within Anki, these changes will trigger a delete as it will no longer match the markdown.
 - Added option: "anki.send.keepSync". If enabled, after send metadata is added to the bottom of the file. Subsequent file changes will trigger another send. BEWARE: Cards deleted from the markdown will be deleted from the Anki database. Delete the metadata from the file to prevent future sync.
 - Fixed: pushNewCardsToAnki returns NOTE IDs, which were assigned to the Card model's id field. AnkiSerivce.findCards then assigned CARD IDS to the Id field. Fixed to assign note Ids instead of Card Ids in the Card model. Anki potentially creates multiple cards per note, so if there is a need to track card ids, i renamed Card.id to Card.noteId to prevent future confusion.
+- Send to Deck now saves file afterward if user has enabled Sync to allow writing metadata to the filesystem.
 
 ## Todo:
 
@@ -34,7 +35,6 @@ I have forked extension to use the original author's nice groundwork to expand t
 
 - Line breaks need to be appropriate
 - Always adds a new line so the metadata keeps creeping down
-- Writes to new file, but does not update the active editor to reflect changes after sync, resulting in conflicts
 
 
 ## Nested Headers

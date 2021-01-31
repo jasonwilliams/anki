@@ -88,7 +88,7 @@ export class Transformer {
       console.log('notes to delete', noteIdsToDelete);
       this.ankiService?.deleteNotes(noteIdsToDelete);
       // update the metadata or add it
-      this.source.updateMeta(currentCards);
+      await this.source.updateMeta(currentCards);
     }
   }
 
