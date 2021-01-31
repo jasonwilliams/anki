@@ -22,6 +22,7 @@ I have forked extension to use the original author's nice groundwork to expand t
 - Option to display a Markdown->Anki deck diff popup with option proceed or cancel. Might be useful if not sure which cards will be created/deleted.
 - Display hover-over link to show the corresponding Anki card in the guiBrowser. I imagine this similar to Yomichan little book icon, except appearing at the end of the header lines.
 - Need to check to make sure text above any header at the top of a document is handled appropriately.
+- Test: What happens if the user hit save multiple times rapidly before Send To Deck completes when it occurs on save?
 
 ## Known Issues
 
@@ -30,6 +31,7 @@ I have forked extension to use the original author's nice groundwork to expand t
 - Nested Header strategy ignores original author's use of title to send to own deck.
 - Card updates from within Anki are overwritten. Is there a solution...? There doesn't seem to be any way to know if the card was updated in Markdown or Anki last and which should take priority.
 - MarkdownFile uses node os.EOL for line breaks. Should probably be consistent with code, since a user could I think, use a non-os linebreak system within code.
+
 
 
 ## Nested Headers

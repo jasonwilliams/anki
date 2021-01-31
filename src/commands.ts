@@ -7,6 +7,7 @@ import { getLogger } from "./logger";
 import { initialSetup } from "./initialSetup";
 import { allMarkdownUri } from "./fsUtils";
 import { MarkdownFile } from './models/MarkdownFile';
+import { sendFile } from "./sendFile";
 
 export const registerCommands = (ctx: IContext) => {
   // Handle Syncing the Anki Instance
@@ -92,18 +93,7 @@ export const registerCommands = (ctx: IContext) => {
             const uris = await allMarkdownUri();
             for (let i = 0; i < uris.length; i++)
             {
-              try {
-                const file = new MarkdownFile(uris[i]);
-                await file.load(); // must call to read prior to transform
-                try {
-                  await new Transformer(file, ctx.ankiService, true).transform();
-                } catch (e) {
-                  window.showErrorMessage(e.toString());
-                }
-              } catch(e)
-              {
-                window.showErrorMessage(`Unable to read ${uris[i].fsPath}`);
-              }              
+              sendFile(uris[i], ctx);
             }
           } catch(err)
           {

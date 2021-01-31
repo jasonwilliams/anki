@@ -1,5 +1,6 @@
 import { IContext } from "./extension";
-import { workspace } from "vscode";
+import { workspace, window } from "vscode";
+import { sendFile } from "./sendFile";
 
 export const subscriptions = (ctx: IContext) => {
   ctx.context.subscriptions.push(
@@ -15,4 +16,16 @@ export const subscriptions = (ctx: IContext) => {
       }
     })
   );
-};
+
+  ctx.context.subscriptions.push(
+    workspace.onDidSaveTextDocument((e) => {
+      if (e.languageId == "markdown") {
+        if (workspace.getConfiguration("anki.send").get("keepSync")) {
+          sendFile(e.uri, ctx).then(() => {
+            window.showInformationMessage("Send Changes to Anki");
+          });
+        }
+      }      
+    })
+  );
+}
