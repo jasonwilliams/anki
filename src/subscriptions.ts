@@ -21,8 +21,10 @@ export const subscriptions = (ctx: IContext) => {
     workspace.onDidSaveTextDocument((e) => {
       if (e.languageId == "markdown") {
         if (workspace.getConfiguration("anki.send").get("keepSync")) {
-          sendFile(e.uri, ctx).then(() => {
-            window.showInformationMessage("Send Changes to Anki");
+          sendFile(e.uri, ctx, true).then((isSuccess) => {
+            if (isSuccess) {
+              window.showInformationMessage("Sent Changes to Anki");
+            }
           });
         }
       }      

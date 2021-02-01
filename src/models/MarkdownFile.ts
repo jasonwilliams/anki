@@ -11,6 +11,7 @@ export class MarkdownFile {
   public uri: Uri;
   public cachedContent: string;
   public noteIds: number[] = [];
+  public autoSend: boolean = false;
   private meta: string = "";
   private isFromActiveEditor: boolean = false;
 
@@ -30,6 +31,7 @@ export class MarkdownFile {
 
   private loadContent(content: string) {
     this.noteIds = this.readNoteIds(content);
+    this.autoSend = this.readAutoSendMeta(content);
     this.cachedContent = this.removeMeta(content.toString());
   }
 
@@ -59,9 +61,10 @@ export class MarkdownFile {
   }
 
   // TODO: make line breaks consistent with what's used in the file
-  public async updateMeta(cards: Card[]) {
+  public async updateMeta(cards: Card[], autoSend: boolean) {
+    this.autoSend = autoSend;
     const ids = cards.map(c => c.noteId ?? 0 );
-    const metaBody = `[note-ids]: # (${ids.join(', ')})`;
+    const metaBody = `[auto-send]: # (${this.autoSend ? "yes" : "no"})${EOL}[note-ids]: # (${ids.join(', ')})`;
     const meta = `${EOL}${EOL}${EOL}${this.metaStart}${EOL}${metaBody}${EOL}${this.metaEnd}${EOL}`;
     const content = this.cachedContent + meta;
     if (this.isFromActiveEditor) {
@@ -80,6 +83,15 @@ export class MarkdownFile {
       return matches[1].split(', ').map(Number); // what is this wizardry
     }
     return [];
+  }
+
+  private readAutoSendMeta(content: string): boolean {
+    const re = RegExp(/\[auto-send\]: # \((.+)\)/);
+    const matches = content.match(re);
+    if (matches) {
+      return matches[1] == "yes"; // what is this wizardry
+    }
+    return false;
   }
 
 

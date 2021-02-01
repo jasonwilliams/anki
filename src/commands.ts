@@ -93,7 +93,7 @@ export const registerCommands = (ctx: IContext) => {
             const uris = await allMarkdownUri();
             for (let i = 0; i < uris.length; i++)
             {
-              sendFile(uris[i], ctx);
+              sendFile(uris[i], ctx, false);
             }
           } catch(err)
           {
