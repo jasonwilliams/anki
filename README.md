@@ -25,9 +25,11 @@ I have forked extension to use the original author's nice groundwork to expand t
 - Test: What happens if the user hit save multiple times rapidly before Send To Deck completes when it occurs on save?
 - Don't send if no changes to file. Important for Send All command so it doesn't check every file every time needlessly. Probably need to add last-sent meta timestamp to compare to file mod time.
 - Make sure added features are working with "Send to Own Deck"
+- Auto-hide/collapse anki metadata in editor so you don't have to look at it.
 
 ## Known Issues
 
+- Send all can fail because AnkiConnect gets overwhelmed.
 - What should SendAll do if multiple workspaces? 
 - At the moment, Nested header strategy ignores clozes, % sign and tags. I don't use any of this, so I am in no rush to add it.
 - Nested Header strategy ignores original author's use of title to send to own deck.
