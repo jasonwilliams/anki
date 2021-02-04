@@ -2,9 +2,10 @@ import { Transformer } from "./markdown/transformer";
 import { MarkdownFile } from "./models/MarkdownFile";
 import { window, Uri } from 'vscode';
 import { IContext } from "./extension";
+import { SendDiff } from "./models/SendDiff";
 
 
-export async function sendFile(uri: Uri, ctx: IContext, isAutoSend: boolean) {
+export async function sendFile(uri: Uri, ctx: IContext, isAutoSend: boolean): Promise<SendDiff | boolean> {
     try {
         const file = new MarkdownFile(uri);
         await file.load(); // must call to read prior to transform
@@ -12,8 +13,9 @@ export async function sendFile(uri: Uri, ctx: IContext, isAutoSend: boolean) {
             return false;
         }
         try {
-            await new Transformer(file, ctx.ankiService, true).transform();
+            return await new Transformer(file, ctx.ankiService, true).transform();
         } catch (e) {
+            console.log("transform error",e);
             window.showErrorMessage(e.toString());
             return false;
         }
@@ -21,6 +23,5 @@ export async function sendFile(uri: Uri, ctx: IContext, isAutoSend: boolean) {
         window.showErrorMessage(`Unable to read ${uri.fsPath}`);
         return false;
     }
-    return true;
 }
           

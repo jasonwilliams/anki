@@ -36,11 +36,11 @@ export class Transformer {
       .get("defaultDeck") as string;
   }
 
-  async transform() {
-    await this.transformToDeck();
+  async transform(): Promise<SendDiff> {
+    return await this.transformToDeck();
   }
 
-  async transformToDeck() {
+  async transformToDeck(): Promise<SendDiff> {
     const serializer = new Serializer(this.source, this.useDefault);
 
     const { cards, deckName, media } = await serializer.transform();
@@ -86,10 +86,18 @@ export class Transformer {
         })
       })
       // console.log('notes to delete', noteIdsToDelete);
-      this.ankiService?.deleteNotes(noteIdsToDelete);
+      if (noteIdsToDelete.length > 0) {
+        await this.ankiService?.deleteNotes(noteIdsToDelete);
+        // assume success
+        diff.notesDeleted = noteIdsToDelete;
+      }      
       // update the metadata or add it
       await this.source.updateMeta(currentCards, true);
     }
+    await this.ankiService?.resetUi(); // important to reset the Anki UI afterward because
+     // user may be reviewing cards and the card he is on may get deleted
+     // then if the user trys to schedule that card, he will get an error
+    return diff;
   }
 
   async pushMediaItems(media: Media[]) {

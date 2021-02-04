@@ -8,6 +8,7 @@ import { initialSetup } from "./initialSetup";
 import { allMarkdownUri } from "./fsUtils";
 import { MarkdownFile } from './models/MarkdownFile';
 import { sendFile } from "./sendFile";
+import { SendDiff } from "./models/SendDiff";
 
 export const registerCommands = (ctx: IContext) => {
   // Handle Syncing the Anki Instance
@@ -91,13 +92,27 @@ export const registerCommands = (ctx: IContext) => {
         async () => {
           try {
             const uris = await allMarkdownUri();
+            const diffs: SendDiff[] = [];
             for (let i = 0; i < uris.length; i++)
             {
-              sendFile(uris[i], ctx, false);
+              try {
+                console.log("about to send "+ uris[i].fsPath);
+                const diff = await sendFile(uris[i], ctx, false);
+                if (diff instanceof SendDiff) {
+                  diffs.push(diff);
+                  console.log("sent", diff.toString());
+                } else {
+                  console.log("send failed");
+                }               
+                
+              } catch(err) {
+                console.log("failed to send with error: ", err);
+              }
             }
+            window.showInformationMessage(SendDiff.combine(diffs).toString());
           } catch(err)
           {
-            console.log(err);
+            console.log("failed to retrieve markdown files", err);
             window.showErrorMessage("Failed to retrieve markdown files from workspace.");
           }
         }

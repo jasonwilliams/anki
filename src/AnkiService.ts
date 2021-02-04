@@ -142,6 +142,10 @@ export class AnkiService {
     return await this.invoke("addNotes", { notes });
   }
 
+  async resetUi(): Promise<any[]> {
+    return await this.invoke("guiDeckBrowser");
+  }
+
   // seems to return { result: null, error: null } from the doc so I'm not sure how to confirm card deletion
   async deleteNotes(notes: number[]): Promise<any[]> {
     return await this.invoke("deleteNotes", {

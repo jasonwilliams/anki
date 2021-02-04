@@ -13,10 +13,11 @@ I have forked extension to use the original author's nice groundwork to expand t
 - Added option: "anki.send.keepSync". If enabled, after send metadata is added to the bottom of the file. Subsequent file changes will trigger another send. BEWARE: Cards deleted from the markdown will be deleted from the Anki database. Delete the metadata from the file to prevent future sync.
 - Fixed: pushNewCardsToAnki returns NOTE IDs, which were assigned to the Card model's id field. AnkiSerivce.findCards then assigned CARD IDS to the Id field. Fixed to assign note Ids instead of Card Ids in the Card model. Anki potentially creates multiple cards per note, so if there is a need to track card ids, i renamed Card.id to Card.noteId to prevent future confusion.
 - Send to Deck now saves file afterward if user has enabled Sync to allow writing metadata to the filesystem.
+- Send is now more informative, reporting counts of changes.
+- Send now resets Anki UI to DeckBrowser (important if card is deleted that user is actively reviewing)
 
 ## Todo:
 
-- Better feedback for what happened during Send to Anki (# cards created, # unchanged, etc)
 - System to designate files/dirs for exclusion/inclusion on Send All
 - Add option so that card updates are in place, leaving the learning meta data.
 - Option to display a Markdown->Anki deck diff popup with option proceed or cancel. Might be useful if not sure which cards will be created/deleted.
@@ -29,7 +30,6 @@ I have forked extension to use the original author's nice groundwork to expand t
 
 ## Known Issues
 
-- Send all can fail because AnkiConnect gets overwhelmed.
 - What should SendAll do if multiple workspaces? 
 - At the moment, Nested header strategy ignores clozes, % sign and tags. I don't use any of this, so I am in no rush to add it.
 - Nested Header strategy ignores original author's use of title to send to own deck.
