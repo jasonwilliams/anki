@@ -4,6 +4,10 @@ All notable changes to the "anki" extension will be documented in this file.
 
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
+## [1.2.0]
+
+- Added support for Math/Latex syntax
+
 ## [1.0.4]
 
 - Fixed bug where various assets were ignored in production builds
