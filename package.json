@@ -169,7 +169,7 @@
   "dependencies": {
     "@vscode-logging/logger": "^1.2.2",
     "cheerio": "^1.0.0-rc.3",
-    "marked": "^1.1.1",
+    "marked": "^2.0.0",
     "node-fetch": "^2.6.1",
     "prismjs": "^1.20.0",
     "semver": "^7.3.4"
