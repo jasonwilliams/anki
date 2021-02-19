@@ -4,6 +4,7 @@ import { Transformer } from "./markdown/transformer";
 import { CONSTANTS } from "./constants";
 import { getLogger } from "./logger";
 import { initialSetup } from "./initialSetup";
+import { MarkdownFile } from './models/MarkdownFile';
 
 export const registerCommands = (ctx: IContext) => {
   // Handle Syncing the Anki Instance
@@ -39,8 +40,7 @@ export const registerCommands = (ctx: IContext) => {
         async () => {
           try {
             getLogger().info("active Editor..");
-            const file = window.activeTextEditor?.document.getText() ?? "";
-            await new Transformer(file, ctx.ankiService, true).transform();
+            await new Transformer(MarkdownFile.fromActiveTextEditor(), ctx.ankiService, true).transform();
           } catch (e) {
             window.showErrorMessage(e.toString());
           }
@@ -62,8 +62,7 @@ export const registerCommands = (ctx: IContext) => {
         },
         async () => {
           try {
-            const file = window.activeTextEditor?.document.getText() ?? "";
-            await new Transformer(file, ctx.ankiService, false).transform();
+            await new Transformer(MarkdownFile.fromActiveTextEditor(), ctx.ankiService, false).transform();
           } catch (e) {
             getLogger().error(e);
             getLogger().error(
@@ -75,6 +74,9 @@ export const registerCommands = (ctx: IContext) => {
       );
     }
   );
+
+
+
 
   let disposableTreeItemOpen = commands.registerCommand(
     "anki.treeItem",
@@ -90,6 +92,7 @@ export const registerCommands = (ctx: IContext) => {
       await initialSetup(ctx);
     }
   );
+
 
   ctx.context.subscriptions.push(
     disposableSync,

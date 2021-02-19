@@ -142,6 +142,17 @@ export class AnkiService {
     return await this.invoke("addNotes", { notes });
   }
 
+  async guiDeckBrowser(): Promise<any[]> {
+    return await this.invoke("guiDeckBrowser");
+  }
+
+  // seems to return { result: null, error: null } from the doc so I'm not sure how to confirm card deletion
+  async deleteNotes(notes: number[]): Promise<any[]> {
+    return await this.invoke("deleteNotes", {
+      "notes": notes
+    })
+  }
+
   async findCards(query: string): Promise<Card[]> {
     // need double quotes for findCard
     // https://github.com/FooSoft/anki-connect/issues/80#issuecomment-394154441
@@ -154,7 +165,7 @@ export class AnkiService {
       $ = load(v.answer.toString());
       const cleanAnswer = $("html").text();
       const newCard = new Card(cleanQuestion, cleanAnswer)
-        .setId(v.cardId)
+        .setNoteId(v.note)
         .setFields(v.fields)
         .setDeckName(v.deckName);
 
