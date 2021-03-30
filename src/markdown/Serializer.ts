@@ -76,7 +76,7 @@ export class Serializer {
   }
 
   deckName(rawCards: string[]): string | null {
-    const deckName = rawCards.reduce((acc, str) => {
+    const deckName = rawCards.reduceRight((acc, str) => {
       const match = str.match(
         new RegExp(this.getConfig("deck.titleSeparator") as string, "m")
       );

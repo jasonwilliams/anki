@@ -71,5 +71,19 @@ describe("Serializer", () => {
       // Assert
       expect(result).toEqual(deckName);
     });
+    it("should only accept first h1 title", () => {
+      // Arrange
+      const deckName = "Test Title";
+      const input = [
+        `# ${deckName}\r\rextra stuff before the card`,
+        "## Some Card\rCard text",
+        `# other title`
+      ];
+      const serializer = new Serializer(new MarkdownFile(null), false);
+      // Act
+      const result = serializer.deckName(input);
+      // Assert
+      expect(result).toEqual(deckName);
+    });
   });
 });
