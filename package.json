@@ -171,7 +171,7 @@
     "cheerio": "^1.0.0-rc.3",
     "marked": "^2.0.0",
     "node-fetch": "^2.6.1",
-    "prismjs": "^1.20.0",
+    "prismjs": "^1.24.0",
     "semver": "^7.3.4"
   }
 }
