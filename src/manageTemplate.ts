@@ -31,6 +31,11 @@ export async function updateTemplate(ctx: IContext) {
   }
 }
 
+// Is our note type installed on Anki?
+export async function isTemplateInstalled(ctx: IContext): Promise<boolean> {
+  const modelNames: string[] = await ctx.ankiService.modelNames();
+  return modelNames.includes(CONSTANTS.defaultTemplateName);
+}
 /**
  * Check if the template exists, if not create it, if it does exist update it
  */
@@ -39,9 +44,7 @@ export async function createOrUpdateTemplate(ctx: IContext) {
     `Checking if ${CONSTANTS.defaultTemplateName} exists as a model in Anki`
   );
 
-  const modelNames: string[] = await ctx.ankiService.modelNames();
-
-  if (modelNames.includes(CONSTANTS.defaultTemplateName)) {
+  if (await isTemplateInstalled(ctx)) {
     getLogger().info(`${CONSTANTS.defaultTemplateName} found in Anki`);
     await updateTemplate(ctx);
     return;

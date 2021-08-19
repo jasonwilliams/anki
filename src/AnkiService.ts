@@ -179,4 +179,16 @@ export class AnkiService {
       return newCard;
     });
   }
+
+  // Is Anki running?
+  async isUp(): Promise<boolean> {
+    try {
+      // There's no native "isUp" function but modelNames is a safe
+      await this.modelNames();
+    } catch(e) {
+      return false;
+    }
+
+    return true;
+  }
 }

@@ -21,6 +21,7 @@ import { subscriptions } from "./subscriptions";
 import { AnkiFS, initFilesystem } from "./fileSystemProvider";
 import { initState, getAnkiState } from "./state";
 import { initialSetup } from "./initialSetup";
+import { isTemplateInstalled, updateTemplate } from "./manageTemplate";
 
 require("./resources/vscodeAnkiPlugin.scss");
 
@@ -42,7 +43,7 @@ export interface IContext {
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
-export function activate(context: ExtensionContext) {
+export async function activate(context: ExtensionContext) {
   // config
   const schema = workspace.getConfiguration("anki.api").get("schema");
   const hostname = workspace.getConfiguration("anki.api").get("hostname");
@@ -60,20 +61,21 @@ export function activate(context: ExtensionContext) {
 
   const ankiExt = extensions.getExtension("jasew.anki");
   const extMeta = ankiExt?.packageJSON;
-
+  
   // Set up logging
   const logOutputChannel = window.createOutputChannel(extMeta.displayName);
-
+  
   const extLogger = getExtensionLogger({
     extName: extMeta.displayName,
     level: config.log,
     logPath: context.logPath,
     logOutputChannel: logOutputChannel,
   });
-
+  
   // Initialize logger
   initLogger(extLogger);
-
+  
+  getLogger().info(`Anki Extension v${extMeta?.version} activated`);
   const extContext: IContext = {
     ankiService,
     logger: extLogger,
@@ -82,15 +84,33 @@ export function activate(context: ExtensionContext) {
     extMeta,
   };
 
+  // There have been issues with the template being deleted from Anki, but the extension not knowing about it.
+  // We will have to check on every activation to see if its still there
+  // Check if ANKI is running and see if note type is installed
+  const isUp = await ankiService.isUp();
+  let templateInstalled: boolean;
+  if (isUp) {
+    getLogger().info('Anki is running, checking for note type..');
+    templateInstalled = await isTemplateInstalled(extContext);
+    getLogger().info(`Status of note type on Anki: ${templateInstalled}`);
+    if (!templateInstalled) {
+      await updateTemplate(extContext);
+    }
+  } else {
+    getLogger().info('Could not connect to Anki');
+  }
+
   // Check to see if we need to upload assets into Anki
   // If the extension has updated, that is a good time to re-upload
+  const globalStateVersion = context.globalState.get<string>("installedVersion") ?? "0.0.0";
+  getLogger().info(`Checking extension version against cache: Extension: ${extMeta.version}, Cache: ${globalStateVersion}`);
   if (
     semver.gt(
       extMeta.version,
-      context.globalState.get("installedVersion") ?? "0.0.0"
+      globalStateVersion
     )
   ) {
-    getLogger().info(`new version detected (${extMeta.version}), setting up`);
+    getLogger().info(`new version detected (${extMeta.version}), setting up...`);
     initialSetup(extContext);
   }
 
