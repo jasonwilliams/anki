@@ -18,7 +18,8 @@ describe("Serializer", () => {
       // force the getConfig to return back the default value for deck.titleSeparator
       // As that is the only config we're using in deckName
       getConfig.mockImplementation((conf) => "^#\\s");
-    })
+    });
+    
     it("should strip out any front matter before getting the title", () => {
       // Arrange
       const deckName = "Test Title";
