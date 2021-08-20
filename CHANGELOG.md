@@ -4,6 +4,10 @@ All notable changes to the "anki" extension will be documented in this file.
 
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
+## [1.2.3]
+
+- Throw an error if the template is not installed correctly, allowing the user to try again.
+
 ## [1.2.1]
 
 - Added more diagnostics and logging surrounding the bug of missing note types

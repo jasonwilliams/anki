@@ -2,7 +2,7 @@
   "name": "anki",
   "displayName": "Anki for VSCode",
   "description": "Sync notes with your locally running Anki",
-  "version": "1.2.2",
+  "version": "1.2.3",
   "publisher": "jasew",
   "engines": {
     "vscode": "^1.47.0"

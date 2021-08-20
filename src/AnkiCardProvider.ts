@@ -77,7 +77,7 @@ export class AnkiCardProvider implements TreeDataProvider<Dependency> {
     try {
       decks = await this.ankiService.deckNamesAndIds();
     } catch (e) {
-      window.showErrorMessage("Failed to get any Anki Decks");
+      window.showErrorMessage("Failed to get any Decks. Is Anki running?");
       return;
     }
 

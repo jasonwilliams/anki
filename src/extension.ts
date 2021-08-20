@@ -1,27 +1,23 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 import {
-  window,
-  extensions,
-  ExtensionContext,
-  workspace,
-  Disposable,
-} from "vscode";
-import { AnkiService } from "./AnkiService";
-import { AnkiCardProvider } from "./AnkiCardProvider";
-import {
   getExtensionLogger,
   IVSCodeExtLogger,
-  LogLevel,
+  LogLevel
 } from "@vscode-logging/logger";
-import { initLogger, getLogger } from "./logger";
-import { registerCommands } from "./commands";
 import semver from "semver";
-import { subscriptions } from "./subscriptions";
+import {
+  ExtensionContext, extensions, window, workspace
+} from "vscode";
+import { AnkiCardProvider } from "./AnkiCardProvider";
+import { AnkiService } from "./AnkiService";
+import { registerCommands } from "./commands";
 import { AnkiFS, initFilesystem } from "./fileSystemProvider";
-import { initState, getAnkiState } from "./state";
 import { initialSetup } from "./initialSetup";
-import { isTemplateInstalled, updateTemplate } from "./manageTemplate";
+import { getLogger, initLogger } from "./logger";
+import { createOrUpdateTemplate, isTemplateInstalled } from "./manageTemplate";
+import { getAnkiState, initState } from "./state";
+import { subscriptions } from "./subscriptions";
 
 require("./resources/vscodeAnkiPlugin.scss");
 
@@ -95,7 +91,7 @@ export async function activate(context: ExtensionContext) {
     templateInstalled = await isTemplateInstalled(extContext);
     getLogger().info(`Status of note type on Anki: ${templateInstalled}`);
     if (!templateInstalled) {
-      await updateTemplate(extContext);
+      await createOrUpdateTemplate(extContext);
     }
   } else {
     getLogger().info('Could not connect to Anki');

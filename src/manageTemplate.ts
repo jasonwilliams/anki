@@ -62,8 +62,14 @@ export async function createOrUpdateTemplate(ctx: IContext) {
     getLogger().info(
       `${CONSTANTS.defaultTemplateName} was not found in Anki. Will attempt to upload..`
     );
+    let result;
+    try {
+      result = await ctx.ankiService.createModel(model);
+    } catch(e) {
+      getLogger().error(`Creating the template on Anki has failed: ${e}`);
+      throw new Error(`Failed to upload template! ${e}`);
+    }
 
-    const result = await ctx.ankiService.createModel(model);
     if (result.error) {
       getLogger().error(`Failed to upload template: ${result.error}`);
       throw new Error("Failed to upload template!");
