@@ -80,23 +80,6 @@ export async function activate(context: ExtensionContext) {
     extMeta,
   };
 
-  // There have been issues with the template being deleted from Anki, but the extension not knowing about it.
-  // We will have to check on every activation to see if its still there
-  // Check if ANKI is running and see if note type is installed
-  // https://github.com/jasonwilliams/anki/issues/59
-  const isUp = await ankiService.isUp();
-  let templateInstalled: boolean;
-  if (isUp) {
-    getLogger().info('Anki is running, checking for note type..');
-    templateInstalled = await isTemplateInstalled(extContext);
-    getLogger().info(`Status of note type on Anki: ${templateInstalled}`);
-    if (!templateInstalled) {
-      await createOrUpdateTemplate(extContext);
-    }
-  } else {
-    getLogger().info('Could not connect to Anki');
-  }
-
   // Check to see if we need to upload assets into Anki
   // If the extension has updated, that is a good time to re-upload
   const globalStateVersion = context.globalState.get<string>("installedVersion") ?? "0.0.0";
@@ -107,7 +90,7 @@ export async function activate(context: ExtensionContext) {
       globalStateVersion
     )
   ) {
-    getLogger().info(`new version detected (${extMeta.version}), setting up...`);
+    getLogger().info(`Setup triggered by new version being detected (${extMeta.version})`);
     initialSetup(extContext);
   }
 

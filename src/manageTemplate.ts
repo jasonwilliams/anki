@@ -65,6 +65,7 @@ export async function createOrUpdateTemplate(ctx: IContext) {
     let result;
     try {
       result = await ctx.ankiService.createModel(model);
+      getLogger().info(`createModel response: ${result}`);
     } catch(e) {
       getLogger().error(`Creating the template on Anki has failed: ${e}`);
       throw new Error(`Failed to upload template! ${e}`);

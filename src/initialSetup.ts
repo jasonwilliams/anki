@@ -1,10 +1,9 @@
-import { ExtensionContext, Disposable, window } from "vscode";
-import { AnkiService } from "./AnkiService";
 import { readFileSync } from "fs";
 import path from "path";
-import { createOrUpdateTemplate } from "./manageTemplate";
-import { getLogger } from "./logger";
+import { Disposable, window } from "vscode";
 import { IContext } from "./extension";
+import { getLogger } from "./logger";
+import { createOrUpdateTemplate } from "./manageTemplate";
 
 /**
  * The same file names should overwrite, so older versions will eventually update
@@ -38,6 +37,7 @@ export async function initialSetup(ctx: IContext) {
   try {
     disposable = window.setStatusBarMessage("Uploading resources to Anki...");
     await createOrUpdateTemplate(ctx);
+    // This has idempotency as Anki will just ignore if files already exist
     result = await ctx.ankiService.storeMultipleFiles(resources);
     disposable.dispose();
   } catch (e: any) {
