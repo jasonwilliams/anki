@@ -44,7 +44,7 @@ export async function initialSetup(ctx: IContext) {
     window.showErrorMessage(
       "Anki Installation: Unable to update resources on Anki, please make sure Anki is running and try again"
     );
-    ctx.logger.error(e);
+    getLogger().error(`installation attempt failed: ${e}`);
     // If any of the above failed we don't want to update the version, meaning it will try again next time the extension has started
     return;
   }
