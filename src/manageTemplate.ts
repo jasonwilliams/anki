@@ -21,7 +21,17 @@ const model = {
 
 export async function updateTemplate(ctx: IContext) {
   getLogger().info(`Updating ${CONSTANTS.defaultTemplateName} in Anki`);
-  const result = await ctx.ankiService.updateModelTemplate(model);
+  let result;
+  try {
+    // There seems to be an issue here with updating the model silently failing
+    // Check to see if there's any errors from this API call
+    // https://github.com/jasonwilliams/anki/issues/59
+    result = await ctx.ankiService.updateModelTemplate(model);
+  } catch(e: any) {
+    getLogger().error(`updating the template has failed: ${e}`);
+    getLogger().error(e);
+    result = false;
+  }
   if (result === null) {
     getLogger().info(`Updating ${CONSTANTS.defaultTemplateName} successful`);
   } else {

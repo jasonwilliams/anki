@@ -87,6 +87,7 @@ export async function activate(context: ExtensionContext) {
   // There have been issues with the template being deleted from Anki, but the extension not knowing about it.
   // We will have to check on every activation to see if its still there
   // Check if ANKI is running and see if note type is installed
+  // https://github.com/jasonwilliams/anki/issues/59
   const isUp = await ankiService.isUp();
   let templateInstalled: boolean;
   if (isUp) {
