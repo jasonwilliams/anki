@@ -41,10 +41,7 @@ export async function initialSetup(ctx: IContext) {
     result = await ctx.ankiService.storeMultipleFiles(resources);
     disposable.dispose();
   } catch (e: any) {
-    window.showErrorMessage(
-      "Anki Installation: Unable to update resources on Anki, please make sure Anki is running and try again"
-    );
-    getLogger().error(`installation attempt failed: ${e}`);
+    getLogger().error(`installation attempt failed (Anki most likely not running): ${e}`);
     // If any of the above failed we don't want to update the version, meaning it will try again next time the extension has started
     return;
   }

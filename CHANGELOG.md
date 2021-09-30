@@ -4,6 +4,10 @@ All notable changes to the "anki" extension will be documented in this file.
 
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
+## [1.2.5]
+
+- Don't nag if Anki is not running. This reduces annoying pop-ups if user is just looking at a markdown file unrelated to Anki
+
 ## [1.2.3]
 
 - Throw an error if the template is not installed correctly, allowing the user to try again.
