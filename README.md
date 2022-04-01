@@ -33,6 +33,14 @@ Here's an example
 
 ![image](./docs/img/sendToAnkiOwnDeck.gif)
 
+### Send to dirname deck
+
+Similar to the above but will use the current directory structure as deck name.
+
+Here's an example
+
+![image](./docs/img/sendToAnkiAsDirStru.gif)
+
 ### Explorer
 
 Navigate through cards and template CSS.  

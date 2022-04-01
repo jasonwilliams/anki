@@ -4,6 +4,10 @@ All notable changes to the "anki" extension will be documented in this file.
 
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
+## [1.2.6]
+
+- Add a new feature: Use the current directory structure as deck name [#71](https://github.com/jasonwilliams/anki/issues/71)
+
 ## [1.2.5]
 
 - Don't nag if Anki is not running. This reduces annoying pop-ups if user is just looking at a markdown file unrelated to Anki

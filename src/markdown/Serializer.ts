@@ -9,6 +9,11 @@ import path from "path";
 import fs from "fs";
 import { MarkdownFile } from "../models/MarkdownFile";
 
+export const enum DeckNameStrategy {
+  useDefault,
+  ParseTitle,
+  ParseDirStru
+}
 
 interface ParsedData {
   /** DeckName can be null in which case we use the defaultDeck */
@@ -19,11 +24,11 @@ interface ParsedData {
 
 export class Serializer {
   private source: MarkdownFile;
-  private useDefault: boolean;
+  private strategy: DeckNameStrategy;
 
-  public constructor(source: MarkdownFile, useDefault: boolean) {
+  public constructor(source: MarkdownFile, strategy: DeckNameStrategy) {
     this.source = source;
-    this.useDefault = useDefault;
+    this.strategy = strategy;
   }
 
   public async transform(): Promise<ParsedData> {
@@ -44,7 +49,7 @@ export class Serializer {
     const convertMath = this.getConfig("card.convertMath") as boolean;
 
     // If we call "send to own deck" we need the title, if we don't have it error out here
-    if (!deckName && this.useDefault === false) {
+    if (!deckName && this.strategy === DeckNameStrategy.ParseTitle) {
       getLogger().error(
         "Serializer: Could not find H1 title in this document!"
       );
