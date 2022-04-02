@@ -19,6 +19,7 @@
     "onCommand:anki.sync",
     "onCommand:anki.sendToStandalone",
     "onCommand:anki.sendToDeck",
+    "onCommand:anki.sendToAsDirStru",
     "onView:decks"
   ],
   "main": "./out/extension.js",
