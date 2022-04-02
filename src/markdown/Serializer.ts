@@ -10,7 +10,7 @@ import fs from "fs";
 import { MarkdownFile } from "../models/MarkdownFile";
 
 export const enum DeckNameStrategy {
-  useDefault,
+  UseDefault,
   ParseTitle,
   ParseDirStru
 }

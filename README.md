@@ -35,7 +35,9 @@ Here's an example
 
 ### Send to dirname deck
 
-Similar to the above but will use the current directory structure as deck name.
+Similar to the above but will use the current directory structure as deck name. For example, you write a file named `/path/to/workspace/deck/subdeck/note.md`, it will be send to deck `deck::subdeck`.
+
+Also, if `useDirStructure` is selected in the configuration option `saveStrategy`, the command `Anki: Send To Deck` will use the file path as the deck name so you don't need to keep calling the `Anki: Send to DirName Deck` manually.
 
 Here's an example
 

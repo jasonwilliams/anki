@@ -76,6 +76,19 @@
           "default": "http",
           "description": "http or https"
         },
+        "anki.saveStrategy": {
+          "type": "string",
+          "default": "default",
+          "markdownDescription": "Determines the behavior of the command `Anki: Send To Deck`",
+          "enum": [
+            "default",
+            "useDirStructure"
+          ],
+          "markdownEnumDescriptions": [
+            "Send to the deck you specified in the `defaultDeck`",
+            "allows you to default to using the file path as the deck name, same as what `Anki: Send to DirName Deck` does"
+          ]
+        },
         "anki.defaultDeck": {
           "type": "string",
           "default": "notes",

@@ -41,7 +41,11 @@ export const registerCommands = (ctx: IContext) => {
         async () => {
           try {
             getLogger().info("active Editor..");
-            await new Transformer(MarkdownFile.fromActiveTextEditor(), ctx.ankiService, DeckNameStrategy.useDefault).transform();
+            if (workspace.getConfiguration("anki").get("saveStrategy") as string === "default") {
+              await new Transformer(MarkdownFile.fromActiveTextEditor(), ctx.ankiService, DeckNameStrategy.UseDefault).transform();
+            } else {
+              await new Transformer(MarkdownFile.fromActiveTextEditor(), ctx.ankiService, DeckNameStrategy.ParseDirStru).transform();
+            }
           } catch (e) {
             window.showErrorMessage(e.toString());
           }

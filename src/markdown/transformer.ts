@@ -21,12 +21,12 @@ export class Transformer {
 
   /**
    * @param {string} source markdown file
-   * @param {string} useDefault Whether to send to default deck or not
+   * @param {DeckNameStrategy} strategy how to get the deck name
    */
   constructor(
     source: MarkdownFile,
     ankiService: AnkiService,
-    strategy: DeckNameStrategy = DeckNameStrategy.useDefault
+    strategy: DeckNameStrategy = DeckNameStrategy.UseDefault
   ) {
     this.deck = null;
     this.source = source;
@@ -54,11 +54,11 @@ export class Transformer {
       this.ankiService
     );
 
-    // If useDefault is true then the title will be the default Deck
+    // If strategy is UseDefault then the title will be the default Deck
     // For daily markdown files it's still useful to have a tag (we can use the title for this)
     if (
       deckName &&
-      this.strategy === DeckNameStrategy.useDefault &&
+      this.strategy === DeckNameStrategy.UseDefault &&
       (workspace
         .getConfiguration("anki.md")
         .get("createTagForTitle") as boolean)
@@ -88,13 +88,17 @@ export class Transformer {
   }
 
   calculateDeckName(generatedName: string | null = null): string {
-    if (this.strategy === DeckNameStrategy.useDefault) {
+    if (this.strategy === DeckNameStrategy.UseDefault) {
       return this.defaultDeck;
     } else if (this.strategy === DeckNameStrategy.ParseTitle) {
       return generatedName || this.defaultDeck;
     } else {
-      const rootPath = workspace.workspaceFolders?.[0].uri.path;
-      const filePath = window.activeTextEditor?.document.uri.path;
+      const fileUri = window.activeTextEditor?.document.uri;
+      if (fileUri === undefined) {
+        return this.defaultDeck;
+      }
+      const rootPath = workspace.getWorkspaceFolder(fileUri)?.uri.path;
+      const filePath = fileUri.path;
       let deckName: string = "";
       if (rootPath && filePath) {
         deckName = relative(rootPath, dirname(filePath)).replace(/\\/g, '::');
