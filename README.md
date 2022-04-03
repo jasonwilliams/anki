@@ -9,7 +9,7 @@ It uses AnkiConnect for communication so you will need this extension installed 
 
 - Anki >= 2.1.21
 - [Anki Connect](https://ankiweb.net/shared/info/2055492159) >= 2020-07-13
-- VSCode >= 1.47
+- VSCode >= 1.66
 
 ## Features
 

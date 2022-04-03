@@ -5,7 +5,7 @@
   "version": "1.2.6",
   "publisher": "jasew",
   "engines": {
-    "vscode": "^1.57.0"
+    "vscode": "^1.66.0"
   },
   "repository": {
     "type": "git",
