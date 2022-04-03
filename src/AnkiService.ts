@@ -31,7 +31,7 @@ export class AnkiService {
       body: JSON.stringify(req),
     });
 
-    const jsonResponse: IResponse = await response.json();
+    const jsonResponse: IResponse = (await response.json()) as IResponse;
 
     // Seeing that all responses have an error property, its worth just throwing on it here
     if (jsonResponse.error) {
@@ -149,8 +149,8 @@ export class AnkiService {
   // seems to return { result: null, error: null } from the doc so I'm not sure how to confirm card deletion
   async deleteNotes(notes: number[]): Promise<any[]> {
     return await this.invoke("deleteNotes", {
-      "notes": notes
-    })
+      notes: notes,
+    });
   }
 
   async findCards(query: string): Promise<Card[]> {
@@ -185,7 +185,7 @@ export class AnkiService {
     try {
       // There's no native "isUp" function but modelNames is a safe
       await this.modelNames();
-    } catch(e) {
+    } catch (e) {
       return false;
     }
 

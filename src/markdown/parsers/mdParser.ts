@@ -1,4 +1,4 @@
-import { Renderer, setOptions, parse } from "marked";
+import { Renderer, marked } from "marked";
 import { languages, highlight } from "prismjs";
 
 import { BaseParser } from "./baseParser";
@@ -92,7 +92,7 @@ export class MdParser extends BaseParser {
    * @private
    */
   initMarked(): void {
-    setOptions({
+    marked.setOptions({
       renderer: this.renderer,
       gfm: true,
       breaks: true,
@@ -107,7 +107,7 @@ export class MdParser extends BaseParser {
 
   async parse(mdString: string): Promise<string> {
     return new Promise((resolve, reject) => {
-      parse(mdString, (err, result) => {
+      marked.parse(mdString, (err, result) => {
         if (err) {
           return reject(err);
         }

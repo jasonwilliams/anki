@@ -7,6 +7,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 ## [1.2.6]
 
 - Add a new feature: Use the current directory structure as deck name [#71](https://github.com/jasonwilliams/anki/issues/71)
+- Update dependencies
 
 ## [1.2.5]
 

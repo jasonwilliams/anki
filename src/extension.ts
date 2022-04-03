@@ -1,36 +1,25 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
-import {
-  getExtensionLogger,
-  IVSCodeExtLogger,
-  LogLevel
-} from "@vscode-logging/logger";
 import semver from "semver";
-import {
-  ExtensionContext, extensions, window, workspace
-} from "vscode";
+import { ExtensionContext, extensions, window, workspace } from "vscode";
 import { AnkiCardProvider } from "./AnkiCardProvider";
 import { AnkiService } from "./AnkiService";
 import { registerCommands } from "./commands";
 import { AnkiFS, initFilesystem } from "./fileSystemProvider";
 import { initialSetup } from "./initialSetup";
 import { getLogger, initLogger } from "./logger";
-import { createOrUpdateTemplate, isTemplateInstalled } from "./manageTemplate";
 import { getAnkiState, initState } from "./state";
 import { subscriptions } from "./subscriptions";
-
-require("./resources/vscodeAnkiPlugin.scss");
+import "./resources/vscodeAnkiPlugin.scss";
 
 export interface IConfig {
   defaultDeck: string;
-  log: LogLevel;
 }
 
 export interface IContext {
   ankiService: AnkiService;
   /** ExtensionContext from VSCode */
   context: ExtensionContext;
-  logger: IVSCodeExtLogger;
   config: IConfig;
   extMeta: any;
   getAnkiFS?: () => AnkiFS;
@@ -49,7 +38,6 @@ export async function activate(context: ExtensionContext) {
     defaultDeck: workspace
       .getConfiguration("anki")
       .get("defaultDeck") as string,
-    log: workspace.getConfiguration("anki").get("log") as LogLevel,
   };
 
   // Start up Anki Service
@@ -57,24 +45,13 @@ export async function activate(context: ExtensionContext) {
 
   const ankiExt = extensions.getExtension("jasew.anki");
   const extMeta = ankiExt?.packageJSON;
-  
-  // Set up logging
-  const logOutputChannel = window.createOutputChannel(extMeta.displayName);
-  
-  const extLogger = getExtensionLogger({
-    extName: extMeta.displayName,
-    level: config.log,
-    logPath: context.logPath,
-    logOutputChannel: logOutputChannel,
-  });
-  
+
   // Initialize logger
-  initLogger(extLogger);
-  
+  initLogger(workspace.getConfiguration("anki").get("log") || "error");
+
   getLogger().info(`Anki Extension v${extMeta?.version} activated`);
   const extContext: IContext = {
     ankiService,
-    logger: extLogger,
     context: context,
     config,
     extMeta,
@@ -82,15 +59,15 @@ export async function activate(context: ExtensionContext) {
 
   // Check to see if we need to upload assets into Anki
   // If the extension has updated, that is a good time to re-upload
-  const globalStateVersion = context.globalState.get<string>("installedVersion") ?? "0.0.0";
-  getLogger().info(`Checking extension version against cache: Extension: ${extMeta.version}, Cache: ${globalStateVersion}`);
-  if (
-    semver.gt(
-      extMeta.version,
-      globalStateVersion
-    )
-  ) {
-    getLogger().info(`Setup triggered by new version being detected (${extMeta.version})`);
+  const globalStateVersion =
+    context.globalState.get<string>("installedVersion") ?? "0.0.0";
+  getLogger().info(
+    `Checking extension version against cache: Extension: ${extMeta.version}, Cache: ${globalStateVersion}`
+  );
+  if (semver.gt(extMeta.version, globalStateVersion)) {
+    getLogger().info(
+      `Setup triggered by new version being detected (${extMeta.version})`
+    );
     initialSetup(extContext);
   }
 

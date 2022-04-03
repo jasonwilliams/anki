@@ -8,18 +8,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Git Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           ref: ${{ github.sha }}
-      - uses: actions/setup-node@v2-beta
+      - uses: actions/setup-node@v3
         with:
-          node-version: "14"
-      - run: yarn install && npm rebuild
+          node-version: "16"
+      - run: npm ci
       - name: Build and Pre-Publish
-        run: yarn vscode:prepublish
-      - name: Install VSCE
-        run: yarn add vsce
+        run: npm run vscode:prepublish
       - name: Publish
-        run: yarn vsce publish -p $VSCE_TOKEN
+        run: npx vsce publish -p $VSCE_TOKEN
         env:
           VSCE_TOKEN: ${{ secrets.VSCE_TOKEN }}
