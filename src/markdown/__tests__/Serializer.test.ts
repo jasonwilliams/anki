@@ -1,5 +1,5 @@
 import assert from "assert";
-import { Serializer } from "../Serializer";
+import { DeckNameStrategy, Serializer } from "../Serializer";
 import { Uri, workspace } from "vscode";
 import { MarkdownFile } from "../../models/MarkdownFile";
 
@@ -9,7 +9,7 @@ describe("Serializer", () => {
   });
   it("constructs without erroring", () => {
     assert.doesNotThrow(() => {
-      new Serializer(new MarkdownFile(null), false);
+      new Serializer(new MarkdownFile(null), DeckNameStrategy.ParseTitle);
     });
   });
   describe("deckName", () => {
@@ -19,7 +19,7 @@ describe("Serializer", () => {
       // As that is the only config we're using in deckName
       getConfig.mockImplementation((conf) => "^#\\s");
     });
-    
+
     it("should strip out any front matter before getting the title", () => {
       // Arrange
       const deckName = "Test Title";
@@ -27,7 +27,7 @@ describe("Serializer", () => {
         `Some Random Front Matter\r\n# ${deckName}\r\n`,
         "## Some Card\r\nCard text"
       ];
-      const serializer = new Serializer(new MarkdownFile(null), false);
+      const serializer = new Serializer(new MarkdownFile(null), DeckNameStrategy.ParseTitle);
       // Act
       const result = serializer.deckName(input);
       // Assert
@@ -40,7 +40,7 @@ describe("Serializer", () => {
         `# ${deckName}\r\n\r\nextra stuff before the card`,
         "## Some Card\r\nCard text"
       ];
-      const serializer = new Serializer(new MarkdownFile(null), false);
+      const serializer = new Serializer(new MarkdownFile(null), DeckNameStrategy.ParseTitle);
       // Act
       const result = serializer.deckName(input);
       // Assert
@@ -53,7 +53,7 @@ describe("Serializer", () => {
         `# ${deckName}\n\nextra stuff before the card`,
         "## Some Card\nCard text"
       ];
-      const serializer = new Serializer(new MarkdownFile(null), false);
+      const serializer = new Serializer(new MarkdownFile(null), DeckNameStrategy.ParseTitle);
       // Act
       const result = serializer.deckName(input);
       // Assert
@@ -66,7 +66,7 @@ describe("Serializer", () => {
         `# ${deckName}\r\rextra stuff before the card`,
         "## Some Card\rCard text"
       ];
-      const serializer = new Serializer(new MarkdownFile(null), false);
+      const serializer = new Serializer(new MarkdownFile(null), DeckNameStrategy.ParseTitle);
       // Act
       const result = serializer.deckName(input);
       // Assert

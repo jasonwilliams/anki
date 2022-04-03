@@ -1,5 +1,5 @@
 import { window, workspace } from "vscode";
-import { Serializer } from "./Serializer";
+import { DeckNameStrategy, Serializer } from "./Serializer";
 import { Deck } from "../models/Deck";
 import { AnkiService } from "../AnkiService";
 import { Card } from "../models/Card";
@@ -7,6 +7,7 @@ import { getLogger } from "../logger";
 import { Media } from "../models/Media";
 import { MarkdownFile } from "../models/MarkdownFile";
 import { SendDiff } from "../models/SendDiff";
+import { relative, dirname } from "path";
 
 /**
  * Create anki cards from markdown files
@@ -15,22 +16,22 @@ export class Transformer {
   private source: MarkdownFile;
   private deck: Deck | null;
   private defaultDeck: string;
-  private useDefault: boolean;
+  private strategy: DeckNameStrategy;
   private ankiService: AnkiService;
 
   /**
    * @param {string} source markdown file
-   * @param {string} useDefault Whether to send to default deck or not
+   * @param {DeckNameStrategy} strategy how to get the deck name
    */
   constructor(
     source: MarkdownFile,
     ankiService: AnkiService,
-    useDefault: boolean = true
+    strategy: DeckNameStrategy = DeckNameStrategy.UseDefault
   ) {
     this.deck = null;
     this.source = source;
     this.ankiService = ankiService;
-    this.useDefault = useDefault;
+    this.strategy = strategy;
     this.defaultDeck = workspace
       .getConfiguration("anki")
       .get("defaultDeck") as string;
@@ -41,7 +42,7 @@ export class Transformer {
   }
 
   async transformToDeck(): Promise<SendDiff> {
-    const serializer = new Serializer(this.source, this.useDefault);
+    const serializer = new Serializer(this.source, this.strategy);
 
     const { cards, deckName, media } = await serializer.transform();
 
@@ -53,11 +54,11 @@ export class Transformer {
       this.ankiService
     );
 
-    // If useDefault is true then the title will be the default Deck
+    // If strategy is UseDefault then the title will be the default Deck
     // For daily markdown files it's still useful to have a tag (we can use the title for this)
     if (
       deckName &&
-      this.useDefault &&
+      this.strategy === DeckNameStrategy.UseDefault &&
       (workspace
         .getConfiguration("anki.md")
         .get("createTagForTitle") as boolean)
@@ -87,9 +88,23 @@ export class Transformer {
   }
 
   calculateDeckName(generatedName: string | null = null): string {
-    return this.useDefault
-      ? this.defaultDeck
-      : generatedName || this.defaultDeck;
+    if (this.strategy === DeckNameStrategy.UseDefault) {
+      return this.defaultDeck;
+    } else if (this.strategy === DeckNameStrategy.ParseTitle) {
+      return generatedName || this.defaultDeck;
+    } else {
+      const fileUri = window.activeTextEditor?.document.uri;
+      if (fileUri === undefined) {
+        return this.defaultDeck;
+      }
+      const rootPath = workspace.getWorkspaceFolder(fileUri)?.uri.path;
+      const filePath = fileUri.path;
+      let deckName: string = "";
+      if (rootPath && filePath) {
+        deckName = relative(rootPath, dirname(filePath)).replace(/\\/g, '::');
+      }
+      return deckName || this.defaultDeck;
+    }
   }
 
   async exportCards(cards: Card[]) {

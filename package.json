@@ -2,7 +2,7 @@
   "name": "anki",
   "displayName": "Anki for VSCode",
   "description": "Sync notes with your locally running Anki",
-  "version": "1.2.5",
+  "version": "1.2.6",
   "publisher": "jasew",
   "engines": {
     "vscode": "^1.47.0"
@@ -19,6 +19,7 @@
     "onCommand:anki.sync",
     "onCommand:anki.sendToStandalone",
     "onCommand:anki.sendToDeck",
+    "onCommand:anki.sendToAsDirStru",
     "onView:decks"
   ],
   "main": "./out/extension.js",
@@ -37,6 +38,11 @@
       {
         "command": "anki.sendToStandalone",
         "title": "Anki: Send To Own Deck",
+        "enablement": "editorLangId == markdown"
+      },
+      {
+        "command": "anki.sendToAsDirStru",
+        "title": "Anki: Send to DirName Deck",
         "enablement": "editorLangId == markdown"
       },
       {
@@ -70,6 +76,19 @@
           "type": "string",
           "default": "http",
           "description": "http or https"
+        },
+        "anki.saveStrategy": {
+          "type": "string",
+          "default": "default",
+          "markdownDescription": "Determines the behavior of the command `Anki: Send To Deck`",
+          "enum": [
+            "default",
+            "useDirStructure"
+          ],
+          "markdownEnumDescriptions": [
+            "Send to the deck you specified in the `defaultDeck`",
+            "allows you to default to using the file path as the deck name, same as what `Anki: Send to DirName Deck` does"
+          ]
         },
         "anki.defaultDeck": {
           "type": "string",

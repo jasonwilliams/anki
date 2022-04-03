@@ -5,6 +5,7 @@ import { CONSTANTS } from "./constants";
 import { getLogger } from "./logger";
 import { initialSetup } from "./initialSetup";
 import { MarkdownFile } from './models/MarkdownFile';
+import { DeckNameStrategy } from "./markdown/Serializer";
 
 export const registerCommands = (ctx: IContext) => {
   // Handle Syncing the Anki Instance
@@ -40,7 +41,11 @@ export const registerCommands = (ctx: IContext) => {
         async () => {
           try {
             getLogger().info("active Editor..");
-            await new Transformer(MarkdownFile.fromActiveTextEditor(), ctx.ankiService, true).transform();
+            if (workspace.getConfiguration("anki").get("saveStrategy") as string === "default") {
+              await new Transformer(MarkdownFile.fromActiveTextEditor(), ctx.ankiService, DeckNameStrategy.UseDefault).transform();
+            } else {
+              await new Transformer(MarkdownFile.fromActiveTextEditor(), ctx.ankiService, DeckNameStrategy.ParseDirStru).transform();
+            }
           } catch (e) {
             window.showErrorMessage(e.toString());
           }
@@ -62,7 +67,7 @@ export const registerCommands = (ctx: IContext) => {
         },
         async () => {
           try {
-            await new Transformer(MarkdownFile.fromActiveTextEditor(), ctx.ankiService, false).transform();
+            await new Transformer(MarkdownFile.fromActiveTextEditor(), ctx.ankiService, DeckNameStrategy.ParseTitle).transform();
           } catch (e) {
             getLogger().error(e);
             getLogger().error(
@@ -75,8 +80,27 @@ export const registerCommands = (ctx: IContext) => {
     }
   );
 
-
-
+  // Handle Syncing the Anki Instance
+  let disposableSendToAsDirStru = commands.registerCommand(
+    "anki.sendToAsDirStru",
+    async () => {
+      // The code you place here will be executed every time your command is executed
+      window.withProgress(
+        {
+          location: ProgressLocation.Notification,
+          title: `Sending to dirname deck...`,
+          cancellable: false,
+        },
+        async () => {
+          try {
+            await new Transformer(MarkdownFile.fromActiveTextEditor(), ctx.ankiService, DeckNameStrategy.ParseDirStru).transform();
+          } catch (e) {
+            window.showErrorMessage(`Deck not sent: ${e.message}`);
+          }
+        }
+      );
+    }
+  );
 
   let disposableTreeItemOpen = commands.registerCommand(
     "anki.treeItem",
@@ -98,6 +122,7 @@ export const registerCommands = (ctx: IContext) => {
     disposableSync,
     disposableSendToDeck,
     disposableSendToStandalone,
+    disposableSendToAsDirStru,
     disposableTreeItemOpen,
     disposableForceInstall
   );
