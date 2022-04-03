@@ -17,8 +17,9 @@ jobs:
       - run: npm ci
       - name: Build and Pre-Publish
         run: npm run vscode:prepublish
-      - name: Publish
+      - name: Install VSCE
         run: npm i vsce
+      - name: Publish
         run: npx vsce publish -p $VSCE_TOKEN
         env:
           VSCE_TOKEN: ${{ secrets.VSCE_TOKEN }}
