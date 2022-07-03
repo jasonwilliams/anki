@@ -144,6 +144,7 @@ echo "Hello, World!"
 - `Anki: Sync Anki`: This will run Sync on your Anki Instance
 - `Anki: Anki: Send To Deck`: This will attempt to send your (markdown) card into Anki - More info above
 - `Anki: Anki: Send To Own Deck`: Sends to a new deck using the Markdown's title (# example) as a deck name
+- `Anki: Anki: Send To DirName Deck`: Sends to a new deck using the directory structure as a deck name
 - `Anki: Force Re-install`: This will attempt to re-setup the extension on Anki (Anki needs to be running). You shouldn't need this unless there's an issue.
 
 ## Extension Settings
@@ -153,6 +154,7 @@ echo "Hello, World!"
 - `anki.api.hostname`: API Hostname. | _127.0.0.1_
 - `anki.api.port`: API Port. | _8765_
 - `anki.api.schema`: Schema. | _http_
+- `anki.saveStrategy`: the behavior of the command `Anki: Send To Deck` | _default_
 
 I don't recommend messing with the following settings
 

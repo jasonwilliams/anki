@@ -4,6 +4,11 @@ All notable changes to the "anki" extension will be documented in this file.
 
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
+## [1.2.7]
+
+- Fix bug that LaTeX curly brackets do not convert correctly [#63](https://github.com/jasonwilliams/anki/issues/63)
+- Fix bug when user sets the `saveStrategy` to `useDirStructure`, the actual deck does not match the displayed deck when executing the `Send To Deck` command
+
 ## [1.2.6]
 
 - Add a new feature: Use the current directory structure as deck name [#71](https://github.com/jasonwilliams/anki/issues/71)

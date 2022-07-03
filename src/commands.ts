@@ -32,20 +32,19 @@ export const registerCommands = (ctx: IContext) => {
     "anki.sendToDeck",
     async () => {
       // The code you place here will be executed every time your command is executed
+      let strategyStr = workspace.getConfiguration("anki").get("saveStrategy") as string;
+      let processInfo = strategyStr === "default" ? `Sending to Deck: ${ctx.config.defaultDeck}...` : `Sending to dirname deck...`;
+      let strategy = strategyStr === "default" ? DeckNameStrategy.UseDefault : DeckNameStrategy.ParseDirStru;
       window.withProgress(
         {
           location: ProgressLocation.Notification,
-          title: `Sending to Deck: ${ctx.config.defaultDeck}...`,
+          title: processInfo,
           cancellable: false,
         },
         async () => {
           try {
             getLogger().info("active Editor..");
-            if (workspace.getConfiguration("anki").get("saveStrategy") as string === "default") {
-              await new Transformer(MarkdownFile.fromActiveTextEditor(), ctx.ankiService, DeckNameStrategy.UseDefault).transform();
-            } else {
-              await new Transformer(MarkdownFile.fromActiveTextEditor(), ctx.ankiService, DeckNameStrategy.ParseDirStru).transform();
-            }
+            await new Transformer(MarkdownFile.fromActiveTextEditor(), ctx.ankiService, strategy).transform();
           } catch (e) {
             window.showErrorMessage(e.toString());
           }
