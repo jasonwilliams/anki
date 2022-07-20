@@ -135,7 +135,7 @@ export class CardParser extends BaseParser {
    * @private
    */
   async linesToHtml(lines: string[]) {
-    const string = lines.join("\n");
+    const string = lines.join("\n").replace("## ", "");
 
     const mdString = await new MdParser({}).parse(string);
     if (!this.options.convertMath) {
