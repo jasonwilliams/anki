@@ -4,6 +4,9 @@ All notable changes to the "anki" extension will be documented in this file.
 
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
+## [1.2.8]
+- Embeddable Cards definitions. Extract `text` for processing from `<!-- BEGIN_ANKI_CARDS -->text<!-- END_ANKI_CARDS -->` match in the Markdown file.
+
 ## [1.2.7]
 
 - Fix bug that LaTeX curly brackets do not convert correctly [#63](https://github.com/jasonwilliams/anki/issues/63)

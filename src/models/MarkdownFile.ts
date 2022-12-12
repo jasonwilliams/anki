@@ -32,7 +32,9 @@ export class MarkdownFile {
   private loadContent(content: string) {
     this.noteIds = this.readNoteIds(content);
     this.autoSend = this.readAutoSendMeta(content);
-    this.cachedContent = this.removeMeta(content.toString());
+    this.cachedContent = this.removeMeta(
+      this.extractMarkedText(content.toString())
+    );
   }
 
   async load() {      
@@ -49,6 +51,39 @@ export class MarkdownFile {
   public dirPath()
   {
     return path.dirname(this.uri.fsPath);
+  }
+
+
+
+  private extractMarkedText(content: string): string {
+    // extract the text between markers - markdown comments <!-- BEGIN_ANKI_CARDS --> text <!-- END_ANKI_CARDS -->
+    // if the markers are not present then return the entire content
+
+    const beginMarker = "<!-- BEGIN_ANKI_CARDS -->";
+    const endMarker = "<!-- END_ANKI_CARDS -->";
+
+    const begin = content.indexOf(beginMarker);
+    const end = content.indexOf(endMarker);
+
+    // test if least one full pair of markets is present
+    if (begin === -1 || end === -1) {
+      // but if there is only one marker, show an error message
+      if (begin !== -1 || end !== -1) {
+        window.showErrorMessage("Anki Markdown: Found only one of the BEGIN_ANKI_CARDS or END_ANKI_CARDS markers. Ignoring.");
+      }
+      return content;
+    }
+
+    const regex = /<!-- BEGIN_ANKI_CARDS -->([\s\S]*?)<!-- END_ANKI_CARDS -->/gi;
+    const matches = content.matchAll(regex);
+
+    // If there are matches, concatenate the text between the markers and return the result. Otherwise, return conent intact.
+    let result = "";
+    for (const match of matches) {
+      result += match[1] + EOL;
+    }
+    return result ?? content;
+
   }
 
   private removeMeta(content: string) {
