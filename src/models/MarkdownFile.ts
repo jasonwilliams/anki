@@ -56,33 +56,30 @@ export class MarkdownFile {
 
 
   private extractMarkedText(content: string): string {
-    // extract the text between markers - markdown comments <!-- BEGIN_ANKI_CARDS --> text <!-- END_ANKI_CARDS -->
-    // if the markers are not present then return the entire content
+    // Extract the text between markers - markdown comments <!-- BEGIN_ANKI_CARDS --> text <!-- END_ANKI_CARDS -->
+    // Do a qucik test to see if the markers are present, otherwise return the whole content
 
     const beginMarker = "<!-- BEGIN_ANKI_CARDS -->";
-    const endMarker = "<!-- END_ANKI_CARDS -->";
 
     const begin = content.indexOf(beginMarker);
-    const end = content.indexOf(endMarker);
 
-    // test if least one full pair of markets is present
-    if (begin === -1 || end === -1) {
-      // but if there is only one marker, show an error message
-      if (begin !== -1 || end !== -1) {
-        window.showErrorMessage("Anki Markdown: Found only one of the BEGIN_ANKI_CARDS or END_ANKI_CARDS markers. Ignoring.");
-      }
+    if (begin === -1) {
       return content;
     }
 
     const regex = /<!-- BEGIN_ANKI_CARDS -->([\s\S]*?)<!-- END_ANKI_CARDS -->/gi;
     const matches = content.matchAll(regex);
 
-    // If there are matches, concatenate the text between the markers and return the result. Otherwise, return conent intact.
     let result = "";
     for (const match of matches) {
       result += match[1] + EOL;
     }
-    return result ?? content;
+
+    if (result === "") {
+      window.showErrorMessage("Anki Markdown: No text found between BEGIN_ANKI_CARDS and END_ANKI_CARDS markers.");
+    }
+
+    return result;
 
   }
 
