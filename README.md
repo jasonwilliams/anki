@@ -85,6 +85,8 @@ necessary.
 
 When parsing only one markdown file, the title of the deck could be generated based on the top-level headline (`#`).
 
+### Embeding
+
 To embed cards definitions in the existing document, one can limit the scope of the document to be processed between one or more matching pairs of
 `<!-- BEGIN_ANKI_CARDS -->` and `<!-- END_ANKI_CARDS -->` markdown comments.
 ```
