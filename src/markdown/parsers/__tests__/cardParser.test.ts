@@ -9,7 +9,7 @@ describe("CardParser", () => {
   afterAll(() => {
     jest.resetAllMocks();
   });
-  describe("Good Input", () => {
+ describe("Good Input", () => {
     it("constructs without erroring", () => {
       assert.doesNotThrow(() => {
         new CardParser();
@@ -71,6 +71,17 @@ describe("CardParser", () => {
 
       expect(card.tags).toContain("myTag");
     });
+
+    // Should parse the note ID properly
+    it("should parse the note ID properly", async () => {
+        const input =
+          "## Some text that should be on the front\n\n<!-- notecardId: 123 -->\nThis text will be on the back\n\n[#myTag]()";
+        const parser = new CardParser();
+        const card = await parser.parse(input);
+
+        expect(card.noteId).toBe(123);
+        expect(card.answer).toBe("<p>This text will be on the back</p>\n");
+      });
   });
 
   describe("Bad Input", () => {
