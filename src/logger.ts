@@ -12,7 +12,7 @@ const logLevels = [
   "debug",
   "trace",
 ] as const;
-type LogLevel = typeof logLevels[number];
+type LogLevel = (typeof logLevels)[number];
 
 class Logger {
   private channel: OutputChannel;

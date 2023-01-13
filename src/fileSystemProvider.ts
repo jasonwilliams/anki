@@ -181,8 +181,8 @@ export class AnkiFS implements vscode.FileSystemProvider {
   private _bufferedEvents: vscode.FileChangeEvent[] = [];
   private _fireSoonHandle?: NodeJS.Timeout;
 
-  readonly onDidChangeFile: vscode.Event<vscode.FileChangeEvent[]> = this
-    ._emitter.event;
+  readonly onDidChangeFile: vscode.Event<vscode.FileChangeEvent[]> =
+    this._emitter.event;
 
   watch(_resource: vscode.Uri): vscode.Disposable {
     // ignore, fires for all changes...

@@ -48,7 +48,9 @@ export class Deck {
   }
 
   private orderZeroFieldValue(card: Card): string | null {
-    const field: any = Object.values(card.fields).find((field: any) => field.order == 0)
+    const field: any = Object.values(card.fields).find(
+      (field: any) => field.order === 0
+    );
     if (field) {
       return field.value;
     } else {
@@ -57,10 +59,10 @@ export class Deck {
   }
 
   private findDuplicate(ankiCards: Card[], testCard: Card): Card | undefined {
-      return ankiCards.find((ankiCard) => {
-        const ankiCardFront = this.orderZeroFieldValue(ankiCard);
-        return (ankiCardFront && ankiCardFront == testCard.question);
-      });
+    return ankiCards.find((ankiCard) => {
+      const ankiCardFront = this.orderZeroFieldValue(ankiCard);
+      return ankiCardFront && ankiCardFront === testCard.question;
+    });
   }
 
   // pull the deck from Anki
@@ -100,11 +102,13 @@ export class Deck {
   }
 
   private async deleteCards(cards: Card[]) {
-    const nIds: number[] = cards.filter(card => card.noteId).map(card => card.noteId!);
+    const nIds: number[] = cards
+      .filter((card) => card.noteId)
+      .map((card) => card.noteId!);
     await this.ankiService?.deleteNotes(nIds);
   }
 
-  // updates card references in place. 
+  // updates card references in place.
   private async _pushNewCardsToAnki(cards: Card[]) {
     const ids = await this.ankiService?.addNotes(cards); // this function returns NOTE IDS
     ids?.map((v, i) => (cards[i].noteId = v));
@@ -114,7 +118,6 @@ export class Deck {
     const newCards = this.cards.filter((v) => !v.noteId);
     this._pushNewCardsToAnki(newCards);
   }
-
 
   // Anki Service Methods
 
