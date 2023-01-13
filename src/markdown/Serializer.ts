@@ -12,7 +12,7 @@ import { MarkdownFile } from "../models/MarkdownFile";
 export const enum DeckNameStrategy {
   UseDefault,
   ParseTitle,
-  ParseDirStru
+  ParseDirStru,
 }
 
 interface ParsedData {

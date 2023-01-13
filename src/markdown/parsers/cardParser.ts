@@ -135,12 +135,14 @@ export class CardParser extends BaseParser {
    * @private
    */
   async linesToHtml(lines: string[]) {
-    const fixLatex = (match: string) => (
-      /\n\n/.test(match) ?
-        match :  // If there is an empty line, return directly
-        match.replace(/\\[{}%#&$_\\]/g, str => str === "\\\\" ? "\\\\\\\\" : ("\\" + str))
-    );
-    const string = lines.join("\n")
+    const fixLatex = (match: string) =>
+      /\n\n/.test(match)
+        ? match // If there is an empty line, return directly
+        : match.replace(/\\[{}%#&$_\\]/g, (str) =>
+            str === "\\\\" ? "\\\\\\\\" : "\\" + str
+          );
+    const string = lines
+      .join("\n")
       // $$\{1,2\} \%100$$ => $$\\{1,2\\} \\%100$$
       .replace(/(?<!\\)\$\$.+?(?<!\\)\$\$/gs, fixLatex)
       // $\{1,2\} \%100$ => $\\{1,2\\} \\%100$

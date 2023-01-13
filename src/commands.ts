@@ -4,7 +4,7 @@ import { Transformer } from "./markdown/transformer";
 import { CONSTANTS } from "./constants";
 import { getLogger } from "./logger";
 import { initialSetup } from "./initialSetup";
-import { MarkdownFile } from './models/MarkdownFile';
+import { MarkdownFile } from "./models/MarkdownFile";
 import { DeckNameStrategy } from "./markdown/Serializer";
 
 export const registerCommands = (ctx: IContext) => {
@@ -32,9 +32,17 @@ export const registerCommands = (ctx: IContext) => {
     "anki.sendToDeck",
     async () => {
       // The code you place here will be executed every time your command is executed
-      let strategyStr = workspace.getConfiguration("anki").get("saveStrategy") as string;
-      let processInfo = strategyStr === "default" ? `Sending to Deck: ${ctx.config.defaultDeck}...` : `Sending to dirname deck...`;
-      let strategy = strategyStr === "default" ? DeckNameStrategy.UseDefault : DeckNameStrategy.ParseDirStru;
+      let strategyStr = workspace
+        .getConfiguration("anki")
+        .get("saveStrategy") as string;
+      let processInfo =
+        strategyStr === "default"
+          ? `Sending to Deck: ${ctx.config.defaultDeck}...`
+          : `Sending to dirname deck...`;
+      let strategy =
+        strategyStr === "default"
+          ? DeckNameStrategy.UseDefault
+          : DeckNameStrategy.ParseDirStru;
       window.withProgress(
         {
           location: ProgressLocation.Notification,
@@ -44,7 +52,11 @@ export const registerCommands = (ctx: IContext) => {
         async () => {
           try {
             getLogger().info("active Editor..");
-            await new Transformer(MarkdownFile.fromActiveTextEditor(), ctx.ankiService, strategy).transform();
+            await new Transformer(
+              MarkdownFile.fromActiveTextEditor(),
+              ctx.ankiService,
+              strategy
+            ).transform();
           } catch (e) {
             window.showErrorMessage(e.toString());
           }
@@ -66,7 +78,11 @@ export const registerCommands = (ctx: IContext) => {
         },
         async () => {
           try {
-            await new Transformer(MarkdownFile.fromActiveTextEditor(), ctx.ankiService, DeckNameStrategy.ParseTitle).transform();
+            await new Transformer(
+              MarkdownFile.fromActiveTextEditor(),
+              ctx.ankiService,
+              DeckNameStrategy.ParseTitle
+            ).transform();
           } catch (e) {
             getLogger().error(e);
             getLogger().error(
@@ -92,7 +108,11 @@ export const registerCommands = (ctx: IContext) => {
         },
         async () => {
           try {
-            await new Transformer(MarkdownFile.fromActiveTextEditor(), ctx.ankiService, DeckNameStrategy.ParseDirStru).transform();
+            await new Transformer(
+              MarkdownFile.fromActiveTextEditor(),
+              ctx.ankiService,
+              DeckNameStrategy.ParseDirStru
+            ).transform();
           } catch (e) {
             window.showErrorMessage(`Deck not sent: ${e.message}`);
           }
@@ -115,7 +135,6 @@ export const registerCommands = (ctx: IContext) => {
       await initialSetup(ctx);
     }
   );
-
 
   ctx.context.subscriptions.push(
     disposableSync,

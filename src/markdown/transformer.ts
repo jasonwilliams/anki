@@ -101,7 +101,10 @@ export class Transformer {
       const filePath = fileUri.path;
       let deckName: string = "";
       if (rootPath && filePath) {
-        deckName = relative(rootPath, dirname(filePath)).replace(/[\/\\]/g, '::');
+        deckName = relative(rootPath, dirname(filePath)).replace(
+          /[\/\\]/g,
+          "::"
+        );
       }
       return deckName || this.defaultDeck;
     }

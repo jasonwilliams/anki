@@ -2,7 +2,7 @@
 
 [![](https://vsmarketplacebadge.apphb.com/version/jasew.anki.svg)](https://marketplace.visualstudio.com/items?itemName=jasew.anki)
 
-This is a VSCode extension for interacting and sending cards to Anki.  
+This is a VSCode extension for interacting and sending cards to Anki.
 It uses AnkiConnect for communication so you will need this extension installed and running before installing the VSCode extension.
 
 ## Requirements
@@ -11,12 +11,16 @@ It uses AnkiConnect for communication so you will need this extension installed 
 - [Anki Connect](https://ankiweb.net/shared/info/2055492159) >= 2020-07-13
 - VSCode >= 1.66
 
+## Contributing
+
+See [Contributing](./CONTRIBUTING.md)
+
 ## Features
 
 ### Send to deck
 
-If you're writing up Markdown files and want to send some Q & As to a deck you can do that quite easily with the `Anki: Send To Deck` command.  
-It will send to this extension's default deck named "notes" but you can change this in the settings.  
+If you're writing up Markdown files and want to send some Q & As to a deck you can do that quite easily with the `Anki: Send To Deck` command.
+It will send to this extension's default deck named "notes" but you can change this in the settings.
 This is useful if you want a "Daily" deck where you can put daily notes into.
 This extension will also add a tag to each card based on the title, so you can still organise cards within a deck.
 
@@ -26,7 +30,7 @@ Here's an example
 
 ### Send to own deck
 
-Very similar to the above but will send to a new deck that will have the same name that you marked with `#` as the title of the current document.  
+Very similar to the above but will send to a new deck that will have the same name that you marked with `#` as the title of the current document.
 In this example we realise that we want to send this content to its own deck, that's no problem, use `Anki: Send To Own Deck`
 
 Here's an example
@@ -45,7 +49,7 @@ Here's an example
 
 ### Explorer
 
-Navigate through cards and template CSS.  
+Navigate through cards and template CSS.
 Currently this is in a readonly state but future releases should enable editing.
 
 ![image](./docs/img/ankiExplorer3.gif)

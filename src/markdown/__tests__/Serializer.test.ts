@@ -14,7 +14,7 @@ describe("Serializer", () => {
   });
   describe("deckName", () => {
     beforeAll(() => {
-      const getConfig = jest.spyOn(Serializer.prototype as any, 'getConfig');
+      const getConfig = jest.spyOn(Serializer.prototype as any, "getConfig");
       // force the getConfig to return back the default value for deck.titleSeparator
       // As that is the only config we're using in deckName
       getConfig.mockImplementation((conf) => "^#\\s");
@@ -25,9 +25,12 @@ describe("Serializer", () => {
       const deckName = "Test Title";
       const input = [
         `Some Random Front Matter\r\n# ${deckName}\r\n`,
-        "## Some Card\r\nCard text"
+        "## Some Card\r\nCard text",
       ];
-      const serializer = new Serializer(new MarkdownFile(null), DeckNameStrategy.ParseTitle);
+      const serializer = new Serializer(
+        new MarkdownFile(null),
+        DeckNameStrategy.ParseTitle
+      );
       // Act
       const result = serializer.deckName(input);
       // Assert
@@ -38,9 +41,12 @@ describe("Serializer", () => {
       const deckName = "Test Title";
       const input = [
         `# ${deckName}\r\n\r\nextra stuff before the card`,
-        "## Some Card\r\nCard text"
+        "## Some Card\r\nCard text",
       ];
-      const serializer = new Serializer(new MarkdownFile(null), DeckNameStrategy.ParseTitle);
+      const serializer = new Serializer(
+        new MarkdownFile(null),
+        DeckNameStrategy.ParseTitle
+      );
       // Act
       const result = serializer.deckName(input);
       // Assert
@@ -51,9 +57,12 @@ describe("Serializer", () => {
       const deckName = "Test Title";
       const input = [
         `# ${deckName}\n\nextra stuff before the card`,
-        "## Some Card\nCard text"
+        "## Some Card\nCard text",
       ];
-      const serializer = new Serializer(new MarkdownFile(null), DeckNameStrategy.ParseTitle);
+      const serializer = new Serializer(
+        new MarkdownFile(null),
+        DeckNameStrategy.ParseTitle
+      );
       // Act
       const result = serializer.deckName(input);
       // Assert
@@ -64,9 +73,12 @@ describe("Serializer", () => {
       const deckName = "Test Title";
       const input = [
         `# ${deckName}\r\rextra stuff before the card`,
-        "## Some Card\rCard text"
+        "## Some Card\rCard text",
       ];
-      const serializer = new Serializer(new MarkdownFile(null), DeckNameStrategy.ParseTitle);
+      const serializer = new Serializer(
+        new MarkdownFile(null),
+        DeckNameStrategy.ParseTitle
+      );
       // Act
       const result = serializer.deckName(input);
       // Assert

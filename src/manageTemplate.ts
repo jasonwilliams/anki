@@ -27,7 +27,7 @@ export async function updateTemplate(ctx: IContext) {
     // Check to see if there's any errors from this API call
     // https://github.com/jasonwilliams/anki/issues/59
     result = await ctx.ankiService.updateModelTemplate(model);
-  } catch(e: any) {
+  } catch (e: any) {
     getLogger().error(`updating the template has failed: ${e}`);
     getLogger().error(e);
     result = false;
@@ -66,7 +66,7 @@ export async function createOrUpdateTemplate(ctx: IContext) {
     try {
       result = await ctx.ankiService.createModel(model);
       getLogger().info(`createModel response: ${result}`);
-    } catch(e) {
+    } catch (e) {
       getLogger().error(`Creating the template on Anki has failed: ${e}`);
       throw new Error(`Failed to upload template! ${e}`);
     }
