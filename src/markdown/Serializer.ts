@@ -131,7 +131,7 @@ export class Serializer {
 
     const prepare = (_: string, p1: string) => {
       // If it is a remote media resource, do not upload it to anki web
-      if(isRemoteLink(p1)) {
+      if (isRemoteLink(p1)) {
         return `src="${decodeURIComponent(p1)}"`;
       }
 
