@@ -8,6 +8,7 @@ import { Media } from "../models/Media";
 import path from "path";
 import fs from "fs";
 import { MarkdownFile } from "../models/MarkdownFile";
+import { isRemoteLink } from "../utils";
 
 export const enum DeckNameStrategy {
   UseDefault,
@@ -129,6 +130,11 @@ export class Serializer {
     const pattern = /src="([^"]*?)"/g;
 
     const prepare = (_: string, p1: string) => {
+      // If it is a remote media resource, do not upload it to anki web
+      if(isRemoteLink(p1)) {
+        return `src="${decodeURIComponent(p1)}"`;
+      }
+
       const filePath = path.resolve(
         this.source.dirPath() ?? "", // get media relative to current file instead
         decodeURIComponent(p1)

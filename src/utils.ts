@@ -42,3 +42,9 @@ export const trimArrayStart = (array: any[]) => {
  * Trim array
  */
 export const trimArray = (array: any[]) => trimArrayEnd(trimArrayStart(array));
+
+/**
+ * Check whether the link is a http link
+ * @param link
+ */
+export const isRemoteLink = (link: string) => /^(https?)?:\/\//.test(link);
