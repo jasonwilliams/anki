@@ -1,10 +1,11 @@
 const production = process.argv[2] === "--production";
-const watch = process.argv[2] === "--watch";
-const { copy } = require("esbuild-plugin-copy");
-const { sassPlugin } = require("esbuild-sass-plugin");
+import { copy } from "esbuild-plugin-copy";
+import { sassPlugin } from "esbuild-sass-plugin";
+import esbuild from "esbuild";
 
-require("esbuild")
-  .build({
+const watch = process.argv[2] === "--watch";
+const context = await esbuild
+  .context({
     entryPoints: ["./src/extension.ts"],
     bundle: true,
     outdir: "out",
@@ -24,15 +25,26 @@ require("esbuild")
         verbose: false,
       }),
       sassPlugin(),
-    ],
-    watch: watch && {
-      onRebuild(error) {
-        if (error) console.error("watch build failed:", error);
-        else console.log("watch build succeeded");
+      {
+        name: "watch",
+        setup(build) {
+          build.onEnd(() => {
+            console.log("build finished");
+          });
+          build.onStart(() => {
+            console.log("building");
+          });
+        },
       },
-    },
+    ],
   })
   .catch((e) => {
     console.error(e);
     process.exit(1);
   });
+
+if (watch) {
+  await context.watch();
+} else {
+  context.dispose();
+}

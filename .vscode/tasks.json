@@ -14,7 +14,14 @@
         "kind": "build",
         "isDefault": true
       },
-      "problemMatcher": [],
+      "problemMatcher": {
+        "base": "$tsc-watch",
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": "building",
+          "endsPattern": "build finished"
+        }
+      },
       "label": "npm: watch"
     },
     {
