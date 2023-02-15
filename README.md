@@ -89,6 +89,29 @@ necessary.
 
 When parsing only one markdown file, the title of the deck could be generated based on the top-level headline (`#`).
 
+### Embeding
+
+To embed cards definitions in the existing document, one can limit the scope of the document to be processed between one or more matching pairs of
+`<!-- BEGIN_ANKI_CARDS -->` and `<!-- END_ANKI_CARDS -->` markdown comments.
+```
+# Anki for VSCode
+
+This is a VSCode extension for interacting and sending cards to Anki.  
+It uses AnkiConnect for communication so you will need this extension installed and running before installing the VSCode extension.
+
+<!-- BEGIN_ANKI_CARDS -->
+
+## What is the name of the most awesome VSCode plugin?
+
+It is `Anki for VSCode` of course.
+
+## What "Anki for VSCode" requires to function?
+
+It requires AnkiConnect
+
+<!-- END_ANKI_CARDS -->
+```
+
 ### Cloze
 
 You can make Cloze deletions in the card title `## A bit like {{c1::this}}`.

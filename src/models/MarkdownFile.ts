@@ -30,7 +30,9 @@ export class MarkdownFile {
   private loadContent(content: string) {
     this.noteIds = this.readNoteIds(content);
     this.autoSend = this.readAutoSendMeta(content);
-    this.cachedContent = this.removeMeta(content.toString());
+    this.cachedContent = this.removeMeta(
+      this.extractMarkedText(content.toString())
+    );
   }
 
   async load() {
@@ -44,6 +46,36 @@ export class MarkdownFile {
 
   public dirPath() {
     return path.dirname(this.uri.fsPath);
+  }
+
+
+
+  private extractMarkedText(content: string): string {
+    // Extract the text between markers - markdown comments <!-- BEGIN_ANKI_CARDS --> text <!-- END_ANKI_CARDS -->
+    // Do a qucik test to see if the markers are present, otherwise return the whole content
+
+    const beginMarker = "<!-- BEGIN_ANKI_CARDS -->";
+
+    const begin = content.indexOf(beginMarker);
+
+    if (begin === -1) {
+      return content;
+    }
+
+    const regex = /<!-- BEGIN_ANKI_CARDS -->([\s\S]*?)<!-- END_ANKI_CARDS -->/gi;
+    const matches = content.matchAll(regex);
+
+    let result = "";
+    for (const match of matches) {
+      result += match[1] + EOL;
+    }
+
+    if (result === "") {
+      window.showErrorMessage("Anki Markdown: No text found between BEGIN_ANKI_CARDS and END_ANKI_CARDS markers.");
+    }
+
+    return result;
+
   }
 
   private removeMeta(content: string) {
