@@ -164,7 +164,9 @@ export class CardParser extends BaseParser {
       // $$\{1,2\} \%100$$ => $$\\{1,2\\} \\%100$$
       .replace(/(?<!\\)\$\$.+?(?<!\\)\$\$/gs, fixLatex)
       // $\{1,2\} \%100$ => $\\{1,2\\} \\%100$
-      .replace(/(?<![\\$])\$(?!\$).+?(?<!\\)\$/gs, fixLatex);
+      .replace(/(?<![\\$])\$(?!\$).+?(?<!\\)\$/gs, fixLatex)
+      // Replace H2 with normal text
+      .replace(/^## /, "");
 
     const mdString = await new MdParser({}).parse(string);
     if (!this.options.convertMath) {

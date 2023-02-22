@@ -22,7 +22,7 @@ describe("CardParser", () => {
         "## Equation\n\n%\n\n$x_1 = 1$, $x_2 = 2$, $$x_3 = 3$$, $$x_4 = 4$$";
       const parser = new CardParser();
       const card = await parser.parse(input);
-      expect(card.question).toBe('<h2 id="equation">Equation</h2>\n');
+      expect(card.question).toBe("<p>Equation</p>\n");
       expect(card.answer).toBe(
         "<p>\\(x_1 = 1\\), \\(x_2 = 2\\), \\[x_3 = 3\\], \\[x_4 = 4\\]</p>\n"
       );
@@ -45,7 +45,7 @@ describe("CardParser", () => {
       const card = await parser.parse(input);
 
       expect(card.question).toBe(
-        '<h2 id="some-text-that-should-be-on-the-front">Some text that should be on the front</h2>\n'
+        "<p>Some text that should be on the front</p>\n"
       );
       expect(card.answer).toBe("<p>This text will be on the back</p>\n");
     });
@@ -57,7 +57,7 @@ describe("CardParser", () => {
       const card = await parser.parse(input);
 
       expect(card.question).toBe(
-        '<h2 id="some-text-that-should-be-on-the-front">Some text that should be on the front</h2>\n<p>This text will be still be on the front</p>\n'
+        "<p>Some text that should be on the front</p>\n<p>This text will be still be on the front</p>\n"
       );
       expect(card.answer).toBe("<p>This text will be on the back</p>\n");
     });

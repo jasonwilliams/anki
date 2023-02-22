@@ -152,14 +152,14 @@
     }
   },
   "scripts": {
-    "compile": "node build.mjs --production",
+    "build": "node build.mjs --production",
     "lint": "eslint src --ext ts",
     "lint:fix": "eslint src --ext ts --fix",
     "format": "prettier --check .",
     "format:fix": "prettier --write .",
     "watch": "node build.mjs --watch",
     "test": "jest",
-    "test-compile": "tsc -p ./",
+    "test-build": "tsc -p ./",
     "vscode:prepublish": "node build.mjs --production"
   },
   "devDependencies": {
