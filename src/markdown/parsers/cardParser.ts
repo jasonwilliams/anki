@@ -10,6 +10,7 @@ interface ParsedCardLine {
   back: string[];
   tags: string[];
   isCloze: boolean;
+  noteId: number;
 }
 
 /**
@@ -20,6 +21,7 @@ export class CardParser extends BaseParser {
   private splitRe: RegExp;
   private tagRe: RegExp;
   private clozeRe: RegExp;
+  private noteIdRe: RegExp;
 
   constructor({ convertToHtml = true, convertMath = true } = {}) {
     super({ convertToHtml, convertMath });
@@ -29,6 +31,9 @@ export class CardParser extends BaseParser {
     );
     this.tagRe = new RegExp(this.getConfig("card.tagPattern") as string);
     this.clozeRe = new RegExp("{{c\\w+::");
+    this.noteIdRe = new RegExp(
+        "<!--\\s*?notecardId\\s*?[:=]\\s*?(\\d+)\\s*?-->"
+    );
   }
 
   /**
@@ -42,10 +47,11 @@ export class CardParser extends BaseParser {
       .map((item) => item.split("\n"))
       .map((arr) => arr.map((str) => str.trimRight()));
 
-    const { front, back, tags, isCloze } = this.parseCardLines(cardLines);
+    const { front, back, tags, isCloze, noteId } =
+      this.parseCardLines(cardLines);
 
     if (!this.options.convertToHtml) {
-      return new Card(front.join(), back.join(), tags);
+      return new Card(front.join(), back.join(), tags, noteId);
     }
 
     // If card is a Cloze card we need to use a different note type
@@ -54,6 +60,7 @@ export class CardParser extends BaseParser {
         front.join().replace("## ", ""),
         back.join(),
         tags,
+        noteId,
         "Cloze"
       );
     }
@@ -61,13 +68,14 @@ export class CardParser extends BaseParser {
     const frontHtml = await this.linesToHtml(front);
     const backHtml = await this.linesToHtml(back);
 
-    return new Card(frontHtml, backHtml, tags);
+    return new Card(frontHtml, backHtml, tags, noteId);
   }
 
   private parseCardLines(cardLines: string[][]): ParsedCardLine {
     const front: string[] = [];
     const back: string[] = [];
     const tags: string[] = [];
+    let noteId = 0;
     let isCloze = false;
 
     const fillBackAndTags = (line: string) => {
@@ -75,6 +83,15 @@ export class CardParser extends BaseParser {
       if (this.tagRe.test(line)) {
         tags.push(...this.parseTags(line));
         return;
+      }
+
+      // set note ID
+      if (this.noteIdRe.test(line)) {
+        let match = line.match(this.noteIdRe);
+        if (match && match.length == 2) {
+          noteId = parseInt(match[1]);
+          return;
+        }
       }
 
       // set back
@@ -112,6 +129,7 @@ export class CardParser extends BaseParser {
       back: trimArray(back),
       tags: trimArray(tags),
       isCloze,
+      noteId,
     };
   }
 
