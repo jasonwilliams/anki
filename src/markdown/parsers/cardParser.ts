@@ -32,7 +32,7 @@ export class CardParser extends BaseParser {
     this.tagRe = new RegExp(this.getConfig("card.tagPattern") as string);
     this.clozeRe = new RegExp("{{c\\w+::");
     this.noteIdRe = new RegExp(
-        "<!--\\s*?notecardId\\s*?[:=]\\s*?(\\d+)\\s*?-->"
+      "<!--\\s*?notecardId\\s*?[:=]\\s*?(\\d+)\\s*?-->"
     );
   }
 
@@ -88,7 +88,7 @@ export class CardParser extends BaseParser {
       // set note ID
       if (this.noteIdRe.test(line)) {
         let match = line.match(this.noteIdRe);
-        if (match && match.length == 2) {
+        if (match && match.length === 2) {
           noteId = parseInt(match[1]);
           return;
         }

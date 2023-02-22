@@ -16,14 +16,14 @@ export class Card {
     question: string,
     answer: string,
     tags: string[] = [],
-        noteId: number = 0,
+    noteId: number = 0,
     model: string = CONSTANTS.defaultTemplateName
   ) {
     this.question = question;
     this.answer = answer;
     this.tags = tags;
     this.modelName = model;
-    this.noteId = noteId
+    this.noteId = noteId;
 
     // The fields need to match the template, cloze has different fields
     if (this.modelName === CONSTANTS.defaultTemplateName) {
