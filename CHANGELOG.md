@@ -6,6 +6,8 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ## [1.3.0]
 
+- The title of the card is no longer a H2 element, but just a normal paragraph [#82](https://github.com/jasonwilliams/anki/pull/82)
+- You can now use reverse cards, just set `anki.notetype` to `BasicWithHighlightVSCodeRev`
 - Support remote images [#99](https://github.com/jasonwilliams/anki/pull/99)
 - Parse NoteIDs [#92](https://github.com/jasonwilliams/anki/pull/92)
 - Fixed bug with trace not showing in logs
