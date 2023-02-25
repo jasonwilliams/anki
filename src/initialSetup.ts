@@ -16,12 +16,9 @@ export async function initialSetup(ctx: IContext) {
 
   // get dark-mode override
   // The selectors in here are more specific so will kick in when darkMode is turned on
-  const vscodeAnkiPlugin = readFileSync(
-    path.join(ctx.context.extensionPath, "out", "extension.css"),
-    {
-      encoding: "base64",
-    }
-  );
+  const vscodeAnkiPlugin = readFileSync(path.join(ctx.context.extensionPath, "out", "extension.css"), {
+    encoding: "base64",
+  });
 
   const resources = [
     {
@@ -36,9 +33,7 @@ export async function initialSetup(ctx: IContext) {
     result = await ctx.ankiService.storeMultipleFiles(resources);
     disposable.dispose();
   } catch (e: any) {
-    getLogger().error(
-      `installation attempt failed (Anki most likely not running): ${e}`
-    );
+    getLogger().error(`installation attempt failed (Anki most likely not running): ${e}`);
     // If any of the above failed we don't want to update the version, meaning it will try again next time the extension has started
     return;
   }

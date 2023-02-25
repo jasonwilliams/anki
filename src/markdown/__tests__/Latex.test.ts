@@ -20,14 +20,7 @@ describe("Latex", () => {
   });
   it("Should keep the content of 'Latex block' unchanged.", async () => {
     // linesToHtml always return a newline at the end of string
-    const latexs = [
-      "a=\\%1",
-      "b=\\#1",
-      "\\before{align}",
-      "c=\\{1,2\\} \\\\",
-      "d=\\$2",
-      "\\end{align}",
-    ];
+    const latexs = ["a=\\%1", "b=\\#1", "\\before{align}", "c=\\{1,2\\} \\\\", "d=\\$2", "\\end{align}"];
     const input = [
       `extra stuff before the latex`,
       `$$${latexs[0]} ${latexs[1]}$$`, // one line latex block

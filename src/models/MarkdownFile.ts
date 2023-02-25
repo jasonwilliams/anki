@@ -59,9 +59,7 @@ export class MarkdownFile {
   public async updateMeta(cards: Card[], autoSend: boolean) {
     this.autoSend = autoSend;
     const ids = cards.map((c) => c.noteId ?? 0);
-    const metaBody = `[auto-send]: # (${
-      this.autoSend ? "yes" : "no"
-    })${EOL}[note-ids]: # (${ids.join(", ")})`;
+    const metaBody = `[auto-send]: # (${this.autoSend ? "yes" : "no"})${EOL}[note-ids]: # (${ids.join(", ")})`;
     const meta = `${EOL}${EOL}${EOL}${this.metaStart}${EOL}${metaBody}${EOL}${this.metaEnd}${EOL}`;
     const content = this.cachedContent + meta;
     if (this.isFromActiveEditor) {

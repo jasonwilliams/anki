@@ -23,14 +23,8 @@ describe("Serializer", () => {
     it("should strip out any front matter before getting the title", () => {
       // Arrange
       const deckName = "Test Title";
-      const input = [
-        `Some Random Front Matter\r\n# ${deckName}\r\n`,
-        "## Some Card\r\nCard text",
-      ];
-      const serializer = new Serializer(
-        new MarkdownFile(null),
-        DeckNameStrategy.ParseTitle
-      );
+      const input = [`Some Random Front Matter\r\n# ${deckName}\r\n`, "## Some Card\r\nCard text"];
+      const serializer = new Serializer(new MarkdownFile(null), DeckNameStrategy.ParseTitle);
       // Act
       const result = serializer.deckName(input);
       // Assert
@@ -39,14 +33,8 @@ describe("Serializer", () => {
     it("should only receive the title from the line of the h1 accounting for CRLF line endings", () => {
       // Arrange
       const deckName = "Test Title";
-      const input = [
-        `# ${deckName}\r\n\r\nextra stuff before the card`,
-        "## Some Card\r\nCard text",
-      ];
-      const serializer = new Serializer(
-        new MarkdownFile(null),
-        DeckNameStrategy.ParseTitle
-      );
+      const input = [`# ${deckName}\r\n\r\nextra stuff before the card`, "## Some Card\r\nCard text"];
+      const serializer = new Serializer(new MarkdownFile(null), DeckNameStrategy.ParseTitle);
       // Act
       const result = serializer.deckName(input);
       // Assert
@@ -55,14 +43,8 @@ describe("Serializer", () => {
     it("should only receive the title from the line of the h1 accounting for LF line endings", () => {
       // Arrange
       const deckName = "Test Title";
-      const input = [
-        `# ${deckName}\n\nextra stuff before the card`,
-        "## Some Card\nCard text",
-      ];
-      const serializer = new Serializer(
-        new MarkdownFile(null),
-        DeckNameStrategy.ParseTitle
-      );
+      const input = [`# ${deckName}\n\nextra stuff before the card`, "## Some Card\nCard text"];
+      const serializer = new Serializer(new MarkdownFile(null), DeckNameStrategy.ParseTitle);
       // Act
       const result = serializer.deckName(input);
       // Assert
@@ -71,14 +53,8 @@ describe("Serializer", () => {
     it("should only receive the title from the line of the h1 accounting for weird mac line endings", () => {
       // Arrange
       const deckName = "Test Title";
-      const input = [
-        `# ${deckName}\r\rextra stuff before the card`,
-        "## Some Card\rCard text",
-      ];
-      const serializer = new Serializer(
-        new MarkdownFile(null),
-        DeckNameStrategy.ParseTitle
-      );
+      const input = [`# ${deckName}\r\rextra stuff before the card`, "## Some Card\rCard text"];
+      const serializer = new Serializer(new MarkdownFile(null), DeckNameStrategy.ParseTitle);
       // Act
       const result = serializer.deckName(input);
       // Assert

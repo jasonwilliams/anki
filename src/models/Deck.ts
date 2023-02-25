@@ -48,9 +48,7 @@ export class Deck {
   }
 
   private orderZeroFieldValue(card: Card): string | null {
-    const field: any = Object.values(card.fields).find(
-      (field: any) => field.order === 0
-    );
+    const field: any = Object.values(card.fields).find((field: any) => field.order === 0);
     if (field) {
       return field.value;
     } else {
@@ -102,9 +100,7 @@ export class Deck {
   }
 
   private async deleteCards(cards: Card[]) {
-    const nIds: number[] = cards
-      .filter((card) => card.noteId)
-      .map((card) => card.noteId!);
+    const nIds: number[] = cards.filter((card) => card.noteId).map((card) => card.noteId!);
     await this.ankiService?.deleteNotes(nIds);
   }
 
@@ -127,9 +123,7 @@ export class Deck {
       const id = await this.ankiService.createDeck(this.name);
       this.id = id;
     } else {
-      throw new Error(
-        "Deck cannot be created because it either has an ID or can't use Service"
-      );
+      throw new Error("Deck cannot be created because it either has an ID or can't use Service");
     }
   }
 

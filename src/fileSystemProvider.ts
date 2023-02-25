@@ -76,11 +76,7 @@ export class AnkiFS implements vscode.FileSystemProvider {
     throw vscode.FileSystemError.FileNotFound();
   }
 
-  writeFile(
-    uri: vscode.Uri,
-    content: Uint8Array,
-    options: { create: boolean; overwrite: boolean }
-  ): void {
+  writeFile(uri: vscode.Uri, content: Uint8Array, options: { create: boolean; overwrite: boolean }): void {
     const basename = path.posix.basename(uri.path);
     const parent = this._lookupParentDirectory(uri);
     let entry = parent.entries.get(basename);
@@ -105,11 +101,7 @@ export class AnkiFS implements vscode.FileSystemProvider {
     this._fireSoon({ type: vscode.FileChangeType.Changed, uri });
   }
 
-  rename(
-    oldUri: vscode.Uri,
-    newUri: vscode.Uri,
-    options: { overwrite: boolean }
-  ): void {}
+  rename(oldUri: vscode.Uri, newUri: vscode.Uri, options: { overwrite: boolean }): void {}
 
   delete(uri: vscode.Uri): void {}
 
@@ -123,10 +115,7 @@ export class AnkiFS implements vscode.FileSystemProvider {
     parent.mtime = Date.now();
     parent.size += 1;
 
-    this._fireSoon(
-      { type: vscode.FileChangeType.Changed, uri: dirname },
-      { type: vscode.FileChangeType.Created, uri }
-    );
+    this._fireSoon({ type: vscode.FileChangeType.Changed, uri: dirname }, { type: vscode.FileChangeType.Created, uri });
   }
 
   private _lookup(uri: vscode.Uri, silent: false): Entry;
@@ -181,8 +170,7 @@ export class AnkiFS implements vscode.FileSystemProvider {
   private _bufferedEvents: vscode.FileChangeEvent[] = [];
   private _fireSoonHandle?: NodeJS.Timeout;
 
-  readonly onDidChangeFile: vscode.Event<vscode.FileChangeEvent[]> =
-    this._emitter.event;
+  readonly onDidChangeFile: vscode.Event<vscode.FileChangeEvent[]> = this._emitter.event;
 
   watch(_resource: vscode.Uri): vscode.Disposable {
     // ignore, fires for all changes...

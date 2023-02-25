@@ -1,8 +1,4 @@
-const {
-  question: defaultQuestion,
-  answer: defaultAnswer,
-  css: defaultCss,
-} = require("../configs").template.formats;
+const { question: defaultQuestion, answer: defaultAnswer, css: defaultCss } = require("../configs").template.formats;
 
 class Template {
   private questionFormat: string;
