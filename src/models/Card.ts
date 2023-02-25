@@ -1,6 +1,5 @@
 import { sanitizeString } from "../utils";
 import { Deck } from "./Deck";
-import { CONSTANTS } from "../constants";
 
 export class Card {
   public question: string;
@@ -12,29 +11,22 @@ export class Card {
   public deck?: Deck;
   public deckName?: string;
 
-  constructor(
-    question: string,
-    answer: string,
-    tags: string[] = [],
-    noteId: number = 0,
-    model: string = CONSTANTS.defaultTemplateName
-  ) {
+  constructor(question: string, answer: string, tags: string[] = [], noteId: number = 0, model: string) {
     this.question = question;
     this.answer = answer;
     this.tags = tags;
     this.modelName = model;
     this.noteId = noteId;
 
-    // The fields need to match the template, cloze has different fields
-    if (this.modelName === CONSTANTS.defaultTemplateName) {
+    // must be a Cloze note type
+    if (this.modelName === "Cloze") {
+      this.fields = {
+        Text: question,
+      };
+    } else {
       this.fields = {
         Front: question,
         Back: answer,
-      };
-      // must be a Cloze note type
-    } else {
-      this.fields = {
-        Text: question,
       };
     }
   }
@@ -75,11 +67,10 @@ export class Card {
 
     // Also set the fields
     // The fields need to match the template, cloze has different fields
-    if (this.modelName === CONSTANTS.defaultTemplateName) {
-      this.fields.Front = q;
-      // must be a Cloze note type
-    } else {
+    if (this.modelName === "Cloze") {
       this.fields.Text = q;
+    } else {
+      this.fields.Front = q;
     }
   }
 
@@ -88,7 +79,7 @@ export class Card {
 
     // Also set the fields
     // The fields need to match the template, cloze has different fields
-    if (this.modelName === CONSTANTS.defaultTemplateName) {
+    if (this.modelName !== "Cloze") {
       this.fields.Back = a;
     }
   }
@@ -111,9 +102,7 @@ export class Card {
   // this is how we check to see if the anki card needs to be updated
   fieldsMatch(ankiCard: Card): boolean {
     return !Object.keys(this.fields).some((key) => {
-      return !(
-        ankiCard.fields[key] && ankiCard.fields[key].value === this.fields[key]
-      );
+      return !(ankiCard.fields[key] && ankiCard.fields[key].value === this.fields[key]);
     });
   }
 }

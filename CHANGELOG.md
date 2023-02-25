@@ -4,6 +4,13 @@ All notable changes to the "anki" extension will be documented in this file.
 
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
+## [1.3.0]
+
+- Support remote images [#99](https://github.com/jasonwilliams/anki/pull/99)
+- Parse NoteIDs [#92](https://github.com/jasonwilliams/anki/pull/92)
+- Fixed bug with trace not showing in logs
+- updated TypeScript and updated formatting.
+
 ## [1.2.7]
 
 - Fix bug that LaTeX curly brackets do not convert correctly [#63](https://github.com/jasonwilliams/anki/issues/63)

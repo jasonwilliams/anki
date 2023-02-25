@@ -1,9 +1,9 @@
-import fetch from "node-fetch";
 import { load } from "cheerio";
-import { Deck } from "./models/Deck";
-import { Card } from "./models/Card";
+import fetch from "node-fetch";
 import { getLogger } from "./logger";
-import { CONSTANTS } from "./constants";
+import { Model } from "./manageTemplate";
+import { Card } from "./models/Card";
+import { Deck } from "./models/Deck";
 import { getAnkiState } from "./state";
 
 interface IResponse {
@@ -78,9 +78,7 @@ export class AnkiService {
     });
   }
 
-  async storeMultipleFiles(
-    files: { filename: string; data: string }[]
-  ): Promise<any> {
+  async storeMultipleFiles(files: { filename: string; data: string }[]): Promise<any> {
     const actions = files.map((v) => ({
       action: "storeMediaFile",
       params: {
@@ -111,16 +109,14 @@ export class AnkiService {
   async modelTemplates(modelName: string): Promise<object> {
     return await this.invoke("modelTemplates", { modelName });
   }
-  async updateModelTemplate(model: any) {
+  async updateModelTemplate(model: Model) {
     return await this.invoke("updateModelTemplates", {
       model: {
-        name: CONSTANTS.defaultTemplateName,
-        templates: {
-          "Card 1": {
-            Front: model.cardTemplates[0].Front,
-            Back: model.cardTemplates[0].Back,
-          },
-        },
+        name: model.modelName,
+        templates: model.cardTemplates.reduce((acc, v) => {
+          (acc as any)[v.Name] = { Front: v.Front, Back: v.Back };
+          return acc;
+        }, {}),
       },
     });
   }
@@ -164,7 +160,7 @@ export class AnkiService {
       const cleanQuestion = $("html").text();
       $ = load(v.answer.toString());
       const cleanAnswer = $("html").text();
-      const newCard = new Card(cleanQuestion, cleanAnswer)
+      const newCard = new Card(cleanQuestion, cleanAnswer, undefined, undefined, v.modelName)
         .setNoteId(v.note)
         .setFields(v.fields)
         .setDeckName(v.deckName);

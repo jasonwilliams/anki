@@ -1,18 +1,10 @@
-import { window, OutputChannel } from "vscode";
+import { OutputChannel, window } from "vscode";
 /**
  * A Simple Wrapper to hold the state of our "singleton" (per extension) IVSCodeExtLogger
  * implementation.
  */
-const logLevels = [
-  "off",
-  "fatal",
-  "error",
-  "warn",
-  "info",
-  "debug",
-  "trace",
-] as const;
-type LogLevel = (typeof logLevels)[number];
+const logLevels = ["off", "fatal", "error", "warn", "info", "debug", "trace"] as const;
+export type LogLevel = (typeof logLevels)[number];
 
 class Logger {
   private channel: OutputChannel;
@@ -23,8 +15,12 @@ class Logger {
     this.logLevel = log;
   }
 
+  public setLevel(level: LogLevel) {
+    this.logLevel = level;
+  }
+
   private checkLevel(input: LogLevel): boolean {
-    if (logLevels.indexOf(input) < logLevels.indexOf(this.logLevel)) {
+    if (logLevels.indexOf(input) <= logLevels.indexOf(this.logLevel)) {
       return true;
     }
 

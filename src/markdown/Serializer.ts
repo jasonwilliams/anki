@@ -1,14 +1,15 @@
 /* eslint-disable no-param-reassign */
 import { workspace } from "vscode";
 
-import { Card } from "../models/Card";
-import { CardParser } from "./parsers/cardParser";
-import { getLogger } from "../logger";
-import { Media } from "../models/Media";
-import path from "path";
 import fs from "fs";
+import path from "path";
+import { IContext } from "../extension";
+import { getLogger } from "../logger";
+import { Card } from "../models/Card";
 import { MarkdownFile } from "../models/MarkdownFile";
+import { Media } from "../models/Media";
 import { isRemoteLink } from "../utils";
+import { CardParser } from "./parsers/cardParser";
 
 export const enum DeckNameStrategy {
   UseDefault,
@@ -26,10 +27,12 @@ interface ParsedData {
 export class Serializer {
   private source: MarkdownFile;
   private strategy: DeckNameStrategy;
+  private context: IContext;
 
-  public constructor(source: MarkdownFile, strategy: DeckNameStrategy) {
+  public constructor(source: MarkdownFile, strategy: DeckNameStrategy, ctx: IContext) {
     this.source = source;
     this.strategy = strategy;
+    this.context = ctx;
   }
 
   public async transform(): Promise<ParsedData> {
@@ -47,25 +50,19 @@ export class Serializer {
       .map((line) => line.trim());
 
     const deckName = this.deckName(rawCards);
+    const noteType = this.context.config.noteType;
     const convertMath = this.getConfig("card.convertMath") as boolean;
 
     // If we call "send to own deck" we need the title, if we don't have it error out here
     if (!deckName && this.strategy === DeckNameStrategy.ParseTitle) {
-      getLogger().error(
-        "Serializer: Could not find H1 title in this document!"
-      );
+      getLogger().error("Serializer: Could not find H1 title in this document!");
       throw new Error("Unable to parse title!");
     }
 
     // filter out deck title
-    rawCards = rawCards.filter(
-      (str) =>
-        str.search(this.getConfig("deck.titleSeparator") as string) === -1
-    );
+    rawCards = rawCards.filter((str) => str.search(this.getConfig("deck.titleSeparator") as string) === -1);
 
-    const parsedCards = await Promise.all(
-      rawCards.map((str) => new CardParser({ convertMath }).parse(str))
-    );
+    const parsedCards = await Promise.all(rawCards.map((str) => new CardParser({ convertMath, noteType }).parse(str)));
     const cards = parsedCards
       // card should have at least a front side
       // Cloze cards don't need an answer side
@@ -83,9 +80,7 @@ export class Serializer {
 
   deckName(rawCards: string[]): string | null {
     const deckName = rawCards.reduce((acc, str) => {
-      const match = str.match(
-        new RegExp(this.getConfig("deck.titleSeparator") as string, "m")
-      );
+      const match = str.match(new RegExp(this.getConfig("deck.titleSeparator") as string, "m"));
 
       if (match && match.input) {
         // Handle frontmatter
@@ -149,9 +144,7 @@ export class Serializer {
 
       media.fileName = `${media.checksum}${fileExt}`;
 
-      const hasMedia = mediaList.some(
-        (item) => item.checksum === media.checksum
-      );
+      const hasMedia = mediaList.some((item) => item.checksum === media.checksum);
       if (!hasMedia) {
         mediaList.push(media);
       }

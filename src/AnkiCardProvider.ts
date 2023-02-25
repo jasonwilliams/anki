@@ -1,12 +1,5 @@
 import { join } from "path";
-import {
-  TreeItemCollapsibleState,
-  TreeItem,
-  ExtensionContext,
-  TreeDataProvider,
-  window,
-  Uri,
-} from "vscode";
+import { TreeDataProvider, TreeItem, TreeItemCollapsibleState, Uri, window } from "vscode";
 import { AnkiService } from "./AnkiService";
 import { IContext } from "./extension";
 import { AnkiFS } from "./fileSystemProvider";
@@ -14,13 +7,13 @@ import { getAnkiState } from "./state";
 
 export class AnkiCardProvider implements TreeDataProvider<Dependency> {
   private ankiService: AnkiService;
-  private context: ExtensionContext;
+  private context: IContext;
   private ankiFS: AnkiFS;
   private state: any;
 
   constructor(extContext: IContext) {
     this.ankiService = extContext.ankiService;
-    this.context = extContext.context;
+    this.context = extContext;
     if (!extContext?.getAnkiFS) {
       throw new Error("Anki Error: initialised AnkiFS/AnkiState is required");
     }
@@ -140,35 +133,15 @@ export class AnkiCardProvider implements TreeDataProvider<Dependency> {
       create: true,
       overwrite: true,
     });
-    const css = new Dependency(
-      "styling.css",
-      uri,
-      TreeItemCollapsibleState.None,
-      uri,
-      ItemType.Css
-    );
+    const css = new Dependency("styling.css", uri, TreeItemCollapsibleState.None, uri, ItemType.Css);
 
     return css;
   }
 
   getIconPath(iconName: string): object {
     return {
-      light: join(
-        this.context.extensionPath,
-        "src",
-        "resources",
-        "icons",
-        "light",
-        `${iconName}.svg`
-      ),
-      dark: join(
-        this.context.extensionPath,
-        "src",
-        "resources",
-        "icons",
-        "dark",
-        `${iconName}.svg`
-      ),
+      light: join(this.context.context.extensionPath, "src", "resources", "icons", "light", `${iconName}.svg`),
+      dark: join(this.context.context.extensionPath, "src", "resources", "icons", "dark", `${iconName}.svg`),
     };
   }
 }

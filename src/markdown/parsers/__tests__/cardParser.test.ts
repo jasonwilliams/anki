@@ -1,9 +1,10 @@
 import assert from "assert";
-import { CardParser } from "../cardParser";
 import { Card } from "../../../models/Card";
+import { CardParser } from "../cardParser";
 
 // Setup mocks for cardParser
 jest.mock("vscode");
+const options = { noteType: "BasicWithHighlightVSCode" };
 
 describe("CardParser", () => {
   afterAll(() => {
@@ -12,48 +13,41 @@ describe("CardParser", () => {
   describe("Good Input", () => {
     it("constructs without erroring", () => {
       assert.doesNotThrow(() => {
-        new CardParser();
+        new CardParser({ noteType: "BasicWithHighlightVSCode" });
       });
     });
 
     // Handling math parsing
     it("should convert math strings correctly", async () => {
-      const input =
-        "## Equation\n\n%\n\n$x_1 = 1$, $x_2 = 2$, $$x_3 = 3$$, $$x_4 = 4$$";
-      const parser = new CardParser();
+      const input = "## Equation\n\n%\n\n$x_1 = 1$, $x_2 = 2$, $$x_3 = 3$$, $$x_4 = 4$$";
+      const parser = new CardParser(options);
       const card = await parser.parse(input);
       expect(card.question).toBe("<p>Equation</p>\n");
-      expect(card.answer).toBe(
-        "<p>\\(x_1 = 1\\), \\(x_2 = 2\\), \\[x_3 = 3\\], \\[x_4 = 4\\]</p>\n"
-      );
+      expect(card.answer).toBe("<p>\\(x_1 = 1\\), \\(x_2 = 2\\), \\[x_3 = 3\\], \\[x_4 = 4\\]</p>\n");
     });
 
     // Represents a typical use case of simple front and back card
     it("should parse a Markdown input and return a Card instance", async () => {
-      const input =
-        "## Some text that should be on the front\n\nThis text will be on the back";
-      const parser = new CardParser({ convertMath: true });
+      const input = "## Some text that should be on the front\n\nThis text will be on the back";
+      const parser = new CardParser({ convertMath: true, ...options });
       const card = await parser.parse(input);
       expect(card).toBeInstanceOf(Card);
     });
 
     // Represents a typical use case of simple front and back card
     it("should parse a Markdown input to the correct output", async () => {
-      const input =
-        "## Some text that should be on the front\n\nThis text will be on the back";
-      const parser = new CardParser();
+      const input = "## Some text that should be on the front\n\nThis text will be on the back";
+      const parser = new CardParser(options);
       const card = await parser.parse(input);
 
-      expect(card.question).toBe(
-        "<p>Some text that should be on the front</p>\n"
-      );
+      expect(card.question).toBe("<p>Some text that should be on the front</p>\n");
       expect(card.answer).toBe("<p>This text will be on the back</p>\n");
     });
 
     it("should parse % to enable an extended question", async () => {
       const input =
         "## Some text that should be on the front\n\nThis text will be still be on the front\n\n%\n\nThis text will be on the back";
-      const parser = new CardParser();
+      const parser = new CardParser(options);
       const card = await parser.parse(input);
 
       expect(card.question).toBe(
@@ -64,9 +58,8 @@ describe("CardParser", () => {
 
     // Similar to the above but with a tag
     it("should parse a Markdown input to the correct output (with tags)", async () => {
-      const input =
-        "## Some text that should be on the front\n\nThis text will be on the back\n\n[#myTag]()";
-      const parser = new CardParser();
+      const input = "## Some text that should be on the front\n\nThis text will be on the back\n\n[#myTag]()";
+      const parser = new CardParser(options);
       const card = await parser.parse(input);
 
       expect(card.tags).toContain("myTag");
@@ -76,7 +69,7 @@ describe("CardParser", () => {
     it("should parse the note ID properly", async () => {
       const input =
         "## Some text that should be on the front\n\n<!-- notecardId: 123 -->\nThis text will be on the back\n\n[#myTag]()";
-      const parser = new CardParser();
+      const parser = new CardParser(options);
       const card = await parser.parse(input);
 
       expect(card.noteId).toBe(123);
@@ -87,9 +80,8 @@ describe("CardParser", () => {
   describe("Bad Input", () => {
     // Card Parser splits by \n
     it("should handle a H1 and just split by new line", async () => {
-      const input =
-        "# Some text that should be on the front\n\nThis text will be on the back";
-      const parser = new CardParser();
+      const input = "# Some text that should be on the front\n\nThis text will be on the back";
+      const parser = new CardParser(options);
       const card = await parser.parse(input);
 
       expect(card.question).toBe(

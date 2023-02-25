@@ -1,13 +1,12 @@
+import { dirname, relative } from "path";
 import { window, workspace } from "vscode";
-import { DeckNameStrategy, Serializer } from "./Serializer";
-import { Deck } from "../models/Deck";
-import { AnkiService } from "../AnkiService";
+import { IContext } from "../extension";
 import { Card } from "../models/Card";
-import { getLogger } from "../logger";
-import { Media } from "../models/Media";
+import { Deck } from "../models/Deck";
 import { MarkdownFile } from "../models/MarkdownFile";
+import { Media } from "../models/Media";
 import { SendDiff } from "../models/SendDiff";
-import { relative, dirname } from "path";
+import { DeckNameStrategy, Serializer } from "./Serializer";
 
 /**
  * Create anki cards from markdown files
@@ -17,24 +16,18 @@ export class Transformer {
   private deck: Deck | null;
   private defaultDeck: string;
   private strategy: DeckNameStrategy;
-  private ankiService: AnkiService;
+  private context: IContext;
 
   /**
    * @param {string} source markdown file
    * @param {DeckNameStrategy} strategy how to get the deck name
    */
-  constructor(
-    source: MarkdownFile,
-    ankiService: AnkiService,
-    strategy: DeckNameStrategy = DeckNameStrategy.UseDefault
-  ) {
+  constructor(source: MarkdownFile, ctx: IContext, strategy: DeckNameStrategy = DeckNameStrategy.UseDefault) {
     this.deck = null;
     this.source = source;
-    this.ankiService = ankiService;
+    this.context = ctx;
     this.strategy = strategy;
-    this.defaultDeck = workspace
-      .getConfiguration("anki")
-      .get("defaultDeck") as string;
+    this.defaultDeck = workspace.getConfiguration("anki").get("defaultDeck") as string;
   }
 
   async transform(): Promise<SendDiff> {
@@ -42,7 +35,7 @@ export class Transformer {
   }
 
   async transformToDeck(): Promise<SendDiff> {
-    const serializer = new Serializer(this.source, this.strategy);
+    const serializer = new Serializer(this.source, this.strategy, this.context);
 
     const { cards, deckName, media } = await serializer.transform();
 
@@ -50,18 +43,14 @@ export class Transformer {
       throw new Error("No cards found. Check your markdown file");
     }
 
-    this.deck = new Deck(this.calculateDeckName(deckName)).setAnkiService(
-      this.ankiService
-    );
+    this.deck = new Deck(this.calculateDeckName(deckName)).setAnkiService(this.context.ankiService);
 
     // If strategy is UseDefault then the title will be the default Deck
     // For daily markdown files it's still useful to have a tag (we can use the title for this)
     if (
       deckName &&
       this.strategy === DeckNameStrategy.UseDefault &&
-      (workspace
-        .getConfiguration("anki.md")
-        .get("createTagForTitle") as boolean)
+      (workspace.getConfiguration("anki.md").get("createTagForTitle") as boolean)
     ) {
       cards.forEach((v) => v.addTag(deckName));
     }
@@ -84,7 +73,7 @@ export class Transformer {
       data: v.data,
     }));
 
-    await this.ankiService.storeMultipleFiles(files);
+    await this.context.ankiService.storeMultipleFiles(files);
   }
 
   calculateDeckName(generatedName: string | null = null): string {
@@ -101,10 +90,7 @@ export class Transformer {
       const filePath = fileUri.path;
       let deckName: string = "";
       if (rootPath && filePath) {
-        deckName = relative(rootPath, dirname(filePath)).replace(
-          /[\/\\]/g,
-          "::"
-        );
+        deckName = relative(rootPath, dirname(filePath)).replace(/[\/\\]/g, "::");
       }
       return deckName || this.defaultDeck;
     }

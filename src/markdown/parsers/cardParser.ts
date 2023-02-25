@@ -1,6 +1,6 @@
+import { trimArray } from "../../utils";
 import { MathParser } from "../parsers/mathParser";
 import { MdParser } from "../parsers/mdParser";
-import { trimArray } from "../../utils";
 import { BaseParser } from "./baseParser";
 
 import { Card } from "../../models/Card";
@@ -22,18 +22,15 @@ export class CardParser extends BaseParser {
   private tagRe: RegExp;
   private clozeRe: RegExp;
   private noteIdRe: RegExp;
+  private noteType: string;
 
-  constructor({ convertToHtml = true, convertMath = true } = {}) {
+  constructor({ convertToHtml = true, convertMath = true, noteType = "" } = {}) {
     super({ convertToHtml, convertMath });
-    this.splitRe = new RegExp(
-      `^${this.getConfig("card.frontBackSeparator") as string}$`,
-      "m"
-    );
+    this.splitRe = new RegExp(`^${this.getConfig("card.frontBackSeparator") as string}$`, "m");
     this.tagRe = new RegExp(this.getConfig("card.tagPattern") as string);
     this.clozeRe = new RegExp("{{c\\w+::");
-    this.noteIdRe = new RegExp(
-      "<!--\\s*?notecardId\\s*?[:=]\\s*?(\\d+)\\s*?-->"
-    );
+    this.noteIdRe = new RegExp("<!--\\s*?notecardId\\s*?[:=]\\s*?(\\d+)\\s*?-->");
+    this.noteType = noteType;
   }
 
   /**
@@ -42,33 +39,27 @@ export class CardParser extends BaseParser {
    * @returns {Promise<Card>}
    */
   async parse(string = ""): Promise<Card> {
+    const noteType = this.noteType;
     const cardLines = string
       .split(this.splitRe)
       .map((item) => item.split("\n"))
       .map((arr) => arr.map((str) => str.trimRight()));
 
-    const { front, back, tags, isCloze, noteId } =
-      this.parseCardLines(cardLines);
+    const { front, back, tags, isCloze, noteId } = this.parseCardLines(cardLines);
 
     if (!this.options.convertToHtml) {
-      return new Card(front.join(), back.join(), tags, noteId);
+      return new Card(front.join(), back.join(), tags, noteId, noteType);
     }
 
     // If card is a Cloze card we need to use a different note type
     if (isCloze) {
-      return new Card(
-        front.join().replace("## ", ""),
-        back.join(),
-        tags,
-        noteId,
-        "Cloze"
-      );
+      return new Card(front.join().replace("## ", ""), back.join(), tags, noteId, "Cloze");
     }
 
     const frontHtml = await this.linesToHtml(front);
     const backHtml = await this.linesToHtml(back);
 
-    return new Card(frontHtml, backHtml, tags, noteId);
+    return new Card(frontHtml, backHtml, tags, noteId, noteType);
   }
 
   private parseCardLines(cardLines: string[][]): ParsedCardLine {
@@ -156,9 +147,7 @@ export class CardParser extends BaseParser {
     const fixLatex = (match: string) =>
       /\n\n/.test(match)
         ? match // If there is an empty line, return directly
-        : match.replace(/\\[{}%#&$_\\]/g, (str) =>
-            str === "\\\\" ? "\\\\\\\\" : "\\" + str
-          );
+        : match.replace(/\\[{}%#&$_\\]/g, (str) => (str === "\\\\" ? "\\\\\\\\" : "\\" + str));
     const string = lines
       .join("\n")
       // $$\{1,2\} \%100$$ => $$\\{1,2\\} \\%100$$

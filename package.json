@@ -107,6 +107,15 @@
             "trace"
           ]
         },
+        "anki.noteType": {
+          "type": "string",
+          "default": "BasicWithHighlightVSCode",
+          "description": "Which noteType should be used when creating a note?",
+          "enum": [
+            "BasicWithHighlightVSCode",
+            "BasicWithHighlightVSCodeRev"
+          ]
+        },
         "anki.md.card.separator": {
           "type": "string",
           "default": "(?=^##\\s)",
@@ -187,7 +196,7 @@
     "jest": "27.0.6",
     "jest-cli": "^27.0.6",
     "prettier": "^2.8.2",
-    "typescript": "4.9.4"
+    "typescript": "4.9.5"
   },
   "dependencies": {
     "cheerio": "^1.0.0-rc.10",

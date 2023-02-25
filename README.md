@@ -159,6 +159,7 @@ echo "Hello, World!"
 - `anki.api.port`: API Port. | _8765_
 - `anki.api.schema`: Schema. | _http_
 - `anki.saveStrategy`: the behavior of the command `Anki: Send To Deck` | _default_
+- `anki.template`: Which template to use? Normal or reverse? | _BasicWithHighlightVSCode_
 
 I don't recommend messing with the following settings
 
