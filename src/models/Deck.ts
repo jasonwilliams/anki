@@ -106,13 +106,19 @@ export class Deck {
 
   // updates card references in place.
   private async _pushNewCardsToAnki(cards: Card[]) {
-    const ids = await this.ankiService?.addNotes(cards); // this function returns NOTE IDS
-    ids?.map((v, i) => (cards[i].noteId = v));
-  }
+      const ids = await this.ankiService?.addNotes(cards); // this function returns NOTE IDS
+      ids?.map((v, i) => (cards[i].noteId = v));
+    }
 
-  async pushNewCardsToAnki() {
+    // Rename to pushAndUpdateCards, returns a list of created cards
+    async pushNewCardsToAnki() {
+      //   I would do the opposite of this filter to determine which cards should just be updated, not created
     const newCards = this.cards.filter((v) => !v.noteId);
     this._pushNewCardsToAnki(newCards);
+
+    // Push the updated cards (based on noteID)
+    // this._pushUpdatedCardsToAnki(cards)
+    // return newCards
   }
 
   // Anki Service Methods

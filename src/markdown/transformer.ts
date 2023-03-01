@@ -58,7 +58,9 @@ export class Transformer {
     // Either create a new Deck on Anki or get back the ID of the same-named Deck
     await this.deck.createOnAnki();
     await this.pushMediaItems(media);
+    // this.exportCards will return a list of Cards that were just created. Thus we need to insert their note IDs into the markdown
     await this.exportCards(cards);
+    // Call to insert noteID into markdown
 
     return new SendDiff(); // dummy return for the first pull request
   }
@@ -96,12 +98,14 @@ export class Transformer {
     }
   }
 
-  async exportCards(cards: Card[]) {
+ // Going to return a list of cards that require their note IDs to be added to the file's markdown
+  async exportCards(cards: Card[]): Card[] {
     this.addCardsToDeck(cards);
     if (!this.deck) {
       throw new Error("No Deck exists for current cards");
     }
 
+    // I want to change this to this.deck.pushAndUpdateCards()
     await this.deck.pushNewCardsToAnki();
   }
 
