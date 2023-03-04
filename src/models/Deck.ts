@@ -106,18 +106,42 @@ export class Deck {
 
   // updates card references in place.
   private async _pushNewCardsToAnki(cards: Card[]) {
-      const ids = await this.ankiService?.addNotes(cards); // this function returns NOTE IDS
-      ids?.map((v, i) => (cards[i].noteId = v));
-    }
+    const ids = await this.ankiService?.addNotes(cards); // this function returns NOTE IDS
+    ids?.map((v, i) => (cards[i].noteId = v));
+  }
 
-    // Rename to pushAndUpdateCards, returns a list of created cards
-    async pushNewCardsToAnki() {
-      //   I would do the opposite of this filter to determine which cards should just be updated, not created
+  async updateFields(card: Card): Promise<any> {
+    const request = {
+      note: {
+        id: card.noteId,
+        fields: {
+          Front: card.question,
+          Back: card.answer,
+        },
+      },
+    };
+    return await this.ankiService?.invoke("updateNoteFields", request);
+  }
+
+  // updates card references in place.
+  private async _pushUpdatedCardsToAnki(cards: Card[]) {
+    cards?.map((card) => {
+      // console.log("this.updateFields(card): %s", this.updateFields(card))
+      this.updateFields(card).then((value) => {
+        console.log("value: %s", value);
+      });
+    });
+    console.log("Passed %s", 127);
+  }
+
+  // Rename to pushAndUpdateCards, returns a list of created cards
+  async pushNewCardsToAnki() {
     const newCards = this.cards.filter((v) => !v.noteId);
     this._pushNewCardsToAnki(newCards);
-
     // Push the updated cards (based on noteID)
-    // this._pushUpdatedCardsToAnki(cards)
+    const updateCards = this.cards.filter((v) => v.noteId);
+    this._pushUpdatedCardsToAnki(updateCards);
+    console.log("Passed %s", 142);
     // return newCards
   }
 
