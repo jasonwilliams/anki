@@ -21,8 +21,10 @@ export class AnkiService {
   }
 
   async invoke(action: string, params?: object): Promise<any> {
+    console.log("{ ...params }: %s", { ...params });
     const req = { action, version: this.version, params: { ...params } };
     getLogger().trace(JSON.stringify(req));
+    console.log("JSON.stringify(req): %s", JSON.stringify(req));
     const response = await fetch(this.url, {
       method: "post",
       headers: {
