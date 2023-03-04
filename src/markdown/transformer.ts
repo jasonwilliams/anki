@@ -98,15 +98,13 @@ export class Transformer {
     }
   }
 
- // Going to return a list of cards that require their note IDs to be added to the file's markdown
-  async exportCards(cards: Card[]): Card[] {
+  async exportCards(cards: Card[]) {
     this.addCardsToDeck(cards);
     if (!this.deck) {
       throw new Error("No Deck exists for current cards");
     }
 
-    // I want to change this to this.deck.pushAndUpdateCards()
-    await this.deck.pushNewCardsToAnki();
+    await this.deck.createAndUpdateCards();
   }
 
   addCardsToDeck(cards: Card[]) {
