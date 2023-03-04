@@ -106,43 +106,22 @@ export class Deck {
 
   // updates card references in place.
   private async _pushNewCardsToAnki(cards: Card[]) {
-    const ids = await this.ankiService?.addNotes(cards); // this function returns NOTE IDS
+    const ids = await this.ankiService?.addNotes(cards);
     ids?.map((v, i) => (cards[i].noteId = v));
   }
 
-  async updateFields(card: Card): Promise<any> {
-    const request = {
-      note: {
-        id: card.noteId,
-        fields: {
-          Front: card.question,
-          Back: card.answer,
-        },
-      },
-    };
-    return await this.ankiService?.invoke("updateNoteFields", request);
+  // Calls anki to update the fields of all the passed cards.
+  private _pushUpdatedCardsToAnki(cards: Card[]) {
+    cards.forEach((card) => this.ankiService?.updateFields(card));
   }
 
-  // updates card references in place.
-  private async _pushUpdatedCardsToAnki(cards: Card[]) {
-    cards?.map((card) => {
-      // console.log("this.updateFields(card): %s", this.updateFields(card))
-      this.updateFields(card).then((value) => {
-        console.log("value: %s", value);
-      });
-    });
-    console.log("Passed %s", 127);
-  }
-
-  // Rename to pushAndUpdateCards, returns a list of created cards
-  async pushNewCardsToAnki() {
-    const newCards = this.cards.filter((v) => !v.noteId);
-    this._pushNewCardsToAnki(newCards);
+  async createAndUpdateCards() {
     // Push the updated cards (based on noteID)
-    const updateCards = this.cards.filter((v) => v.noteId);
+    let updateCards: Card[] = [];
+    let newCards: Card[] = [];
+    this.cards.forEach((card) => (card.noteId ? updateCards.push(card) : newCards.push(card)));
     this._pushUpdatedCardsToAnki(updateCards);
-    console.log("Passed %s", 142);
-    // return newCards
+    this._pushNewCardsToAnki(newCards);
   }
 
   // Anki Service Methods
