@@ -1,5 +1,5 @@
 import { dirname, relative } from "path";
-import { window, workspace } from "vscode";
+import { Position, window, workspace } from "vscode";
 import { IContext } from "../extension";
 import { Card } from "../models/Card";
 import { Deck } from "../models/Deck";
@@ -7,6 +7,7 @@ import { MarkdownFile } from "../models/MarkdownFile";
 import { Media } from "../models/Media";
 import { SendDiff } from "../models/SendDiff";
 import { DeckNameStrategy, Serializer } from "./Serializer";
+import { load } from "cheerio";
 
 /**
  * Create anki cards from markdown files
@@ -59,10 +60,58 @@ export class Transformer {
     await this.deck.createOnAnki();
     await this.pushMediaItems(media);
     // this.exportCards will return a list of Cards that were just created. Thus we need to insert their note IDs into the markdown
-    await this.exportCards(cards);
+    const newCards = await this.exportCards(cards);
     // Call to insert noteID into markdown
+    this.insertNoteIDs(newCards);
 
     return new SendDiff(); // dummy return for the first pull request
+  }
+
+  private getConfig(conf: string) {
+    return workspace.getConfiguration("anki.md").get(conf);
+  }
+
+  insertNoteIDs(cards: Card[]) {
+    let lines = this.source.cachedContent.split("\n");
+    let match = new RegExp(this.getConfig("card.separator") as string);
+
+    // https://stackoverflow.com/questions/6946466/line-number-of-the-matched-characters-in-js-node-js
+    let headerLineNumbers: number[] = [];
+    lines.map((element, index) => {
+      if (match.exec(element)) {
+        headerLineNumbers.push(index);
+      }
+    });
+    console.log("headerLineNumbers: %s", headerLineNumbers);
+
+    // Now need to correlate the header lines with which card they match
+    // I have to have a line number such that I can create a position
+    // https://code.visualstudio.com/api/references/vscode-api#Position
+    // https://code.visualstudio.com/api/references/vscode-api#TextEditorEdit
+
+    // For each of the indexes, try and match one of the card fronts
+    let lineIndexToNoteID = new Map();
+    headerLineNumbers.forEach((lineIndex) => {
+      cards.forEach((card) => {
+        let $ = load(card.question);
+        const cleanQuestion = $("p").text();
+
+        // Fails if your name has any formatting, or regex chars?
+        let match = new RegExp(`(^##\\s+)${cleanQuestion}\\s*$`, "m");
+        if (match.exec(lines[lineIndex])) {
+          lineIndexToNoteID.set(lineIndex, card.noteId);
+        }
+      });
+    });
+    console.log("[...lineIndexToNoteID.entries()]: %s", [...lineIndexToNoteID.entries()]);
+
+    // https://github.com/microsoft/vscode-extension-samples/blob/main/document-editing-sample/src/extension.ts
+    const editor = window.activeTextEditor;
+    editor?.edit((editBuilder) => {
+      for (let [lineIndex, noteID] of lineIndexToNoteID.entries()) {
+        editBuilder.insert(new Position(lineIndex + 1, 0), `\n<!-- notecardId: ${noteID} -->\n`);
+      }
+    });
   }
 
   async pushMediaItems(media: Media[]) {
@@ -98,14 +147,13 @@ export class Transformer {
     }
   }
 
-  // Going to return a list of cards that require their note IDs to be added to the file's markdown
-  async exportCards(cards: Card[]): Card[] {
+  async exportCards(cards: Card[]): Promise<Card[]> {
     this.addCardsToDeck(cards);
     if (!this.deck) {
       throw new Error("No Deck exists for current cards");
     }
 
-    await this.deck.createAndUpdateCards();
+    return await this.deck.createAndUpdateCards();
   }
 
   addCardsToDeck(cards: Card[]) {
