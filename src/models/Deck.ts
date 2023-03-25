@@ -1,6 +1,7 @@
 import { Card } from "./Card";
 import { AnkiService } from "../AnkiService";
 import { SendDiff } from "./SendDiff";
+import { workspace } from "vscode";
 
 export class Deck {
   public readonly name: string;
@@ -111,8 +112,8 @@ export class Deck {
   }
 
   // Calls anki to update the fields of all the passed cards.
-  private _pushUpdatedCardsToAnki(cards: Card[]) {
-    cards.forEach((card) => this.ankiService?.updateFields(card));
+  private async _pushUpdatedCardsToAnki(cards: Card[]): Promise<Card[]> {
+    return Promise.all(cards.map((card) => this.ankiService?.updateFields(card)));
   }
 
   async createAndUpdateCards() {
@@ -120,8 +121,10 @@ export class Deck {
     let updateCards: Card[] = [];
     let newCards: Card[] = [];
     this.cards.forEach((card) => (card.noteId ? updateCards.push(card) : newCards.push(card)));
-    this._pushUpdatedCardsToAnki(updateCards);
-    this._pushNewCardsToAnki(newCards);
+    if (workspace.getConfiguration("anki.md").get("updateCards")) {
+      await this._pushUpdatedCardsToAnki(updateCards);
+    }
+    await this._pushNewCardsToAnki(newCards);
   }
 
   // Anki Service Methods
