@@ -146,10 +146,10 @@
           "default": true,
           "description": "When you run 'Send To Deck' the title (h1) of the markdown file is stored as a tag. This is useful if you have 'daily' notes, you can use the same deck but separate cards by title"
         },
-        "anki.md.card.notecardIdPattern": {
-          "type": "string",
-          "default": "<!--\\s*?notecardId\\s*?\\[:=\\]\\s*?(\\d+)\\s*?-->",
-          "description": "Text to match match the commented notecard ID."
+        "anki.md.updateCards": {
+          "type": "boolean",
+          "default": false,
+          "description": "Opt in to allow parsed noteIDs to be used for updating existing anki cards. Note: Update doesn't care which deck the card with each noteID are, see: https://github.com/jasonwilliams/anki/pull/106#issuecomment-1483743818"
         }
       }
     }

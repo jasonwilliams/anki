@@ -1,6 +1,7 @@
 import { Card } from "./Card";
 import { AnkiService } from "../AnkiService";
 import { SendDiff } from "./SendDiff";
+import { workspace } from "vscode";
 
 export class Deck {
   public readonly name: string;
@@ -106,13 +107,24 @@ export class Deck {
 
   // updates card references in place.
   private async _pushNewCardsToAnki(cards: Card[]) {
-    const ids = await this.ankiService?.addNotes(cards); // this function returns NOTE IDS
+    const ids = await this.ankiService?.addNotes(cards);
     ids?.map((v, i) => (cards[i].noteId = v));
   }
 
-  async pushNewCardsToAnki() {
-    const newCards = this.cards.filter((v) => !v.noteId);
-    this._pushNewCardsToAnki(newCards);
+  // Calls anki to update the fields of all the passed cards.
+  private async _pushUpdatedCardsToAnki(cards: Card[]): Promise<Card[]> {
+    return Promise.all(cards.map((card) => this.ankiService?.updateFields(card)));
+  }
+
+  async createAndUpdateCards() {
+    // Push the updated cards (based on noteID)
+    let updateCards: Card[] = [];
+    let newCards: Card[] = [];
+    this.cards.forEach((card) => (card.noteId ? updateCards.push(card) : newCards.push(card)));
+    if (workspace.getConfiguration("anki.md").get("updateCards")) {
+      await this._pushUpdatedCardsToAnki(updateCards);
+    }
+    await this._pushNewCardsToAnki(newCards);
   }
 
   // Anki Service Methods

@@ -58,7 +58,9 @@ export class Transformer {
     // Either create a new Deck on Anki or get back the ID of the same-named Deck
     await this.deck.createOnAnki();
     await this.pushMediaItems(media);
+    // this.exportCards will return a list of Cards that were just created. Thus we need to insert their note IDs into the markdown
     await this.exportCards(cards);
+    // Call to insert noteID into markdown
 
     return new SendDiff(); // dummy return for the first pull request
   }
@@ -102,7 +104,7 @@ export class Transformer {
       throw new Error("No Deck exists for current cards");
     }
 
-    await this.deck.pushNewCardsToAnki();
+    await this.deck.createAndUpdateCards();
   }
 
   addCardsToDeck(cards: Card[]) {

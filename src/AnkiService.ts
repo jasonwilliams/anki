@@ -138,6 +138,19 @@ export class AnkiService {
     return await this.invoke("addNotes", { notes });
   }
 
+  async updateFields(card: Card): Promise<any> {
+    const request = {
+      note: {
+        id: card.noteId,
+        fields: {
+          Front: card.question,
+          Back: card.answer,
+        },
+      },
+    };
+    return await this.invoke("updateNoteFields", request);
+  }
+
   async guiDeckBrowser(): Promise<any[]> {
     return await this.invoke("guiDeckBrowser");
   }
