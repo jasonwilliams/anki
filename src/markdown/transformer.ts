@@ -8,6 +8,7 @@ import { Media } from "../models/Media";
 import { SendDiff } from "../models/SendDiff";
 import { DeckNameStrategy, Serializer } from "./Serializer";
 import { load } from "cheerio";
+import { NodeHtmlMarkdown, NodeHtmlMarkdownOptions } from "node-html-markdown";
 
 /**
  * Create anki cards from markdown files
@@ -89,16 +90,21 @@ export class Transformer {
     // https://code.visualstudio.com/api/references/vscode-api#Position
     // https://code.visualstudio.com/api/references/vscode-api#TextEditorEdit
 
+    // https://codereview.stackexchange.com/questions/153691/escape-user-input-for-use-in-js-regex
+    function escapeRegExp(string: string) {
+      return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); // $& means the whole matched string
+    }
+
     // For each of the indexes, try and match one of the card fronts
+    const nhm = new NodeHtmlMarkdown();
     let lineIndexToNoteID = new Map();
     headerLineNumbers.forEach((lineIndex) => {
       cards.forEach((card) => {
-        let $ = load(card.question);
-        const cleanQuestion = $("p").text();
+        let front = nhm.translate(card.question);
+        let matchFront = new RegExp(`^##\\s+${escapeRegExp(front)}\\s*$`, "m");
+        let matched = matchFront.exec(lines[lineIndex]);
 
-        // Fails if your name has any formatting, or regex chars?
-        let match = new RegExp(`(^##\\s+)${cleanQuestion}\\s*$`, "m");
-        if (match.exec(lines[lineIndex])) {
+        if (matched) {
           lineIndexToNoteID.set(lineIndex, card.noteId);
         }
       });
