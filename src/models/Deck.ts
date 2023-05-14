@@ -125,7 +125,7 @@ export class Deck {
       await this._pushUpdatedCardsToAnki(updateCards);
     }
     await this._pushNewCardsToAnki(newCards);
-    return newCards
+    return newCards;
   }
 
   // Anki Service Methods
