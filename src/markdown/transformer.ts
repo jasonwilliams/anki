@@ -83,7 +83,6 @@ export class Transformer {
         headerLineNumbers.push(index);
       }
     });
-    console.log("headerLineNumbers: %s", headerLineNumbers);
 
     // Now need to correlate the header lines with which card they match
     // I have to have a line number such that I can create a position
@@ -109,7 +108,6 @@ export class Transformer {
         }
       });
     });
-    console.log("[...lineIndexToNoteID.entries()]: %s", [...lineIndexToNoteID.entries()]);
 
     // https://github.com/microsoft/vscode-extension-samples/blob/main/document-editing-sample/src/extension.ts
     const editor = window.activeTextEditor;
