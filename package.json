@@ -150,6 +150,11 @@
           "type": "boolean",
           "default": false,
           "description": "Opt in to allow parsed noteIDs to be used for updating existing anki cards. Note: Update doesn't care which deck the card with each noteID are, see: https://github.com/jasonwilliams/anki/pull/106#issuecomment-1483743818"
+        },
+        "anki.md.insertNewCardID": {
+          "type": "boolean",
+          "default": false,
+          "description": "Opt in to allow inserting newly created note IDs."
         }
       }
     }

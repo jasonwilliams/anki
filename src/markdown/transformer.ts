@@ -63,7 +63,9 @@ export class Transformer {
     // this.exportCards will return a list of Cards that were just created. Thus we need to insert their note IDs into the markdown
     const newCards = await this.exportCards(cards);
     // Call to insert noteID into markdown
-    this.insertNoteIDs(newCards);
+    if (this.getConfig("insertNewCardID")) {
+      this.insertNoteIDs(newCards);
+    }
 
     return new SendDiff(); // dummy return for the first pull request
   }
