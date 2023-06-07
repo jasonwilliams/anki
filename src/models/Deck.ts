@@ -116,7 +116,7 @@ export class Deck {
     return Promise.all(cards.map((card) => this.ankiService?.updateFields(card)));
   }
 
-  async createAndUpdateCards() {
+  async createAndUpdateCards(): Promise<Card[]> {
     // Push the updated cards (based on noteID)
     let updateCards: Card[] = [];
     let newCards: Card[] = [];
@@ -125,6 +125,7 @@ export class Deck {
       await this._pushUpdatedCardsToAnki(updateCards);
     }
     await this._pushNewCardsToAnki(newCards);
+    return newCards;
   }
 
   // Anki Service Methods
