@@ -1,7 +1,7 @@
 const production = process.argv[2] === "--production";
+import esbuild from "esbuild";
 import { copy } from "esbuild-plugin-copy";
 import { sassPlugin } from "esbuild-sass-plugin";
-import esbuild from "esbuild";
 
 const watch = process.argv[2] === "--watch";
 const context = await esbuild
@@ -14,6 +14,7 @@ const context = await esbuild
     sourcemap: !production,
     minify: production,
     platform: "node",
+    target: "ES2021",
     plugins: [
       copy({
         resolveFrom: "cwd",
@@ -46,5 +47,6 @@ const context = await esbuild
 if (watch) {
   await context.watch();
 } else {
+  context.rebuild();
   context.dispose();
 }
