@@ -4,7 +4,7 @@ All notable changes to the "anki" extension will be documented in this file.
 
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
-## [1.3.0]
+## [1.3.1]
 
 - **New Feature!** You can now update an Anki note if you've submitted it before. See [Update Cards (Beta)](./README.md#update-cards-beta)
 - The title of the card is no longer a H2 element, but just a normal paragraph [#82](https://github.com/jasonwilliams/anki/pull/82)
