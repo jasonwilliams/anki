@@ -13,7 +13,7 @@ jobs:
           ref: ${{ github.sha }}
       - uses: actions/setup-node@v3
         with:
-          node-version: "16"
+          node-version: "20"
       - run: npm ci
       - name: Build and Pre-Publish
         run: npm run vscode:prepublish
