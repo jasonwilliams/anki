@@ -18,11 +18,13 @@ jobs:
       - name: Build and Pre-Publish
         run: npm run vscode:prepublish
       - name: Install VSCE
-        run: npm i vsce
-        run: npm i ovsx
+        run: |
+          npm i vsce
+          npm i ovsx
       - name: Publish
-        run: npx vsce publish -p $VSCE_TOKEN
-        run: npx ovsx publish -p $OVSX_TOKEN
+        run: |
+          npx vsce publish -p $VSCE_TOKEN
+          npx ovsx publish -p $OVSX_TOKEN
         env:
           VSCE_TOKEN: ${{ secrets.VSCE_TOKEN }}
-          VSCE_TOKEN: ${{ secrets.OVSX_TOKEN }}
+          OVSX_TOKEN: ${{ secrets.OVSX_TOKEN }}
