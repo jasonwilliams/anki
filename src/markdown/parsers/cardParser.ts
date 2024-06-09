@@ -69,7 +69,7 @@ export class CardParser extends BaseParser {
     let noteId = 0;
     let isCloze = false;
 
-    const fillBackAndTags = (line: string) => {
+    const appendLine = (line: string, dest: string[]) => {
       // set tags
       if (this.tagRe.test(line)) {
         tags.push(...this.parseTags(line));
@@ -85,13 +85,13 @@ export class CardParser extends BaseParser {
         }
       }
 
-      // set back
+      // set dest
       // skip first blank lines
-      if (back.length === 0 && !line) {
+      if (dest.length === 0 && !line) {
         return;
       }
 
-      back.push(line);
+      dest.push(line);
     };
 
     if (cardLines.length === 1) {
@@ -106,13 +106,12 @@ export class CardParser extends BaseParser {
           return;
         }
 
-        fillBackAndTags(line);
+        appendLine(line, back);
       });
     } else {
       // front card has multiple lines
-      front.push(...cardLines[0]);
-
-      trimArray(cardLines[1]).forEach((line: string) => fillBackAndTags(line));
+      trimArray(cardLines[0]).forEach((line: string) => appendLine(line, front));
+      trimArray(cardLines[1]).forEach((line: string) => appendLine(line, back));
     }
 
     return {
