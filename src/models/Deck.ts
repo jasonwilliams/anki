@@ -122,9 +122,13 @@ export class Deck {
     let newCards: Card[] = [];
     this.cards.forEach((card) => (card.noteId ? updateCards.push(card) : newCards.push(card)));
     if (workspace.getConfiguration("anki.md").get("updateCards")) {
-      await this._pushUpdatedCardsToAnki(updateCards);
+      for (const card of updateCards.values()) {
+        await this._pushUpdatedCardsToAnki([card]);
+      }
     }
-    await this._pushNewCardsToAnki(newCards);
+    for (const card of newCards.values()) {
+      await this._pushNewCardsToAnki([card]);
+    }
     return newCards;
   }
 
