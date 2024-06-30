@@ -1,7 +1,7 @@
-import { Card } from "./Card";
-import { AnkiService } from "../AnkiService";
-import { SendDiff } from "./SendDiff";
 import { workspace } from "vscode";
+import { AnkiService } from "../AnkiService";
+import { Card } from "./Card";
+import { SendDiff } from "./SendDiff";
 
 export class Deck {
   public readonly name: string;
@@ -112,8 +112,11 @@ export class Deck {
   }
 
   // Calls anki to update the fields of all the passed cards.
-  private async _pushUpdatedCardsToAnki(cards: Card[]): Promise<Card[]> {
-    return Promise.all(cards.map((card) => this.ankiService?.updateFields(card)));
+  private async _pushUpdatedCardsToAnki(cards: Card[]): Promise<void> {
+    // This should be in sequence to not overload AnkiConnect's connection limit
+    for (const card of cards) {
+      await this.ankiService?.updateFields(card);
+    }
   }
 
   async createAndUpdateCards(): Promise<Card[]> {
