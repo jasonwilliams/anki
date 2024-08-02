@@ -47,7 +47,7 @@ Here's an example
 
 ### Update cards (Beta)
 
-You can update a card that you've already sent to a deck. To do this make sure you enable by setting `anki.md.updateCards` to `true`.
+You can update a card that you've already sent to a deck. To do this make sure you enable by setting `anki.md.updateCards` to `true` as well as `anki.md.insertNewCardID` to `true`.
 This feature is currently opt-in but we may turn it on by default in the future.
 
 This feature relies on the NoteID being embedded in the card and searches the Anki Database for that same noteID then updates, this means, if you're using `Send to dirname deck` it [may not](https://github.com/jasonwilliams/anki/pull/106#issuecomment-1483743818) go to the place you were expecting.
