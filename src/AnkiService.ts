@@ -1,5 +1,4 @@
 import { load } from "cheerio";
-import fetch from "node-fetch";
 import { getLogger } from "./logger";
 import { Model } from "./manageTemplate";
 import { Card } from "./models/Card";
